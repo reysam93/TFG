@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualHFSM><SubAutomata id="1" idFather="0"><state initial="true" id="1"><posx>163</posx><posy>201</posy><name>GO</name><idSubautomataSon>0</idSubautomataSon><code>std::cout &lt;&lt; "going up" &lt;&lt; std::endl;
+
+Motorsprx-&gt;setV(100.0);
+Motorsprx-&gt;setW(0.0);</code></state><state initial="false" id="2"><posx>539</posx><posy>238</posy><name>wait</name><idSubautomataSon>0</idSubautomataSon><code>std::cout &lt;&lt; "waiting" &lt;&lt; std::endl;
+
+Motorsprx-&gt;setV(0.0);
+Motorsprx-&gt;setW(0.0);</code></state><transition id="1"><posx>357</posx><posy>116</posy><origin>1</origin><destiny>2</destiny><transcode></transcode><name>transition</name><trans type="time">3000</trans></transition><transition id="2"><posx>342</posx><posy>308</posy><origin>2</origin><destiny>1</destiny><transcode></transcode><name>transition</name><trans type="time">2000</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><libraries><lib>iostream</lib></libraries><config><iceinterface><nameinterface>Motors</nameinterface><ip>localhost</ip><port>9999</port><interface>Motors</interface></iceinterface></config></VisualHFSM>
