@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VisualHFSM><SubAutomata id="1" idFather="0"><state initial="true" id="1"><posx>60</posx><posy>124</posy><name>GoFront</name><idSubautomataSon>0</idSubautomataSon><code>std::cout &lt;&lt; "going front" &lt;&lt; std::endl;
-
-Motorsprx-&gt;setV(100.0);
+<VisualHFSM><SubAutomata id="1" idFather="0"><state initial="true" id="1"><posx>60</posx><posy>124</posy><name>GoFront</name><idSubautomataSon>0</idSubautomataSon><code>Motorsprx-&gt;setV(100.0);
 Motorsprx-&gt;setW(0.0);
 
 encoders = Encodersprx-&gt;getEncodersData();
-thetapos = encoders-&gt;robottheta;</code></state><state initial="false" id="2"><posx>387</posx><posy>123</posy><name>GoBack</name><idSubautomataSon>0</idSubautomataSon><code>std::cout &lt;&lt; "going back" &lt;&lt; std::endl;
-
-Motorsprx-&gt;setV(-100.0);
+thetapos = encoders-&gt;robottheta;</code></state><state initial="false" id="2"><posx>387</posx><posy>123</posy><name>GoBack</name><idSubautomataSon>0</idSubautomataSon><code>Motorsprx-&gt;setV(-100.0);
 Motorsprx-&gt;setW(0.0);
 
 encoders = Encodersprx-&gt;getEncodersData();
-thetapos = encoders-&gt;robottheta;</code></state><state initial="false" id="3"><posx>415</posx><posy>398</posy><name>Turn</name><idSubautomataSon>0</idSubautomataSon><code>std::cout &lt;&lt; "turning" &lt;&lt; std::endl;
-
-Motorsprx-&gt;setV(0.0);
+thetapos = encoders-&gt;robottheta;</code></state><state initial="false" id="3"><posx>415</posx><posy>398</posy><name>Turn</name><idSubautomataSon>0</idSubautomataSon><code>Motorsprx-&gt;setV(0.0);
 Motorsprx-&gt;setW(-3.0);
 
 encoders = Encodersprx-&gt;getEncodersData();
@@ -22,9 +16,7 @@ if (encoders-&gt;robottheta &gt; thetapos + 1)
 else
 	angle = thetapos - encoders-&gt;robottheta;
 
-std::cout &lt;&lt; "angle: " &lt;&lt; angle &lt;&lt; std::endl;</code></state><state initial="false" id="4"><posx>89</posx><posy>389</posy><name>Wait</name><idSubautomataSon>0</idSubautomataSon><code>std::cout &lt;&lt; "waiting" &lt;&lt; std::endl;
-
-Motorsprx-&gt;setV(0.0);
+std::cout &lt;&lt; "angle: " &lt;&lt; angle &lt;&lt; std::endl;</code></state><state initial="false" id="4"><posx>89</posx><posy>389</posy><name>Wait</name><idSubautomataSon>0</idSubautomataSon><code>Motorsprx-&gt;setV(0.0);
 Motorsprx-&gt;setW(0.0);
 
 encoders = Encodersprx-&gt;getEncodersData();
