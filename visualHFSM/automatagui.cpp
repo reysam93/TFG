@@ -204,11 +204,10 @@ int AutomataGui::setNodeAsActive(std::string nodeName){
 	if (this->activeNode != NULL){
  		this->activeNode->changeColor(ITEM_COLOR_BLUE);
  	}
-	GuiNode* node = this->getNodeByName(nodeName);
-	if (node == NULL)
+	this->activeNode = this->getNodeByName(nodeName);
+	if (this->activeNode == NULL)
  		return -1;
- 	this->activeNode = node;
- 	node->changeColor(ITEM_COLOR_GREEN);
+ 	this->activeNode->changeColor(ITEM_COLOR_GREEN);
  	return 0;
 }
 
@@ -228,13 +227,14 @@ GuiNode* AutomataGui::getNodeByName(std::string name){
 
 
  int AutomataGui::setNodeAsActive(std::string nodeName, bool active){
- 	GuiNode* node = this->getNodeByName(nodeName);
- 	if (node == NULL)
+ 	//GuiNode* node
+ 	this->activeNode = this->getNodeByName(nodeName);
+ 	if (this->activeNode == NULL)
  		return -1;
  	if (active){
- 		node->changeColor(ITEM_COLOR_GREEN);
+ 		this->activeNode->changeColor(ITEM_COLOR_GREEN);
  	}else{
- 		node->changeColor(ITEM_COLOR_BLUE);
+ 		this->activeNode->changeColor(ITEM_COLOR_BLUE);
  	}
  	return 0;
  }
