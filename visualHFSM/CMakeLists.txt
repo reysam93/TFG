@@ -1,34 +1,50 @@
-# Install script for directory: /home/samuel/jderobot/src/stable/components/visualHFSM
+IF (goocanvasmm_INCLUDE_DIRS)
 
-# Set the install prefix
-IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  SET(CMAKE_INSTALL_PREFIX "/usr/local")
-ENDIF(NOT DEFINED CMAKE_INSTALL_PREFIX)
-STRING(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+SET( SOURCE_FILES_VISUALHFSM
+	iceinterface.cpp
+	point.cpp
+	node.cpp
+	transition.cpp
+	guinode.cpp
+	subautomata.cpp
+	guitransition.cpp
+	guisubautomata.cpp
+	generate.cpp
+	popups/configfiledialog.cpp
+	popups/editnodedialog.cpp
+	popups/edittransitiondialog.cpp
+	popups/edittransitioncodedialog.cpp
+	popups/funvardialog.cpp
+	popups/librariesdialog.cpp
+	popups/loadfiledialog.cpp
+	popups/renamedialog.cpp
+	popups/renametransitiondialog.cpp
+	popups/savefiledialog.cpp
+	popups/timerdialog.cpp
+	savefile.cpp
+	xmlparser.cpp
+	visualhfsm.cpp
+	main.cpp
+)
 
-# Set the install configuration name.
-IF(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
-  IF(BUILD_TYPE)
-    STRING(REGEX REPLACE "^[^A-Za-z0-9_]+" ""
-           CMAKE_INSTALL_CONFIG_NAME "${BUILD_TYPE}")
-  ELSE(BUILD_TYPE)
-    SET(CMAKE_INSTALL_CONFIG_NAME "")
-  ENDIF(BUILD_TYPE)
-  MESSAGE(STATUS "Install configuration: \"${CMAKE_INSTALL_CONFIG_NAME}\"")
-ENDIF(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
+include_directories (
+	${INTERFACES_CPP_DIR}
+	${LIBS_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${gtkmm3_INCLUDE_DIRS}
+	${goocanvasmm_INCLUDE_DIRS}
+	${gtk3_INCLUDE_DIRS}
+	${libxmlpp_INCLUDE_DIRS}
+)
 
-# Set the component getting installed.
-IF(NOT CMAKE_INSTALL_COMPONENT)
-  IF(COMPONENT)
-    MESSAGE(STATUS "Install component: \"${COMPONENT}\"")
-    SET(CMAKE_INSTALL_COMPONENT "${COMPONENT}")
-  ELSE(COMPONENT)
-    SET(CMAKE_INSTALL_COMPONENT)
-  ENDIF(COMPONENT)
-ENDIF(NOT CMAKE_INSTALL_COMPONENT)
+add_executable (visualHFSM ${SOURCE_FILES_VISUALHFSM})
 
-# Install shared libraries without execute permission?
-IF(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
-  SET(CMAKE_INSTALL_SO_NO_EXE "1")
-ENDIF(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
+TARGET_LINK_LIBRARIES ( visualHFSM
+	${gtkmm3_LIBRARIES}
+	${goocanvasmm_LIBRARIES}
+	${gtk3_LIBRARIES}
+	${libxmlpp_LIBRARIES}
+)
+
+ENDIF()
 
