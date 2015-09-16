@@ -91,6 +91,9 @@ public:
 	void setGuiNodeItems (  const Glib::RefPtr<Goocanvas::Item>& item,
 							Glib::RefPtr<Goocanvas::Item> selectedItem,
 							Glib::RefPtr<Goocanvas::Item> textItem );
+	bool setGuiNodeItems(int id, const Glib::RefPtr<Goocanvas::Item>& item,
+                                        Glib::RefPtr<Goocanvas::Item> selectedItem,
+                                        Glib::RefPtr<Goocanvas::Item> textItem);
 	void setIdSubautomataSon ( int id, const Glib::RefPtr<Goocanvas::Item>& item );
 
 	void setCodeLastGuiNode ( std::string code );

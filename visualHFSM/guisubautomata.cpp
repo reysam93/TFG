@@ -410,6 +410,20 @@ void GuiSubautomata::setGuiNodeItems (  const Glib::RefPtr<Goocanvas::Item>& ite
     nodeListIterator->setItems(item, selectedItem, textItem);
 }
 
+bool GuiSubautomata::setGuiNodeItems(int id, const Glib::RefPtr<Goocanvas::Item>& item,
+                                        Glib::RefPtr<Goocanvas::Item> selectedItem,
+                                        Glib::RefPtr<Goocanvas::Item> textItem){
+    std::list<GuiNode>::iterator nodeListIterator = this->nodeList.begin();
+    while (nodeListIterator != this->nodeList.end()){
+        if (nodeListIterator->getId() == id){
+            nodeListIterator->setItems(item, selectedItem, textItem);
+            return true;
+        }
+        nodeListIterator++;
+    }
+    return false;
+}
+
 // Set the ID of the subautomata son of the specified item
 void GuiSubautomata::setIdSubautomataSon ( int id, const Glib::RefPtr<Goocanvas::Item>& item ) {
     std::list<GuiNode>::iterator nodeListIterator = this->nodeList.begin();
@@ -503,13 +517,18 @@ int GuiSubautomata::getFirstIdNode () {
 
 int GuiSubautomata::getIdSubautomataSon ( const Glib::RefPtr<Goocanvas::Item>& item ) {
     std::list<GuiNode>::iterator nodeListIterator = this->nodeList.begin();
+
+
     while ( (!nodeListIterator->hasThisItem(item)) &&
-            (nodeListIterator != this->nodeList.end()) )
+            (nodeListIterator != this->nodeList.end()) ){
+        int id = nodeListIterator->getId();
         nodeListIterator++;
+    }
+       
 
     if (nodeListIterator != this->nodeList.end())
         return nodeListIterator->getIdSubautomataSon();
-
+    
     return 0;
 }
 
