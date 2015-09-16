@@ -234,21 +234,21 @@ bool AutomataGui::fillTreeView ( std::string nameNode, Gtk::TreeModel::Children 
 
 
 int AutomataGui::setNodeAsActive(std::string nodeName){
-/*	if (this->activeNode != NULL){
+	/*if (this->activeNode != NULL){
  		this->activeNode->changeColor(ITEM_COLOR_BLUE);
  	}
 	this->activeNode = this->getNodeByName(nodeName);
 	if (this->activeNode == NULL)
  		return -1;
  	this->activeNode->changeColor(ITEM_COLOR_GREEN);
- 	return 0;  */
+ 	return 0;*/
 }
 
 
 GuiNode* AutomataGui::getNodeByName(std::string name){
-	std::list<GuiNode> nodeList = *(this->currentGuiSubautomata->getListGuiNodes());
-	std::list<GuiNode>::iterator nodeListIter = nodeList.begin();
-	while (nodeListIter != nodeList.end()){
+	//std::list<GuiNode> nodeList = ;
+	std::list<GuiNode>::iterator nodeListIter = this->currentGuiSubautomata->getListGuiNodes()->begin();
+	while (nodeListIter != this->currentGuiSubautomata->getListGuiNodes()->end()){
 		if (nodeListIter->getName().compare(name) == 0){
 			return &(*nodeListIter);
 		}
@@ -259,14 +259,14 @@ GuiNode* AutomataGui::getNodeByName(std::string name){
 
 
  int AutomataGui::setNodeAsActive(std::string nodeName, bool active){
- 	/*GuiNode* node = this->getNodeByName(nodeName);
+ 	GuiNode* node = this->getNodeByName(nodeName);
  	if (node == NULL)
  		return -1;
  	if (active){
  		node->changeColor(ITEM_COLOR_GREEN);
  	}else{
  		node->changeColor(ITEM_COLOR_BLUE);
- 	}*/
+ 	}
  	return 0;
  }
 
