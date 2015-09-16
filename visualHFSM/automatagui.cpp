@@ -146,7 +146,9 @@ void AutomataGui::create_new_state(GuiNode* gnode){
 		Gtk::TreeModel::Row row = *(this->refTreeModel->append());
 		row[m_Columns.m_col_id] = this->idGuiNode;
 		row[m_Columns.m_col_name] = nodeName;
+		std::cerr << "añado nodo: " << this->idGuiNode << std::endl;
 	} else {
+		std::cerr << "nodo: " << this->idGuiNode << " hijo de " << this->currentGuiSubautomata->getIdFather() << std::endl;
 		this->fillTreeView(nodeName, this->refTreeModel->children(),
 			this->getIdNodeFather(this->currentGuiSubautomata->getIdFather()));
 	}
@@ -192,15 +194,12 @@ void AutomataGui::create_new_transition(GuiTransition* gtrans){
 }
 
 
-/*************************************************************
- * COPIADO
- *************************************************************/
 int AutomataGui::getIdNodeFather ( int subautomataId ) {
     std::list<GuiSubautomata>::iterator subListIterator = this->guiSubautomataList.begin();
     while ( (subListIterator->getId() != subautomataId) &&
             (subListIterator != this->guiSubautomataList.end()) )
-        subListIterator++;
-
+    	subListIterator++;
+        
     if (subListIterator == this->guiSubautomataList.end())
 		return 0;
 
@@ -208,9 +207,9 @@ int AutomataGui::getIdNodeFather ( int subautomataId ) {
     std::list<GuiNode>::iterator guiNodeListIterator = guiNodeList->begin();
     while ( (guiNodeListIterator->getIdSubautomataSon() != this->currentGuiSubautomata->getId()) 
     		&& (guiNodeListIterator != guiNodeList->end()) )
-        guiNodeListIterator++;
+   		guiNodeListIterator++;
 
-    if (guiNodeListIterator != guiNodeList->end()){
+    if (guiNodeListIterator == guiNodeList->end()){
 		return 0;
 	}else{
 		return guiNodeListIterator->getId();
@@ -220,9 +219,12 @@ int AutomataGui::getIdNodeFather ( int subautomataId ) {
 bool AutomataGui::fillTreeView ( std::string nameNode, Gtk::TreeModel::Children child, int idNodeFather ) {
     bool cont = true;
     Gtk::TreeModel::Children::iterator iter = child.begin();
+    std::cerr << "enter fillTreeViewn looking:" << idNodeFather << std::endl;
     while ( cont && (iter != child.end()) ) {
         Gtk::TreeModel::Row therow = *iter;
+        std::cerr << "id row: " << therow[m_Columns.m_col_id] << std::endl;
         if (therow[m_Columns.m_col_id] == idNodeFather) {
+        	std::cerr << "encontrado padre" << std::endl;
             Gtk::TreeModel::Row row = *(refTreeModel->append(therow.children()));
             row[m_Columns.m_col_id] = this->idGuiNode;
             row[m_Columns.m_col_name] = nameNode;
@@ -234,9 +236,6 @@ bool AutomataGui::fillTreeView ( std::string nameNode, Gtk::TreeModel::Children 
     }
     return cont;
 }
-/*************************************************************
- * //COPIADO
- *************************************************************/
 
 
 int AutomataGui::setNodeAsActive(std::string nodeName){
