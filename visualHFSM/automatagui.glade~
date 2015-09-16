@@ -80,7 +80,7 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="up_button">
-                        <property name="label">gtk-go-up</property>
+                        <property name="label">gtk-go-back</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>

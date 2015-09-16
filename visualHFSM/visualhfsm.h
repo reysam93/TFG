@@ -97,6 +97,7 @@ private:
     // Main window
     Gtk::ScrolledWindow* scrolledwindow_schema;
     Goocanvas::Canvas* canvas;
+    Gtk::Button* pUpButton;
 
     // For the draggin item
     Glib::RefPtr<Goocanvas::Item> dragging;
@@ -245,6 +246,7 @@ private:
     void on_menubar_clicked_about ();
     
     void on_menubar_clicked_up (); // deprecated
+    void on_up_button_clicked ();
 
     // General
     GuiSubautomata* getSubautomata ( int idSubautomata );

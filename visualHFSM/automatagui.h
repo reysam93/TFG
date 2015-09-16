@@ -8,6 +8,14 @@
 #include "../visualHFSM/guisubautomata.h"
 
 
+typedef enum ItemType {
+	NONE,
+	STATE,
+	INIT,
+	TEXT
+} ItemType;
+
+
 //Class definition
 class AutomataGui {
 public:
@@ -31,7 +39,7 @@ private:
 	//Main window
 	Goocanvas::Canvas* canvas;
 	Gtk::ScrolledWindow* scrolledwindow_schema;
-
+	Gtk::Button* pUpButton;
 	Glib::RefPtr<Goocanvas::ItemModel> root;
 
 	class ModelColumns : public Gtk::TreeModel::ColumnRecord{
@@ -52,22 +60,32 @@ private:
 	std::list<GuiSubautomata> guiSubautomataList;
 	GuiSubautomata* currentGuiSubautomata;
 
-	GuiNode* activeNode;
-
-	//where the mouse is
-	float event_x, event_y;
+	ItemType type;
 
 	//IDs for the subautomata created
 	int idGuiNode, idGuiTrans;
 
 	//Items for the creation of transition
-	Glib::RefPtr<Goocanvas::Item> lastItem, theOtherItem;
+	//Glib::RefPtr<Goocanvas::Item> lastItem, theOtherItem;
 
+	Glib::RefPtr<Goocanvas::Item> selectedItem;
+	Glib::RefPtr<Goocanvas::Item> textItem;
+
+	GuiSubautomata* getSubautomataWithIdFather(int id);
+	GuiSubautomata* getSubautomata(int id);
 	void create_new_state(GuiNode* gnode);
 	void create_new_transition(GuiTransition* gtrans);
 	int getIdNodeFather(int subautomataId);
 	bool fillTreeView(std::string nameNode, Gtk::TreeModel::Children child, int idNodeFather);
 	GuiNode* getNodeByName(std::string name);
+	void showSubautomata(int id);
+
+	//Handlers
+	void on_up_button_clicked ();
+	void on_item_created(const Glib::RefPtr<Goocanvas::Item>& item, 
+							const Glib::RefPtr<Goocanvas::ItemModel>& model);
+	bool on_item_button_press_event(const Glib::RefPtr<Goocanvas::Item>& item,
+                            GdkEventButton* event);
 };
 
 #endif // AUTOMATAGUI_H

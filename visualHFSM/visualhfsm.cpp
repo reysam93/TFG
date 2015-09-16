@@ -51,6 +51,9 @@ VisualHFSM::VisualHFSM ( BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builde
     // Get the treeview
     refBuilder->get_widget("treeview", this->treeview);
 
+    //Get the backbutton
+    refBuilder->get_widget("up_button", this->pUpButton);
+
     // ASSIGNING SIGNALS
     // Of the menu items
     this->imagemenuitem_new->signal_activate().connect(
@@ -85,7 +88,9 @@ VisualHFSM::VisualHFSM ( BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builde
     // Of the windows
     this->scrolledwindow_schema->signal_event().connect(
                 sigc::mem_fun(*this, &VisualHFSM::on_schema_event));
-    
+    this->pUpButton->signal_clicked().connect(sigc::mem_fun(*this,
+                                        &VisualHFSM::on_up_button_clicked));
+
     // Create the canvas    
     this->canvas = Gtk::manage(new Goocanvas::Canvas());
     this->canvas->signal_item_created().connect(sigc::mem_fun(*this,
@@ -1171,6 +1176,31 @@ void VisualHFSM::on_menubar_clicked_up () { // Deprecated
 
         if (DEBUG)
             std::cout << BEGIN_GREEN << VISUAL << "Got the father" << END_COLOR << std::endl;
+    }
+}
+
+void VisualHFSM::on_up_button_clicked (){
+    int fatherId = this->currentSubautomata->getIdFather();
+
+    if (fatherId != 0){
+        GuiSubautomata* guiSub = this->getSubautomata(fatherId);
+        if (this->currentSubautomata->isNodeListEmpty()){
+            guiSub->setToZero(this->currentSubautomata->getId());
+            std::list<GuiSubautomata>::iterator subIterator = this->subautomataList.begin();
+            while (subIterator != this->subautomataList.end()){
+                if (subIterator->getId() == this->currentSubautomata->getId()){
+                    this->subautomataList.erase(subIterator);
+                    break;
+                }
+                subIterator++;
+            }
+        }else{
+            this->currentSubautomata->hideAll();
+        }
+        this->currentSubautomata = guiSub;
+        this->currentSubautomata->showAll();
+    } else {
+        std::cout << "This subautomata doesn't have any parent." << std::endl;
     }
 }
 
