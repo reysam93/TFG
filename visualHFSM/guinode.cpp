@@ -150,8 +150,6 @@ bool GuiNode::itIsInitial () {
 bool GuiNode::hasThisItem ( const Glib::RefPtr<Goocanvas::Item>& item ) {
 	Glib::RefPtr<Goocanvas::Item> myItem = item;
 
-	std::cerr << "myitem: " << myItem << " hisitem: " << this->item << " thisInitial: " << this->itemInitial << std::endl;
-
 	return ((this->item == myItem) || (this->itemInitial == myItem) || (this->itemText == myItem));
 }
 
