@@ -50,6 +50,7 @@ public:
 	void setItems ( const Glib::RefPtr<Goocanvas::Item>& item,
 					Glib::RefPtr<Goocanvas::Item> itemInitial,
 					Glib::RefPtr<Goocanvas::Item> itemText );
+	void setItem ( const Glib::RefPtr<Goocanvas::Item>& item );
 	void setCode ( std::string code );
 
 	// Getters

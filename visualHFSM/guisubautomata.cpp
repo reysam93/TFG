@@ -410,13 +410,12 @@ void GuiSubautomata::setGuiNodeItems (  const Glib::RefPtr<Goocanvas::Item>& ite
     nodeListIterator->setItems(item, selectedItem, textItem);
 }
 
-bool GuiSubautomata::setGuiNodeItems(int id, const Glib::RefPtr<Goocanvas::Item>& item,
-                                        Glib::RefPtr<Goocanvas::Item> selectedItem,
-                                        Glib::RefPtr<Goocanvas::Item> textItem){
+bool GuiSubautomata::setGuiNodeItems(int id, const Glib::RefPtr<Goocanvas::Item>& item){
+
     std::list<GuiNode>::iterator nodeListIterator = this->nodeList.begin();
     while (nodeListIterator != this->nodeList.end()){
         if (nodeListIterator->getId() == id){
-            nodeListIterator->setItems(item, selectedItem, textItem);
+            nodeListIterator->setItem(item);
             return true;
         }
         nodeListIterator++;

@@ -81,6 +81,10 @@ void GuiNode::setItems ( const Glib::RefPtr<Goocanvas::Item>& item,
 	this->itemText = itemText;
 }
 
+void GuiNode::setItem ( const Glib::RefPtr<Goocanvas::Item>& item ){
+	this->item = item;
+}
+
 void GuiNode::setCode ( std::string code ) {
 	this->node.setCode(code);
 }
@@ -145,6 +149,9 @@ bool GuiNode::itIsInitial () {
 
 bool GuiNode::hasThisItem ( const Glib::RefPtr<Goocanvas::Item>& item ) {
 	Glib::RefPtr<Goocanvas::Item> myItem = item;
+
+	std::cerr << "myitem: " << myItem << " hisitem: " << this->item << " thisInitial: " << this->itemInitial << std::endl;
+
 	return ((this->item == myItem) || (this->itemInitial == myItem) || (this->itemText == myItem));
 }
 

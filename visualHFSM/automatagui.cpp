@@ -207,7 +207,7 @@ int AutomataGui::getIdNodeFather ( int subautomataId ) {
     		&& (guiNodeListIterator != guiNodeList->end()) )
    		guiNodeListIterator++;
 
-    if (guiNodeListIterator == guiNodeList->end()){
+	if (guiNodeListIterator == guiNodeList->end()){
 		return 0;
 	}else{
 		return guiNodeListIterator->getId();
@@ -277,12 +277,11 @@ GuiNode* AutomataGui::getNodeByName(std::string name){
  	if (this->type == STATE){
  		item->signal_button_press_event().connect(
  			sigc::mem_fun(this, &AutomataGui::on_item_button_press_event));
- 		this->selectedItem = item;
- 	} else if (this->type == TEXT){
- 		this->textItem = item;
- 	} else if (this->type == INIT){
- 		this->currentGuiSubautomata->setGuiNodeItems(this->idGuiNode, this->selectedItem, 
- 														item, this->textItem);
+ 		item->signal_enter_notify_event().connect(
+                sigc::mem_fun(this, &AutomataGui::on_item_enter_notify_event));
+ 		item->signal_leave_notify_event().connect(
+                sigc::mem_fun(this, &AutomataGui::on_item_leave_notify_event));
+ 		this->currentGuiSubautomata->setGuiNodeItems(this->idGuiNode, item);
  	}
 }
 
@@ -306,9 +305,26 @@ bool AutomataGui::on_item_button_press_event(const Glib::RefPtr<Goocanvas::Item>
 				std::cout << "This node doesn't have any son." << std::endl;
 			}
 		}
-		return true;
 	}
 
+	return false;
+}
+
+
+bool AutomataGui::on_item_enter_notify_event(const Glib::RefPtr<Goocanvas::Item>& item,
+                                              GdkEventCrossing* event){
+	if (item){
+		this->currentGuiSubautomata->changeGuiNodeWidth(item, 3);
+	}
+	return false;
+}
+
+
+bool AutomataGui::on_item_leave_notify_event(const Glib::RefPtr<Goocanvas::Item>& item,
+                                              GdkEventCrossing* event){
+	if (item){
+		this->currentGuiSubautomata->changeGuiNodeWidth(item, 1);
+	}
 	return false;
 }
 

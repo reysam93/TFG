@@ -68,8 +68,8 @@ private:
 	//Items for the creation of transition
 	//Glib::RefPtr<Goocanvas::Item> lastItem, theOtherItem;
 
-	Glib::RefPtr<Goocanvas::Item> selectedItem;
-	Glib::RefPtr<Goocanvas::Item> textItem;
+	//Glib::RefPtr<Goocanvas::Item> selectedItem;
+	//Glib::RefPtr<Goocanvas::Item> textItem;
 
 	GuiSubautomata* getSubautomataWithIdFather(int id);
 	GuiSubautomata* getSubautomata(int id);
@@ -86,6 +86,10 @@ private:
 							const Glib::RefPtr<Goocanvas::ItemModel>& model);
 	bool on_item_button_press_event(const Glib::RefPtr<Goocanvas::Item>& item,
                             GdkEventButton* event);
+	bool on_item_enter_notify_event(const Glib::RefPtr<Goocanvas::Item>& item,
+                                              GdkEventCrossing* event);
+	bool on_item_leave_notify_event(const Glib::RefPtr<Goocanvas::Item>& item,
+                                              GdkEventCrossing* event);
 };
 
 #endif // AUTOMATAGUI_H
