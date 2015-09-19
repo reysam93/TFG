@@ -152,14 +152,9 @@ void AutomataGui::create_new_state(GuiNode* gnode){
 	}
 	this->type = STATE;
 	this->root->add_child(gnode->getEllipse());
-
-	this->type = TEXT;
-	this->root->add_child(gnode->getText());
-
-	this->type = INIT;
-	this->root->add_child(gnode->getEllipseInitial());
-
 	this->type = NONE;
+	this->root->add_child(gnode->getText());
+	this->root->add_child(gnode->getEllipseInitial());
 }
 
 
@@ -246,7 +241,7 @@ int AutomataGui::setNodeAsActive(std::string nodeName){
 
 
 GuiNode* AutomataGui::getNodeByName(std::string name){
-	//std::list<GuiNode> nodeList = ;
+
 	std::list<GuiNode>::iterator nodeListIter = this->currentGuiSubautomata->getListGuiNodes()->begin();
 	while (nodeListIter != this->currentGuiSubautomata->getListGuiNodes()->end()){
 		if (nodeListIter->getName().compare(name) == 0){
@@ -264,8 +259,10 @@ GuiNode* AutomataGui::getNodeByName(std::string name){
  		return -1;
  	if (active){
  		node->changeColor(ITEM_COLOR_GREEN);
+ 		std::cerr << "color changed to green" << std::endl;
  	}else{
  		node->changeColor(ITEM_COLOR_BLUE);
+ 		std::cerr << "color changed to blue" << std::endl;
  	}
  	return 0;
  }

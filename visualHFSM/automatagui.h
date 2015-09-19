@@ -11,8 +11,6 @@
 typedef enum ItemType {
 	NONE,
 	STATE,
-	INIT,
-	TEXT
 } ItemType;
 
 
@@ -64,12 +62,6 @@ private:
 
 	//IDs for the subautomata created
 	int idGuiNode, idGuiTrans;
-
-	//Items for the creation of transition
-	//Glib::RefPtr<Goocanvas::Item> lastItem, theOtherItem;
-
-	//Glib::RefPtr<Goocanvas::Item> selectedItem;
-	//Glib::RefPtr<Goocanvas::Item> textItem;
 
 	GuiSubautomata* getSubautomataWithIdFather(int id);
 	GuiSubautomata* getSubautomata(int id);
