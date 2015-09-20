@@ -359,8 +359,8 @@ void Generate::generateSubautomatas () {
 						std::string line;
 						while (std::getline(f, line))
 							this->fs << "\t\t\t\t\t\t" << line << std::endl;
-						this->fs << "\t\t\t\t\tautomatagui->setNodeAsActive(\"" << subListIterator->getNodeName(idDestiny) << "\", true);" << std::endl;
 						this->fs << "\t\t\t\t\tautomatagui->setNodeAsActive(\"" << subListIterator->getNodeName(idOrigin) << "\", false);" << std::endl;
+						this->fs << "\t\t\t\t\tautomatagui->setNodeAsActive(\"" << subListIterator->getNodeName(idDestiny) << "\", true);" << std::endl;
 						this->fs << "\t\t\t\t}" << std::endl;
 					} else {
 						this->fs << "\t\t\t\tif (!t_activated) {" << std::endl;
@@ -380,8 +380,8 @@ void Generate::generateSubautomatas () {
 						std::string line;
 						while (std::getline(f, line))
 							this->fs << "\t\t\t\t\t\t" << line << std::endl;
-						this->fs << "\t\t\t\t\t\tautomatagui->setNodeAsActive(\"" << subListIterator->getNodeName(idDestiny) << "\", true);" << std::endl;
 						this->fs << "\t\t\t\t\t\tautomatagui->setNodeAsActive(\"" << subListIterator->getNodeName(idOrigin) << "\", false);" << std::endl;
+						this->fs << "\t\t\t\t\t\tautomatagui->setNodeAsActive(\"" << subListIterator->getNodeName(idDestiny) << "\", true);" << std::endl;
 						if (id != 1)
 							this->fs << "\t\t\t\t\t\tt_" << subListIterator->getNodeName(idNode) << "_max = " << mapNameTime[subListIterator->getNodeName(idNode)] << ";" << std::endl;
 						this->fs << "\t\t\t\t\t}" << std::endl;
