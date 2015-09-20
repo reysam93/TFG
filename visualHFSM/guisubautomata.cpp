@@ -157,6 +157,27 @@ GuiNode* GuiSubautomata::getGuiNode ( Glib::RefPtr<Goocanvas::Item> item ) {
     return NULL;
 }
 
+GuiNode* GuiSubautomata::getGuiNode ( int id ){
+    std::list<GuiNode>::iterator nodeListIterator = this->nodeList.begin();
+    while (nodeListIterator != nodeList.end()){
+        if (nodeListIterator->getId() == id)
+            return &*nodeListIterator;
+        nodeListIterator++;
+    }
+    return NULL;
+}
+
+GuiNode* GuiSubautomata::getGuiNode(std::string name){
+    std::list<GuiNode>::iterator nodeListIter = this->nodeList.begin();
+    while (nodeListIter != nodeList.end()){
+        if (nodeListIter->getName().compare(name) == 0){
+            return &(*nodeListIter);
+        }
+        nodeListIter++;
+    }
+    return NULL;
+}
+
 // Get the GuiTransition* to the specified item
 GuiTransition* GuiSubautomata::getGuiTransition ( Glib::RefPtr<Goocanvas::Item> item ) {
     std::list<GuiTransition>::iterator nodeTransIterator = this->transitionList.begin();
@@ -452,6 +473,10 @@ void GuiSubautomata::setNameLastGuiNode ( std::string name ) {
     nodeListIterator->changeText(name);
 }
 
+void GuiSubautomata::setActiveNode ( std::string name ){
+    this->activeNode = name;
+}
+
 /*************************************************************
  * GETTERS FOR NODES
  *************************************************************/
@@ -529,6 +554,10 @@ int GuiSubautomata::getIdSubautomataSon ( const Glib::RefPtr<Goocanvas::Item>& i
         return nodeListIterator->getIdSubautomataSon();
     
     return 0;
+}
+
+std::string GuiSubautomata::getActiveNode (){
+    return this->activeNode;
 }
 
 /*************************************************************

@@ -107,6 +107,30 @@ GuiSubautomata* AutomataGui::getSubautomata(int id){
 }
 
 
+bool AutomataGui::isFirstActiveNode(GuiNode* gnode){
+	bool isActive = true;
+	int sonSubId, nodeId;
+	GuiSubautomata* subAux = this->currentGuiSubautomata;
+
+	while(subAux != NULL){
+		if (!gnode->itIsInitial())
+			return false;
+		sonSubId = subAux->getId();
+		subAux = this->getSubautomata(subAux->getIdFather());
+
+		if (subAux != NULL){
+			nodeId = this->getIdNodeFather(subAux->getId(), sonSubId);
+			gnode = subAux->getGuiNode(nodeId);
+			if (gnode == NULL){
+				std::cerr << "NODE " << nodeId << " not found." << std::endl;
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+
 void AutomataGui::loadGuiSubautomata(){
 	std::list<GuiSubautomata>::iterator subListIterator = this->guiSubautomataList.begin();
 	while (subListIterator != guiSubautomataList.end()){
@@ -118,6 +142,8 @@ void AutomataGui::loadGuiSubautomata(){
 			this->idGuiNode = nodeListIterator->getId();
 			this->create_new_state(&(*nodeListIterator));
 			if (nodeListIterator->itIsInitial())
+				currentGuiSubautomata->setActiveNode(nodeListIterator->getName());
+			if (this->isFirstActiveNode(&*nodeListIterator))
 				nodeListIterator->changeColor(ITEM_COLOR_GREEN);
 			nodeListIterator++;
 		}
@@ -148,7 +174,8 @@ void AutomataGui::create_new_state(GuiNode* gnode){
 		row[m_Columns.m_col_name] = nodeName;
 	} else {
 		this->fillTreeView(nodeName, this->refTreeModel->children(),
-			this->getIdNodeFather(this->currentGuiSubautomata->getIdFather()));
+			this->getIdNodeFather(this->currentGuiSubautomata->getIdFather(),
+									this->currentGuiSubautomata->getId()));
 	}
 	this->type = STATE;
 	this->root->add_child(gnode->getEllipse());
@@ -187,7 +214,7 @@ void AutomataGui::create_new_transition(GuiTransition* gtrans){
 }
 
 
-int AutomataGui::getIdNodeFather ( int subautomataId ) {
+int AutomataGui::getIdNodeFather ( int subautomataId, int subautSonId ) {
     std::list<GuiSubautomata>::iterator subListIterator = this->guiSubautomataList.begin();
     while ( (subListIterator->getId() != subautomataId) &&
             (subListIterator != this->guiSubautomataList.end()) )
@@ -198,7 +225,7 @@ int AutomataGui::getIdNodeFather ( int subautomataId ) {
 
     std::list<GuiNode>* guiNodeList = subListIterator->getListGuiNodes();
     std::list<GuiNode>::iterator guiNodeListIterator = guiNodeList->begin();
-    while ( (guiNodeListIterator->getIdSubautomataSon() != this->currentGuiSubautomata->getId()) 
+    while ( (guiNodeListIterator->getIdSubautomataSon() != subautSonId)
     		&& (guiNodeListIterator != guiNodeList->end()) )
    		guiNodeListIterator++;
 
@@ -240,29 +267,40 @@ int AutomataGui::setNodeAsActive(std::string nodeName){
 }
 
 
-GuiNode* AutomataGui::getNodeByName(std::string name){
+GuiSubautomata* AutomataGui::getSubautomataByNodeName(std::string name){
+	std::list<GuiSubautomata>::iterator subIterator = this->guiSubautomataList.begin();
+	while (subIterator != this->guiSubautomataList.end()){
 
-	std::list<GuiNode>::iterator nodeListIter = this->currentGuiSubautomata->getListGuiNodes()->begin();
-	while (nodeListIter != this->currentGuiSubautomata->getListGuiNodes()->end()){
-		if (nodeListIter->getName().compare(name) == 0){
-			return &(*nodeListIter);
+		std::list<GuiNode>::iterator nodeListIter = subIterator->getListGuiNodes()->begin();
+		while (nodeListIter != subIterator->getListGuiNodes()->end()){
+			if (nodeListIter->getName().compare(name) == 0){
+				return &(*subIterator);
+			}
+			nodeListIter++;
 		}
-		nodeListIter++;
+		subIterator++;
 	}
 	return NULL;
 }
 
 
  int AutomataGui::setNodeAsActive(std::string nodeName, bool active){
- 	GuiNode* node = this->getNodeByName(nodeName);
+ 	GuiSubautomata* subautomata = this->getSubautomataByNodeName(nodeName);
+ 	GuiNode* node = subautomata->getGuiNode(nodeName);
  	if (node == NULL)
  		return -1;
+
  	if (active){
+ 		subautomata->setActiveNode(nodeName);
  		node->changeColor(ITEM_COLOR_GREEN);
- 		std::cerr << "color changed to green" << std::endl;
  	}else{
  		node->changeColor(ITEM_COLOR_BLUE);
- 		std::cerr << "color changed to blue" << std::endl;
+ 	}
+
+ 	int sonId = node->getIdSubautomataSon();
+ 	if (sonId != 0){
+ 		subautomata = this->getSubautomata(sonId);
+ 		this->setNodeAsActive(subautomata->getActiveNode(), active);
  	}
  	return 0;
  }

@@ -65,11 +65,12 @@ private:
 
 	GuiSubautomata* getSubautomataWithIdFather(int id);
 	GuiSubautomata* getSubautomata(int id);
+	bool isFirstActiveNode(GuiNode* gnode);
 	void create_new_state(GuiNode* gnode);
 	void create_new_transition(GuiTransition* gtrans);
-	int getIdNodeFather(int subautomataId);
+	int getIdNodeFather(int subautomataId, int subautSonId);
 	bool fillTreeView(std::string nameNode, Gtk::TreeModel::Children child, int idNodeFather);
-	GuiNode* getNodeByName(std::string name);
+	GuiSubautomata* getSubautomataByNodeName(std::string name);
 	void showSubautomata(int id);
 
 	//Handlers

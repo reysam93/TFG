@@ -66,6 +66,8 @@ public:
 	std::list<GuiTransition> getAllGuiTransitionsWith ( int id );
 	
 	GuiNode* getGuiNode ( Glib::RefPtr<Goocanvas::Item> item );
+	GuiNode* getGuiNode (int id);
+	GuiNode* getGuiNode(std::string name);
 	GuiTransition* getGuiTransition ( Glib::RefPtr<Goocanvas::Item> item );
 	Point getPoint ( Glib::RefPtr<Goocanvas::Item> item );
 
@@ -98,6 +100,8 @@ public:
 	void setIsInitialLastGuiNode ( bool isInitial );
 	void setNameLastGuiNode ( std::string name );
 
+	void setActiveNode ( std::string name );
+
 	// Getters for nodes
 	Glib::RefPtr<Goocanvas::EllipseModel> getLastEllipse ();
 	Glib::RefPtr<Goocanvas::EllipseModel> getLastEllipseInit ();
@@ -113,6 +117,8 @@ public:
 	int getFirstIdNode ();
 
 	int getIdSubautomataSon ( const Glib::RefPtr<Goocanvas::Item>& item );
+
+	std::string getActiveNode ();
 
 	// Another functions for nodes
 	void changeGuiNodeWidth ( const Glib::RefPtr<Goocanvas::Item>& item, float width );
@@ -156,6 +162,7 @@ public:
 private:
 	// Data structure
 	int id, idFather;
+	std::string activeNode;
 	std::string timing, variables, functions, config;
 	std::list<GuiNode> nodeList;
 	std::list<GuiTransition> transitionList;
