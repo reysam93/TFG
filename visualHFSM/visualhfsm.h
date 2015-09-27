@@ -51,8 +51,9 @@ typedef enum Button {
     TIMER,
     VARIABLES,
     LIBRARIES,
-    GENERATE_CODE,
+    GENERATE_CPP_CODE,
     COMPILE,
+    GENERATE_PYTHON_CODE,
     ANY
 } Button;
 
@@ -91,8 +92,9 @@ private:
     Gtk::ImageMenuItem *imagemenuitem_saveas, *imagemenuitem_quit;
     Gtk::ImageMenuItem *imagemenuitem_state, *imagemenuitem_transition;
     Gtk::ImageMenuItem *imagemenuitem_timer, *imagemenuitem_variables, *imagemenuitem_libraries;
-    Gtk::ImageMenuItem *imagemenuitem_configfile, *imagemenuitem_generatecode;
+    Gtk::ImageMenuItem *imagemenuitem_configfile, *imagemenuitem_generatecppcode;
     Gtk::ImageMenuItem *imagemenuitem_compile, *imagemenuitem_about;
+    Gtk::ImageMenuItem *imagemenuitem_generatepythoncode;
     
     // Main window
     Gtk::ScrolledWindow* scrolledwindow_schema;
@@ -199,6 +201,7 @@ private:
 
     // Of the treeview
     bool fillTreeView ( std::string nameNode, Gtk::TreeModel::Children child, int idNodeFather );
+    bool clearTreeView (Gtk::TreeModel::Children children);
     bool removeFromTreeView ( int id, Gtk::TreeModel::Children child );
     bool changeNameInTreeView ( int id, std::string nameNode, Gtk::TreeModel::Children child );
 
@@ -241,12 +244,16 @@ private:
     void on_menubar_clicked_variables ();
     void on_menubar_clicked_libraries ();
     void on_menubar_clicked_configfile ();
-    void on_menubar_clicked_generate_code ();
+    void on_menubar_clicked_generate_cpp_code ();
     void on_menubar_clicked_compile ();
+    void on_menubar_clicked_generate_python_code ();
     void on_menubar_clicked_about ();
+    int prepareGenerateCode();
     
     void on_menubar_clicked_up (); // deprecated
     void on_up_button_clicked ();
+    void on_row_activated(const Gtk::TreeModel::Path& path,
+                                    Gtk::TreeViewColumn* /* column */);
 
     // General
     GuiSubautomata* getSubautomata ( int idSubautomata );
@@ -257,6 +264,7 @@ private:
 
     int getIdNodeInSubautomata ( int subautomataId );
     int getIdSubautomataWithNode ( int idNode );
+    GuiSubautomata* getSubautomataByNodeName(std::string name);
 
     void remove ( GuiSubautomata* guisub, GuiNode* gnode );
     void removeRecursively ( GuiSubautomata* guisub, GuiNode* gnode );

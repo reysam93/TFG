@@ -56,7 +56,7 @@ public:
 
 	// Another functions
 	int init ();
-
+	int init_py ();
 private:
 	std::list<SubAutomata> subautomataList;
 	std::string path, cfgpath, cmakepath;
@@ -67,8 +67,11 @@ private:
 	std::list<std::string> listLibraries;
 
 	void generateHeaders ();
+	void generateHeaders_py ();
 	void generateGenericHeaders ();
+	void generateGenericHeaders_py ();
 	void generateSpecificHeaders ();
+	void generateSpecificHeaders_py ();
 	void generateEnums ();
 	void generateVariables ();
 	void generateFunctions ();

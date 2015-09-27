@@ -3,6 +3,8 @@
 
 #include <unistd.h>
 #include <iostream>
+#include <err.h>
+#include <pthread.h>
 #include <gtkmm-3.0/gtkmm.h>
 
 #include "../visualHFSM/guisubautomata.h"
@@ -30,6 +32,8 @@ public:
 	int setNodeAsActive(std::string nodeName, bool active);
 
 private:
+	mutable Glib::Threads::Mutex mutex;
+
 	Glib::RefPtr<Gtk::Builder> refBuilder;
 	Gtk::Dialog *guiDialog;
 	Glib::RefPtr<Gtk::Application> app;
@@ -45,15 +49,19 @@ private:
 		ModelColumns () {
 			add(m_col_id);
 			add(m_col_name);
+			add(m_col_color);
 		}
-
 		Gtk::TreeModelColumn<int> m_col_id;
 		Gtk::TreeModelColumn<Glib::ustring> m_col_name;
+		Gtk::TreeModelColumn<Glib::ustring> m_col_color;
 	};
 	ModelColumns m_Columns;
+	ModelColumns m_Columns2;	// <---DON't DELETE THIS
 
 	Gtk::TreeView* treeView;
 	Glib::RefPtr<Gtk::TreeStore> refTreeModel;
+	Glib::ustring lastExpanded; 
+	Gtk::TreeModel::Path pathLastExp;
 
 	std::list<GuiSubautomata> guiSubautomataList;
 	GuiSubautomata* currentGuiSubautomata;
@@ -66,12 +74,15 @@ private:
 	GuiSubautomata* getSubautomataWithIdFather(int id);
 	GuiSubautomata* getSubautomata(int id);
 	bool isFirstActiveNode(GuiNode* gnode);
-	void create_new_state(GuiNode* gnode);
+	void create_new_state(GuiNode* gnode, std::string color);
 	void create_new_transition(GuiTransition* gtrans);
 	int getIdNodeFather(int subautomataId, int subautSonId);
-	bool fillTreeView(std::string nameNode, Gtk::TreeModel::Children child, int idNodeFather);
+	bool fillTreeView(std::string nameNode, std::string color, 
+						Gtk::TreeModel::Children child, int idNodeFather);
 	GuiSubautomata* getSubautomataByNodeName(std::string name);
 	void showSubautomata(int id);
+	int setActiveTreeView(std::string name, bool active,
+								Gtk::TreeModel::Children children);
 
 	//Handlers
 	void on_up_button_clicked ();
@@ -83,6 +94,8 @@ private:
                                               GdkEventCrossing* event);
 	bool on_item_leave_notify_event(const Glib::RefPtr<Goocanvas::Item>& item,
                                               GdkEventCrossing* event);
+	void on_row_activated(const Gtk::TreeModel::Path& path,
+							Gtk::TreeViewColumn* /* column */);
 };
 
 #endif // AUTOMATAGUI_H

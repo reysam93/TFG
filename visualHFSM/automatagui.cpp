@@ -5,7 +5,7 @@
 /*************************************************************
  * CONSTRUCTOR
  *************************************************************/
-AutomataGui::AutomataGui(int argc, char** argv){
+AutomataGui::AutomataGui(int argc, char** argv) : mutex(){
 	this->app = Gtk::Application::create(argc, argv, "jderobot.visualHFSM.automatagui");
 }
 
@@ -16,7 +16,7 @@ AutomataGui::~AutomataGui(){}
 
 
 int AutomataGui::init(){
-	//Create the builder
+	//CREATE REFBUILDER
 	this->refBuilder = Gtk::Builder::create();
 	try{
     	refBuilder->add_from_file("../visualHFSM/automatagui.glade");
@@ -35,29 +35,44 @@ int AutomataGui::init(){
 	refBuilder->get_widget("scrolledwindow_schema", this->scrolledwindow_schema);
 	refBuilder->get_widget("treeview", this->treeView);
 	refBuilder->get_widget("up_button", this->pUpButton);
-
-	this->canvas = Gtk::manage(new Goocanvas::Canvas());
-	this->canvas->signal_item_created().connect(sigc::mem_fun(*this,
-										&AutomataGui::on_item_created));
-
-	this->pUpButton->signal_clicked().connect(sigc::mem_fun(*this,
-										&AutomataGui::on_up_button_clicked));
-
-	this->root = Goocanvas::GroupModel::create();
-	this->canvas->set_root_item_model(root);
-	this->canvas->set_visible(true);
-	this->scrolledwindow_schema->add(*(this->canvas));
-
-	this->refTreeModel = Gtk::TreeStore::create(this->m_Columns);
-	this->treeView->set_model(this->refTreeModel);
-	this->treeView->append_column("ID", this->m_Columns.m_col_id);
-	this->treeView->append_column("Name", this->m_Columns.m_col_name);
-
 	refBuilder->get_widget("DialogDerived", guiDialog);
 	if(!guiDialog){
 		std::cerr << "Error: couldn't get DialogDerived" << std::endl;
 		return -1;
 	}
+
+	this->pUpButton->signal_clicked().connect(sigc::mem_fun(*this,
+										&AutomataGui::on_up_button_clicked));
+
+	//INIT CANAVS
+	this->canvas = Gtk::manage(new Goocanvas::Canvas());
+	this->canvas->signal_item_created().connect(sigc::mem_fun(*this,
+										&AutomataGui::on_item_created));
+	this->root = Goocanvas::GroupModel::create();
+	this->canvas->set_root_item_model(root);
+	this->canvas->set_visible(true);
+	this->scrolledwindow_schema->add(*(this->canvas));
+
+	//INIT TREEVIEW
+	this->refTreeModel = Gtk::TreeStore::create(this->m_Columns);
+	this->treeView->set_model(this->refTreeModel);
+	this->treeView->append_column("ID", this->m_Columns.m_col_id);
+	Gtk::CellRendererText *cell = new Gtk::CellRendererText;
+	int column_count = treeView->append_column("Name", *cell);
+	Gtk::TreeViewColumn *column = treeView->get_column(column_count-1);
+	if (column) {
+	#ifdef GLIBMM_PROPERTIES_ENABLED
+        column->add_attribute(cell->property_background(), this->m_Columns.m_col_color);
+		column->add_attribute(cell->property_text(), this->m_Columns.m_col_name);
+	#else
+        column->add_attribute(*cell, "background", this->m_Columns.m_col_color);
+        column->add_attribute(*cell, "text", this->m_Columns.m_col_name);
+	#endif
+    }
+    this->treeView->signal_row_activated().connect(
+    					sigc::mem_fun(*this, &AutomataGui::on_row_activated));
+
+    //SETTING CANVAS BOUNDS
 	Glib::RefPtr<Gdk::Screen> screen = this->guiDialog->get_screen();
     int width = screen->get_width();
     int height = screen->get_height();
@@ -132,6 +147,8 @@ bool AutomataGui::isFirstActiveNode(GuiNode* gnode){
 
 
 void AutomataGui::loadGuiSubautomata(){
+	std::string color;
+
 	std::list<GuiSubautomata>::iterator subListIterator = this->guiSubautomataList.begin();
 	while (subListIterator != guiSubautomataList.end()){
 		this->currentGuiSubautomata = &(*subListIterator);
@@ -140,13 +157,20 @@ void AutomataGui::loadGuiSubautomata(){
 		std::list<GuiNode>::iterator nodeListIterator = nodeList.begin();
 		while (nodeListIterator != nodeList.end()){
 			this->idGuiNode = nodeListIterator->getId();
-			this->create_new_state(&(*nodeListIterator));
 			if (nodeListIterator->itIsInitial())
 				currentGuiSubautomata->setActiveNode(nodeListIterator->getName());
-			if (this->isFirstActiveNode(&*nodeListIterator))
+			if (this->isFirstActiveNode(&*nodeListIterator)){
 				nodeListIterator->changeColor(ITEM_COLOR_GREEN);
+				this->setActiveTreeView(nodeListIterator->getName(), true,
+											this->refTreeModel->children());
+				color = ITEM_COLOR_GREEN;
+			}else{
+				color = "white";
+			}
+			this->create_new_state(&(*nodeListIterator), color);
 			nodeListIterator++;
 		}
+
 		std::list<GuiTransition> transList = *(subListIterator->getListGuiTransitions());
 		std::list<GuiTransition>:: iterator transListIterator = transList.begin();
 		while (transListIterator != transList.end()){
@@ -156,24 +180,27 @@ void AutomataGui::loadGuiSubautomata(){
 			this->create_new_transition(&(*transListIterator));
 			transListIterator++;
 		}
+
 		if (subListIterator->getIdFather() != 0)
 			this->currentGuiSubautomata->hideAll();
 		subListIterator++;
 	}
 
 	this->currentGuiSubautomata = this->getSubautomataWithIdFather(0);
+	this->treeView->expand_all();
 }
 
 
-void AutomataGui::create_new_state(GuiNode* gnode){
+void AutomataGui::create_new_state(GuiNode* gnode, std::string color){
 	
 	std::string nodeName = gnode->getName();
 	if (this->currentGuiSubautomata->getId() == 1){
 		Gtk::TreeModel::Row row = *(this->refTreeModel->append());
 		row[m_Columns.m_col_id] = this->idGuiNode;
 		row[m_Columns.m_col_name] = nodeName;
+		row[m_Columns.m_col_color] = color;
 	} else {
-		this->fillTreeView(nodeName, this->refTreeModel->children(),
+		this->fillTreeView(nodeName, color, this->refTreeModel->children(),
 			this->getIdNodeFather(this->currentGuiSubautomata->getIdFather(),
 									this->currentGuiSubautomata->getId()));
 	}
@@ -236,34 +263,25 @@ int AutomataGui::getIdNodeFather ( int subautomataId, int subautSonId ) {
 	}
 }
 
-bool AutomataGui::fillTreeView ( std::string nameNode, Gtk::TreeModel::Children child, int idNodeFather ) {
-    bool cont = true;
+bool AutomataGui::fillTreeView ( std::string nameNode, std::string color, 
+									Gtk::TreeModel::Children child, int idNodeFather ) {
+
+    bool added = false;
     Gtk::TreeModel::Children::iterator iter = child.begin();
-    while ( cont && (iter != child.end()) ) {
+    while ( !added && (iter != child.end()) ) {
         Gtk::TreeModel::Row therow = *iter;
         if (therow[m_Columns.m_col_id] == idNodeFather) {
             Gtk::TreeModel::Row row = *(refTreeModel->append(therow.children()));
             row[m_Columns.m_col_id] = this->idGuiNode;
             row[m_Columns.m_col_name] = nameNode;
-            cont = false;
+            row[m_Columns.m_col_color] = color;
+            added = true;
         } else {
-            cont = this->fillTreeView(nameNode, therow.children(), idNodeFather);
+            added = this->fillTreeView(nameNode, color, therow.children(), idNodeFather);
             iter++;
         }
     }
-    return cont;
-}
-
-
-int AutomataGui::setNodeAsActive(std::string nodeName){
-	/*if (this->activeNode != NULL){
- 		this->activeNode->changeColor(ITEM_COLOR_BLUE);
- 	}
-	this->activeNode = this->getNodeByName(nodeName);
-	if (this->activeNode == NULL)
- 		return -1;
- 	this->activeNode->changeColor(ITEM_COLOR_GREEN);
- 	return 0;*/
+    return added;
 }
 
 
@@ -284,7 +302,45 @@ GuiSubautomata* AutomataGui::getSubautomataByNodeName(std::string name){
 }
 
 
- int AutomataGui::setNodeAsActive(std::string nodeName, bool active){
+int AutomataGui::setActiveTreeView(std::string name, bool active,
+										Gtk::TreeModel::Children children){
+
+	bool finded = false;
+	Gtk::TreeModel::Children::iterator iter = children.begin();
+	while(!finded && (iter != children.end())){
+		Gtk::TreeModel::Row row = *iter;
+
+		if (row[m_Columns.m_col_name] == name){
+
+			if (active){
+				row[m_Columns.m_col_color] = ITEM_COLOR_GREEN;
+			}else{
+				row[m_Columns.m_col_color] = ITEM_COLOR_WHITE;
+			}
+			finded = true;
+
+		} else {
+			finded = this->setActiveTreeView(name, active, row.children());
+
+		/*	if (finded){
+				if (active && (this->lastExpanded != row[m_Columns.m_col_name])){
+					
+					this->treeView->collapse_row(this->pathLastExp);
+					this->pathLastExp = this->refTreeModel->get_path(iter);
+					this->treeView->expand_to_path(this->pathLastExp);
+					this->lastExpanded = row[m_Columns.m_col_name];
+				}
+			}*/
+		}
+		iter++;
+	}
+	return finded;
+}
+
+
+int AutomataGui::setNodeAsActive(std::string nodeName, bool active){
+	Glib::Threads::Mutex::Lock lock(mutex);
+
  	GuiSubautomata* subautomata = this->getSubautomataByNodeName(nodeName);
  	GuiNode* node = subautomata->getGuiNode(nodeName);
  	if (node == NULL)
@@ -297,13 +353,17 @@ GuiSubautomata* AutomataGui::getSubautomataByNodeName(std::string name){
  		node->changeColor(ITEM_COLOR_BLUE);
  	}
 
+ 	if(!this->setActiveTreeView(nodeName, active, this->refTreeModel->children()))
+ 		std::cerr << "NOT FINDED " << nodeName << std::endl;
+
  	int sonId = node->getIdSubautomataSon();
  	if (sonId != 0){
  		subautomata = this->getSubautomata(sonId);
+ 		lock.release();
  		this->setNodeAsActive(subautomata->getActiveNode(), active);
  	}
  	return 0;
- }
+}
 
 
  void AutomataGui::on_item_created(const Glib::RefPtr<Goocanvas::Item>& item,
@@ -327,6 +387,8 @@ void AutomataGui::showSubautomata(int id){
 	this->currentGuiSubautomata->showAll();
 }
 
+
+//HANDLERS
 
 bool AutomataGui::on_item_button_press_event(const Glib::RefPtr<Goocanvas::Item>& item,
                                               GdkEventButton* event ){
@@ -369,8 +431,30 @@ void AutomataGui::on_up_button_clicked (){
 	int fatherId = this->currentGuiSubautomata->getIdFather();
 	if (fatherId != 0){
 		this->showSubautomata(fatherId);
-	} else {
+	}else{
 		std::cout << "This subautomata doesn't have any parent." << std::endl;
 	}
-	
+}
+
+
+void AutomataGui::on_row_activated(const Gtk::TreeModel::Path& path,
+									Gtk::TreeViewColumn* /* column */){
+	Gtk::TreeModel::iterator iter = this->refTreeModel->get_iter(path);
+
+	if (iter){
+		Gtk::TreeModel::Row row = *iter;
+
+		std::stringstream name;
+		name << row[m_Columns.m_col_name];
+		GuiSubautomata* gsub = this->getSubautomataByNodeName(name.str());
+
+		if (gsub == NULL)
+            return;
+
+		if (gsub->getId() != this->currentGuiSubautomata->getId()){
+			this->showSubautomata(gsub->getId());
+		}
+	}else{
+		std::cerr << "Couldn't get the row" << std::endl;
+	}
 }

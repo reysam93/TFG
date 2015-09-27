@@ -67,11 +67,6 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-missing-image</property>
   </object>
-  <object class="GtkImage" id="image8">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
   <object class="GtkImage" id="image9">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -295,8 +290,8 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkImageMenuItem" id="imagemenuitem_generatecppcode">
-                            <property name="label">_Generate C++ code</property>
+                          <object class="GtkImageMenuItem" id="imagemenuitem_generatecode">
+                            <property name="label">_Generate c++ code</property>
                             <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -313,17 +308,6 @@
                             <property name="can_focus">False</property>
                             <property name="use_underline">True</property>
                             <property name="image">image13</property>
-                            <property name="use_stock">False</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkImageMenuItem" id="imagemenuitem_generatepythoncode">
-                            <property name="label">_Generate python code</property>
-                            <property name="use_action_appearance">False</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="image">image8</property>
                             <property name="use_stock">False</property>
                           </object>
                         </child>

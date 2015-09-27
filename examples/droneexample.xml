@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualHFSM><SubAutomata id="1" idFather="0"><state initial="true" id="1"><posx>324.024</posx><posy>277.665</posy><name>DoNothing</name><idSubautomataSon>0</idSubautomataSon><code>std::cout &lt;&lt; "DOING NOTHING" &lt;&lt; std::endl;
+
+CMDVelprx-&gt;setCMDVelData((1,0,0,0,0,0));
+
+
+</code></state><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><libraries><lib>iostream</lib></libraries><config><iceinterface><nameinterface>Camera</nameinterface><ip>localhost</ip><port>9994</port><interface>Camera</interface></iceinterface><iceinterface><nameinterface>CMDVel</nameinterface><ip>localhost</ip><port>9850</port><interface>CMDVel</interface></iceinterface></config></VisualHFSM>

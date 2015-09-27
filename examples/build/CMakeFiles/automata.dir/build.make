@@ -52,28 +52,28 @@ include CMakeFiles/automata.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/automata.dir/flags.make
 
-CMakeFiles/automata.dir/example3.cpp.o: CMakeFiles/automata.dir/flags.make
-CMakeFiles/automata.dir/example3.cpp.o: ../example3.cpp
+CMakeFiles/automata.dir/example1.cpp.o: CMakeFiles/automata.dir/flags.make
+CMakeFiles/automata.dir/example1.cpp.o: ../example1.cpp
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/samuel/University/TFG/examples/build/CMakeFiles $(CMAKE_PROGRESS_1)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/automata.dir/example3.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/automata.dir/example3.cpp.o -c /home/samuel/University/TFG/examples/example3.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/automata.dir/example1.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/automata.dir/example1.cpp.o -c /home/samuel/University/TFG/examples/example1.cpp
 
-CMakeFiles/automata.dir/example3.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/automata.dir/example3.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/samuel/University/TFG/examples/example3.cpp > CMakeFiles/automata.dir/example3.cpp.i
+CMakeFiles/automata.dir/example1.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/automata.dir/example1.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/samuel/University/TFG/examples/example1.cpp > CMakeFiles/automata.dir/example1.cpp.i
 
-CMakeFiles/automata.dir/example3.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/automata.dir/example3.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/samuel/University/TFG/examples/example3.cpp -o CMakeFiles/automata.dir/example3.cpp.s
+CMakeFiles/automata.dir/example1.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/automata.dir/example1.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/samuel/University/TFG/examples/example1.cpp -o CMakeFiles/automata.dir/example1.cpp.s
 
-CMakeFiles/automata.dir/example3.cpp.o.requires:
-.PHONY : CMakeFiles/automata.dir/example3.cpp.o.requires
+CMakeFiles/automata.dir/example1.cpp.o.requires:
+.PHONY : CMakeFiles/automata.dir/example1.cpp.o.requires
 
-CMakeFiles/automata.dir/example3.cpp.o.provides: CMakeFiles/automata.dir/example3.cpp.o.requires
-	$(MAKE) -f CMakeFiles/automata.dir/build.make CMakeFiles/automata.dir/example3.cpp.o.provides.build
-.PHONY : CMakeFiles/automata.dir/example3.cpp.o.provides
+CMakeFiles/automata.dir/example1.cpp.o.provides: CMakeFiles/automata.dir/example1.cpp.o.requires
+	$(MAKE) -f CMakeFiles/automata.dir/build.make CMakeFiles/automata.dir/example1.cpp.o.provides.build
+.PHONY : CMakeFiles/automata.dir/example1.cpp.o.provides
 
-CMakeFiles/automata.dir/example3.cpp.o.provides.build: CMakeFiles/automata.dir/example3.cpp.o
+CMakeFiles/automata.dir/example1.cpp.o.provides.build: CMakeFiles/automata.dir/example1.cpp.o
 
 CMakeFiles/automata.dir/home/samuel/University/TFG/visualHFSM/automatagui.cpp.o: CMakeFiles/automata.dir/flags.make
 CMakeFiles/automata.dir/home/samuel/University/TFG/visualHFSM/automatagui.cpp.o: /home/samuel/University/TFG/visualHFSM/automatagui.cpp
@@ -376,7 +376,7 @@ CMakeFiles/automata.dir/home/samuel/University/TFG/visualHFSM/popups/renametrans
 
 # Object files for target automata
 automata_OBJECTS = \
-"CMakeFiles/automata.dir/example3.cpp.o" \
+"CMakeFiles/automata.dir/example1.cpp.o" \
 "CMakeFiles/automata.dir/home/samuel/University/TFG/visualHFSM/automatagui.cpp.o" \
 "CMakeFiles/automata.dir/home/samuel/University/TFG/visualHFSM/point.cpp.o" \
 "CMakeFiles/automata.dir/home/samuel/University/TFG/visualHFSM/node.cpp.o" \
@@ -394,7 +394,7 @@ automata_OBJECTS = \
 # External object files for target automata
 automata_EXTERNAL_OBJECTS =
 
-../automata: CMakeFiles/automata.dir/example3.cpp.o
+../automata: CMakeFiles/automata.dir/example1.cpp.o
 ../automata: CMakeFiles/automata.dir/home/samuel/University/TFG/visualHFSM/automatagui.cpp.o
 ../automata: CMakeFiles/automata.dir/home/samuel/University/TFG/visualHFSM/point.cpp.o
 ../automata: CMakeFiles/automata.dir/home/samuel/University/TFG/visualHFSM/node.cpp.o
@@ -419,7 +419,7 @@ automata_EXTERNAL_OBJECTS =
 CMakeFiles/automata.dir/build: ../automata
 .PHONY : CMakeFiles/automata.dir/build
 
-CMakeFiles/automata.dir/requires: CMakeFiles/automata.dir/example3.cpp.o.requires
+CMakeFiles/automata.dir/requires: CMakeFiles/automata.dir/example1.cpp.o.requires
 CMakeFiles/automata.dir/requires: CMakeFiles/automata.dir/home/samuel/University/TFG/visualHFSM/automatagui.cpp.o.requires
 CMakeFiles/automata.dir/requires: CMakeFiles/automata.dir/home/samuel/University/TFG/visualHFSM/point.cpp.o.requires
 CMakeFiles/automata.dir/requires: CMakeFiles/automata.dir/home/samuel/University/TFG/visualHFSM/node.cpp.o.requires

@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 include(FindPkgConfig)
 
 SET( SOURCE_FILES_AUTOMATA 
-	example3.cpp
+	example1.cpp
 	../visualHFSM/automatagui.cpp
 	../visualHFSM/point.cpp
 	../visualHFSM/node.cpp

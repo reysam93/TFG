@@ -83,9 +83,26 @@ int Generate::init () {
 		return 1;
 }
 
+int Generate::init_py (){
+	this->fs.open(this->path.c_str(), std::fstream::out);
+	if (this->fs.is_open()){
+		this->generateHeaders_py();
+		this->generateMain_py()
+	}
+}
+
 void Generate::generateHeaders () {
 	this->generateGenericHeaders();
 	this->generateSpecificHeaders();
+}
+
+void Generate::generateHeaders_py (){
+	this->fs << "#!/usr/bin/python" << std::endl;
+	this->fs << "# -*- coding: utf-8 -*-" << std::endl;
+	this->fs << std::endl;
+
+	this->generateGenericHeaders_py();
+	this->generateSpecificHeaders_py();
 }
 
 void Generate::generateGenericHeaders () {
@@ -100,6 +117,17 @@ void Generate::generateGenericHeaders () {
 	this->fs.flush();
 }
 
+void Generate::generateGenericHeaders_py (){
+	this->fs << "import sys, Ice" << std::endl;;
+	//AUTOMATAGUI
+	this->fs << std::endl;
+	for ( std::list<std::string>::iterator listLibsIterator = this->listLibraries.begin();
+		listLibsIterator != this->listLibraries.end(); listLibsIterator++ )
+		this->fs << "import " << *listLibsIterator << std::endl;
+	this->fs << std::endl;
+	this->fs.flush();
+}
+
 void Generate::generateSpecificHeaders () {
 	for ( std::list<IceInterface>::iterator listInterfacesIterator = this->listInterfaces->begin();
 			listInterfacesIterator != this->listInterfaces->end(); listInterfacesIterator++ )
@@ -107,6 +135,10 @@ void Generate::generateSpecificHeaders () {
 
 	this->fs << std::endl;
 	this->fs.flush();
+}
+
+void Generate::generateSpecificHeaders_py (){
+	;
 }
 
 void Generate::generateEnums () {
@@ -359,8 +391,8 @@ void Generate::generateSubautomatas () {
 						std::string line;
 						while (std::getline(f, line))
 							this->fs << "\t\t\t\t\t\t" << line << std::endl;
-						this->fs << "\t\t\t\t\tautomatagui->setNodeAsActive(\"" << subListIterator->getNodeName(idOrigin) << "\", false);" << std::endl;
-						this->fs << "\t\t\t\t\tautomatagui->setNodeAsActive(\"" << subListIterator->getNodeName(idDestiny) << "\", true);" << std::endl;
+						this->fs << "\t\t\t\t\tautomatagui->setNodeAsActive_Locked(\"" << subListIterator->getNodeName(idOrigin) << "\", false);" << std::endl;
+						this->fs << "\t\t\t\t\tautomatagui->setNodeAsActive_Locked(\"" << subListIterator->getNodeName(idDestiny) << "\", true);" << std::endl;
 						this->fs << "\t\t\t\t}" << std::endl;
 					} else {
 						this->fs << "\t\t\t\tif (!t_activated) {" << std::endl;
@@ -380,8 +412,8 @@ void Generate::generateSubautomatas () {
 						std::string line;
 						while (std::getline(f, line))
 							this->fs << "\t\t\t\t\t\t" << line << std::endl;
-						this->fs << "\t\t\t\t\t\tautomatagui->setNodeAsActive(\"" << subListIterator->getNodeName(idOrigin) << "\", false);" << std::endl;
-						this->fs << "\t\t\t\t\t\tautomatagui->setNodeAsActive(\"" << subListIterator->getNodeName(idDestiny) << "\", true);" << std::endl;
+						this->fs << "\t\t\t\t\t\tautomatagui->setNodeAsActive_Locked(\"" << subListIterator->getNodeName(idOrigin) << "\", false);" << std::endl;
+						this->fs << "\t\t\t\t\t\tautomatagui->setNodeAsActive_Locked(\"" << subListIterator->getNodeName(idDestiny) << "\", true);" << std::endl;
 						if (id != 1)
 							this->fs << "\t\t\t\t\t\tt_" << subListIterator->getNodeName(idNode) << "_max = " << mapNameTime[subListIterator->getNodeName(idNode)] << ";" << std::endl;
 						this->fs << "\t\t\t\t\t}" << std::endl;
@@ -526,6 +558,11 @@ void Generate::generateMain () {
 	this->fs << "}" << std::endl;
 
 	this->fs.flush();
+}
+
+void Generate::generateMain_py (){
+	this->fs << "if __name__ == '__main__':" << std::endl;
+	this->fs << "\tprint \"HOLA PYTHON!\"" << std::endl;
 }
 
 void Generate::generateCfg () {

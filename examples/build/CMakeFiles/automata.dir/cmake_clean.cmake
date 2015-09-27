@@ -1,5 +1,5 @@
 FILE(REMOVE_RECURSE
-  "CMakeFiles/automata.dir/example3.cpp.o"
+  "CMakeFiles/automata.dir/example1.cpp.o"
   "CMakeFiles/automata.dir/home/samuel/University/TFG/visualHFSM/automatagui.cpp.o"
   "CMakeFiles/automata.dir/home/samuel/University/TFG/visualHFSM/point.cpp.o"
   "CMakeFiles/automata.dir/home/samuel/University/TFG/visualHFSM/node.cpp.o"

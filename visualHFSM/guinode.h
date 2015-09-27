@@ -65,6 +65,7 @@ public:
 	
 	int getId ();
 	int getIdSubautomataSon ();
+	int getIdSubautomataContainer();
 	std::string getCode ();
 	std::string getName ();
 	Point getPoint ();

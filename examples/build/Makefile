@@ -114,29 +114,29 @@ automata/fast:
 	$(MAKE) -f CMakeFiles/automata.dir/build.make CMakeFiles/automata.dir/build
 .PHONY : automata/fast
 
-example3.o: example3.cpp.o
-.PHONY : example3.o
+example1.o: example1.cpp.o
+.PHONY : example1.o
 
 # target to build an object file
-example3.cpp.o:
-	$(MAKE) -f CMakeFiles/automata.dir/build.make CMakeFiles/automata.dir/example3.cpp.o
-.PHONY : example3.cpp.o
+example1.cpp.o:
+	$(MAKE) -f CMakeFiles/automata.dir/build.make CMakeFiles/automata.dir/example1.cpp.o
+.PHONY : example1.cpp.o
 
-example3.i: example3.cpp.i
-.PHONY : example3.i
+example1.i: example1.cpp.i
+.PHONY : example1.i
 
 # target to preprocess a source file
-example3.cpp.i:
-	$(MAKE) -f CMakeFiles/automata.dir/build.make CMakeFiles/automata.dir/example3.cpp.i
-.PHONY : example3.cpp.i
+example1.cpp.i:
+	$(MAKE) -f CMakeFiles/automata.dir/build.make CMakeFiles/automata.dir/example1.cpp.i
+.PHONY : example1.cpp.i
 
-example3.s: example3.cpp.s
-.PHONY : example3.s
+example1.s: example1.cpp.s
+.PHONY : example1.s
 
 # target to generate assembly for a file
-example3.cpp.s:
-	$(MAKE) -f CMakeFiles/automata.dir/build.make CMakeFiles/automata.dir/example3.cpp.s
-.PHONY : example3.cpp.s
+example1.cpp.s:
+	$(MAKE) -f CMakeFiles/automata.dir/build.make CMakeFiles/automata.dir/example1.cpp.s
+.PHONY : example1.cpp.s
 
 home/samuel/University/TFG/visualHFSM/automatagui.o: home/samuel/University/TFG/visualHFSM/automatagui.cpp.o
 .PHONY : home/samuel/University/TFG/visualHFSM/automatagui.o
@@ -459,9 +459,9 @@ help:
 	@echo "... automata"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... example3.o"
-	@echo "... example3.i"
-	@echo "... example3.s"
+	@echo "... example1.o"
+	@echo "... example1.i"
+	@echo "... example1.s"
 	@echo "... home/samuel/University/TFG/visualHFSM/automatagui.o"
 	@echo "... home/samuel/University/TFG/visualHFSM/automatagui.i"
 	@echo "... home/samuel/University/TFG/visualHFSM/automatagui.s"
