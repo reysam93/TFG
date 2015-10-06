@@ -87,7 +87,13 @@ int Generate::init_py (){
 	this->fs.open(this->path.c_str(), std::fstream::out);
 	if (this->fs.is_open()){
 		this->generateHeaders_py();
-		this->generateMain_py()
+		this->generateEnums_py();
+		this->generateVariables_py();
+		this->generateFunctions();
+		//CREATE GUI SUBAUTOMATAS
+		this->generateSubautomatas_py();
+
+		this->generateMain_py();
 	}
 }
 
@@ -100,9 +106,16 @@ void Generate::generateHeaders_py (){
 	this->fs << "#!/usr/bin/python" << std::endl;
 	this->fs << "# -*- coding: utf-8 -*-" << std::endl;
 	this->fs << std::endl;
+	this->fs << "import sys, Ice, traceback, threading, time" << std::endl;
+	this->fs << "import jderobot" << std::endl;
+	//TODO AUTOMATAGUI
+	this->fs << std::endl;
 
-	this->generateGenericHeaders_py();
-	this->generateSpecificHeaders_py();
+	for ( std::list<std::string>::iterator listLibsIterator = this->listLibraries.begin();
+		listLibsIterator != this->listLibraries.end(); listLibsIterator++ )
+		this->fs << "import " << *listLibsIterator << std::endl;
+	this->fs << std::endl;
+	this->fs.flush();
 }
 
 void Generate::generateGenericHeaders () {
@@ -117,28 +130,12 @@ void Generate::generateGenericHeaders () {
 	this->fs.flush();
 }
 
-void Generate::generateGenericHeaders_py (){
-	this->fs << "import sys, Ice" << std::endl;;
-	//AUTOMATAGUI
-	this->fs << std::endl;
-	for ( std::list<std::string>::iterator listLibsIterator = this->listLibraries.begin();
-		listLibsIterator != this->listLibraries.end(); listLibsIterator++ )
-		this->fs << "import " << *listLibsIterator << std::endl;
-	this->fs << std::endl;
-	this->fs.flush();
-}
-
 void Generate::generateSpecificHeaders () {
 	for ( std::list<IceInterface>::iterator listInterfacesIterator = this->listInterfaces->begin();
 			listInterfacesIterator != this->listInterfaces->end(); listInterfacesIterator++ )
 		this->fs << "#include <jderobot/" << this->mapInterfacesHeader[listInterfacesIterator->getInterface()] << ".h>" << std::endl;
-
 	this->fs << std::endl;
 	this->fs.flush();
-}
-
-void Generate::generateSpecificHeaders_py (){
-	;
 }
 
 void Generate::generateEnums () {
@@ -170,6 +167,28 @@ void Generate::generateEnums () {
 			}
 		}
 		this->fs << "};" << std::endl;
+
+		this->fs << std::endl;
+		this->fs.flush();
+	}
+}
+
+void Generate::generateEnums_py(){
+	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
+            subListIterator != this->subautomataList.end(); subListIterator++ ) {
+		int id = subListIterator->getId();
+
+		std::list<Node> nodeList = subListIterator->getNodeList();
+		this->fs << "Names_Sub_" << id << " = [" << std::endl;
+		for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
+				nodeListIterator != nodeList.end(); nodeListIterator++ ) {
+			this->fs << "\t\"" << nodeListIterator->getName() << "\"," << std::endl;
+			if (id != 1) {
+				std::string ghost = std::string(nodeListIterator->getName() + "_ghost");
+				this->fs << "\t\"" << ghost << "\"," << std::endl;
+			}
+		}
+		this->fs << "]" << std::endl;
 
 		this->fs << std::endl;
 		this->fs.flush();
@@ -209,6 +228,30 @@ void Generate::generateVariables () {
 	for ( std::list<IceInterface>::iterator listInterfacesIterator = this->listInterfaces->begin();
 			listInterfacesIterator != this->listInterfaces->end(); listInterfacesIterator++ )
 		this->fs << "jderobot::" << listInterfacesIterator->getInterface() << "Prx " << listInterfacesIterator->getName() << "prx;" << std::endl;
+	this->fs << std::endl;
+	this->fs.flush();
+}
+
+void Generate::generateVariables_py(){
+	//TODO! AUTOMATAGUI
+	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
+            subListIterator != this->subautomataList.end(); subListIterator++ ) {
+		int id = subListIterator->getId();
+
+		std::list<Node> nodeList = subListIterator->getNodeList();
+		std::list<Node>::iterator nodeListIterator = nodeList.begin();
+		while ( (!nodeListIterator->isInitial()) &&
+				(nodeListIterator != nodeList.end()) )
+			nodeListIterator++;
+
+		std::string nameState;
+		if (id != 1)
+			nameState = std::string(nodeListIterator->getName() + "_ghost");
+		else
+			nameState = std::string(nodeListIterator->getName());
+
+		this->fs << " sub_" << id << " = \"" << nameState.c_str() << "\"" << std::endl;
+	}
 	this->fs << std::endl;
 	this->fs.flush();
 }
@@ -482,6 +525,209 @@ void Generate::generateSubautomatas () {
 	}
 }
 
+void Generate::generateSubautomatas_py(){
+	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
+            subListIterator != this->subautomataList.end(); subListIterator++ ) {
+       	int id = subListIterator->getId();		
+		this->fs << "def subautomata_" << id << "():" << std::endl;
+		
+		/* DECLARACIONES NO NECESARIAS EN PYTHON
+		this->fs << "\tstruct timeval a, b;" << std::endl;
+		this->fs << "\tint cycle = " << subListIterator->getTime() << ";" << std::endl;
+		this->fs << "\tlong totala, totalb;" << std::endl;
+		this->fs << "\tlong diff;" << std::endl;
+		this->fs << "\ttime_t t_ini;" << std::endl;
+		this->fs << "\ttime_t t_fin;" << std::endl;
+		this->fs << "\tdouble secs;" << std::endl;*/
+		this->fs << "\tt_activated = false" << std::endl;
+		this->fs << std::endl;
+
+		int countNodes = 0;
+		std::list<Node> nodeList = subListIterator->getNodeList();
+		for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
+				nodeListIterator != nodeList.end(); nodeListIterator++ )
+			countNodes++;
+
+		std::map<std::string, float> mapNameTime;
+		std::list<Transition> transList = subListIterator->getTransList();
+		if (id != 1) {
+			for ( std::list<Transition>::iterator transListIterator = transList.begin();
+					transListIterator != transList.end(); transListIterator++ )	{
+				int idorigin = transListIterator->getIdOrigin();
+				if (transListIterator->getType().compare("time") == 0) {
+					std::list<Node>::iterator nodeListIterator = nodeList.begin();
+					while ( (nodeListIterator->getId() != idorigin) &&
+							(nodeListIterator != nodeList.end()) )
+						nodeListIterator++;
+
+					float ms = atof(transListIterator->getCodeTrans().c_str());
+					this->fs << "\tt_" << nodeListIterator->getName() << "_max = " << (ms/1000.0) << std::endl;
+
+					mapNameTime[nodeListIterator->getName()] = ms/1000.0;
+				}
+			}
+			this->fs << std::endl;
+		}
+
+		std::istringstream f(subListIterator->getVariables());
+		std::string line;
+		while (std::getline(f, line))
+			this->fs << "\t" << line << std::endl;
+		this->fs << std::endl;
+
+
+
+		this->fs << "\twhile(true):" << std::endl;
+		this->fs << "\t\ttotala = time.time()" << std::endl;
+		this->fs << std::endl;
+
+		/* PRIMERO 1 NIVEL
+		if (id != 1) {
+			int idfather = subListIterator->getIdFather();
+
+			std::list<SubAutomata>::iterator subFatherListIterator = this->subautomataList.begin();
+			while ( (subFatherListIterator->getId() != idfather) &&
+					(subFatherListIterator != this->subautomataList.end()) )
+				subFatherListIterator++;
+			
+			std::list<Node> nodeFatherList = subFatherListIterator->getNodeList();
+			std::list<Node>::iterator nodeFatherListIterator = nodeFatherList.begin();
+			while ( (nodeFatherListIterator->getIdSubautomataSon() != id) &&
+					(nodeFatherListIterator != nodeFatherList.end()) )
+				nodeFatherListIterator++;
+
+			this->fs << "\t\tif(sub_" << idfather << " == \"" << nodeFatherListIterator->getName() << "\"):" << std::endl;
+			this->fs << "\t\t\tif (";
+
+			int count = 0;
+			for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
+					nodeListIterator != nodeList.end(); nodeListIterator++ ) {
+				this->fs << " sub_" << id << " == \"" << nodeListIterator->getName() + "_ghost\"";
+				count++;
+				if (count != countNodes) {
+					this->fs << " or ";
+				}
+			}
+			this->fs << "):" << std::endl;
+
+			this->fs << "\t\t\t\tsub_" << id << " = (State_Sub_" << id << ")(sub_" << id << " - 1);" << std::endl;
+			this->fs << "\t\t\t\tt_ini = time(NULL);" << std::endl;
+			this->fs << "\t\t\t}" << std::endl;
+		}*/
+
+		this->fs << "\t\t# Evaluation if" << std::endl;
+		// NO HAY SWITH this->fs << "\t\tswitch (sub_" << id << ") {" << std::endl;
+		for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
+				nodeListIterator != nodeList.end(); nodeListIterator++ ) {
+			int idNode = nodeListIterator->getId();
+			this->fs << "\t\tif(sub_" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+			
+			for ( std::list<Transition>::iterator transListIterator = transList.begin();
+					transListIterator != transList.end(); transListIterator++ ) {
+				if (transListIterator->getIdOrigin() == idNode) {
+					int idDestiny = transListIterator->getIdDestiny();
+					int idOrigin = transListIterator->getIdOrigin();
+					if (transListIterator->getType().compare("condition") == 0) {
+						this->fs << "\t\t\tif (" << transListIterator->getCodeTrans().c_str() << "):" << std::endl;
+						this->fs << "\t\t\t\tsub_" << id << " = \"" << subListIterator->getNodeName(idDestiny) << "\"" << std::endl;
+						std::istringstream f(transListIterator->getCode());
+						std::string line;
+						while (std::getline(f, line))
+							this->fs << "\t\t\t\t\t" << line << std::endl;
+							//TODO AÑADIR CAMBIAR NODOS ACTIVOS
+					} else {
+						this->fs << "\t\t\tif (not t_activated):" << std::endl;
+						this->fs << "\t\t\t\tt_ini = time.time()" << std::endl;
+						this->fs << "\t\t\t\tt_activated = true" << std::endl;
+						this->fs << "\t\t\telse:" << std::endl;
+						this->fs << "\t\t\t\tt_fin = time.time()" << std::endl;
+						this->fs << "\t\t\t\tsecs = t_fin - t_ini" << std::endl;
+						if (id == 1) {
+							float ms = atof(transListIterator->getCodeTrans().c_str());
+
+
+							this->fs << "\t\t\t\tif (secs > " << (ms / 1000.0) << "):" << std::endl;
+						} else
+							this->fs << "\t\t\t\t\tif (secs > t_" << subListIterator->getNodeName(idNode) << "_max):" << std::endl;
+
+
+						//POR AQUI!
+						this->fs << "\t\t\t\t\t\tsub_" << id << " = " << subListIterator->getNodeName(idDestiny) << ";" << std::endl;
+						this->fs << "\t\t\t\t\t\tt_activated = false;" << std::endl;
+						std::istringstream f(transListIterator->getCode());
+						std::string line;
+						while (std::getline(f, line))
+							this->fs << "\t\t\t\t\t\t" << line << std::endl;
+						this->fs << "\t\t\t\t\t\tautomatagui->setNodeAsActive_Locked(\"" << subListIterator->getNodeName(idOrigin) << "\", false);" << std::endl;
+						this->fs << "\t\t\t\t\t\tautomatagui->setNodeAsActive_Locked(\"" << subListIterator->getNodeName(idDestiny) << "\", true);" << std::endl;
+						if (id != 1)
+							this->fs << "\t\t\t\t\t\tt_" << subListIterator->getNodeName(idNode) << "_max = " << mapNameTime[subListIterator->getNodeName(idNode)] << ";" << std::endl;
+						this->fs << "\t\t\t\t\t}" << std::endl;
+						this->fs << "\t\t\t\t}" << std::endl;
+					}
+					this->fs << std::endl;
+				}
+			}
+			this->fs << "\t\t\t\tbreak;" << std::endl;
+			this->fs << "\t\t\t}" << std::endl;
+			this->fs.flush();
+		}
+		this->fs << "\t\t}" << std::endl;
+		this->fs << std::endl;
+
+		this->fs << "\t\t// Actuation switch" << std::endl;
+		this->fs << "\t\tswitch (sub_" << id << ") {" << std::endl;
+		for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
+				nodeListIterator != nodeList.end(); nodeListIterator++ ) {
+			this->fs << "\t\t\tcase " << nodeListIterator->getName() << ": {" << std::endl;
+			std::istringstream f(nodeListIterator->getCode());
+			std::string line;
+			while (std::getline(f, line))
+				this->fs << "\t\t\t\t" << line << std::endl;
+			this->fs << "\t\t\t\tbreak;" << std::endl;
+			this->fs << "\t\t\t}" << std::endl;
+			this->fs.flush();
+		}
+		this->fs << "\t\t}" << std::endl;
+		if (id != 1) {
+			this->fs << "\t\t} else {" << std::endl;
+			this->fs << "\t\t\tswitch (sub_" << id << ") {" << std::endl;
+			for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
+					nodeListIterator != nodeList.end(); nodeListIterator++ ) {
+				if (mapNameTime.find(nodeListIterator->getName()) != mapNameTime.end()) {
+					this->fs << "\t\t\t\tcase " << nodeListIterator->getName() << ":" << std::endl;
+					this->fs << "\t\t\t\t\tt_" << nodeListIterator->getName() << "_max = " << mapNameTime[nodeListIterator->getName()] << " - difftime(t_fin, t_ini);" << std::endl;
+					this->fs << "\t\t\t\t\tsub_" << id << " = (State_Sub_" << id << ")(sub_" << id << " + 1);" << std::endl;
+					this->fs << "\t\t\t\t\tbreak;" << std::endl;
+				} 
+			}
+			this->fs << "\t\t\t\tdefault:" << std::endl;
+			this->fs << "\t\t\t\t\tbreak;" << std::endl;
+			this->fs << "\t\t\t}" << std::endl;
+			this->fs << "\t\t}" << std::endl;
+		}
+		this->fs << std::endl;
+
+		this->fs << "\t\tgettimeofday(&b, NULL);" << std::endl;
+		this->fs << "\t\ttotalb = b.tv_sec * 1000000 + b.tv_usec;" << std::endl;
+		this->fs << "\t\tdiff = (totalb - totala) / 1000;" << std::endl;
+		this->fs << "\t\tif (diff < 0 || diff > cycle)" << std::endl;
+		this->fs << "\t\t\tdiff = cycle;" << std::endl;
+		this->fs << "\t\telse" << std::endl;
+		this->fs << "\t\t\tdiff = cycle - diff;" << std::endl;
+		this->fs << std::endl;
+		this->fs << "\t\tusleep(diff * 1000);" << std::endl;
+		this->fs << "\t\tif (diff < 33 )" << std::endl;
+		this->fs << "\t\t\tusleep (33 * 1000);" << std::endl;
+
+		this->fs << "\t}" << std::endl;
+		this->fs << "}" << std::endl;
+
+		this->fs << std::endl;
+		this->fs.flush();
+	}
+}
+
 void Generate::generateAutomataGui () {
 	this->fs << "void* runAutomatagui (void*) {" << std::endl;
 	this->fs << "\tautomatagui->run();" << std::endl;
@@ -562,7 +808,48 @@ void Generate::generateMain () {
 
 void Generate::generateMain_py (){
 	this->fs << "if __name__ == '__main__':" << std::endl;
-	this->fs << "\tprint \"HOLA PYTHON!\"" << std::endl;
+	this->fs << "\ttry:" << std::endl;
+	this->fs << "\t\tic = Ice.initialize(sys.argv)" << std::endl;
+	this->fs << std::endl;
+
+	for ( std::list<IceInterface>::iterator listInterfacesIterator = this->listInterfaces->begin();
+			listInterfacesIterator != this->listInterfaces->end(); listInterfacesIterator++ ) {
+		this->fs << "\t\t# Contact to " << listInterfacesIterator->getName() << std::endl;
+		this->fs << "\t\t" << listInterfacesIterator->getName() << " = ic.propertyToProxy(\"automata." << listInterfacesIterator->getName() << ".Proxy\");" << std::endl;
+		this->fs << "\t\tif(not " << listInterfacesIterator->getName() << "):" << std::endl;
+		this->fs << "\t\t\tprint \"ERROR: could not create proxy with " << listInterfacesIterator->getName() << "\"" << std::endl;
+		this->fs << "\t\t\traise Exception" << std::endl;
+		this->fs << "\t\t" << listInterfacesIterator->getName() << "prx = jderobot." << listInterfacesIterator->getInterface() << "Prx.checkedCast(" << listInterfacesIterator->getName() << ")" << std::endl;
+		this->fs << "\t\tif(not " << listInterfacesIterator->getName() << "prx):" << std::endl;
+		this->fs << "\t\t\tprint \"ERROR:invalid proxy automata." << listInterfacesIterator->getName() << ".Proxy\";" << std::endl;
+		this->fs << "\t\t\traise Exception" << std::endl;
+		this->fs << "\t\tprint \"" << listInterfacesIterator->getName() << " connected\"" << std::endl;
+		this->fs << std::endl;
+	}
+	this->fs << std::endl;
+
+	//TODO more automatagui
+	this->fs.flush();
+
+	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
+            subListIterator != this->subautomataList.end(); subListIterator++ ) {
+		int id = subListIterator->getId();
+		this->fs << "\t\tt" << id << " = threading.Thread(target=subautomata_" << id << ")"<< std::endl;
+		this->fs << "\t\tt" << id << ".start()" << std::endl;
+	}
+	this->fs << std::endl;
+
+	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
+            subListIterator != this->subautomataList.end(); subListIterator++ ) {
+		int id = subListIterator->getId();
+		this->fs << "\t\tt" << id << ".join()" << std::endl;
+	}	
+
+	this->fs << "\texcept:" << std::endl;
+	this->fs << "\t\ttraceback.print_exc()" <<std::endl;
+	this->fs << "\t\tif(ic):" << std::endl;
+	this->fs << "\t\t\tic.destroy()" << std::endl;
+	this->fs << "\texit(-1)"<< std::endl;
 }
 
 void Generate::generateCfg () {

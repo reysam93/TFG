@@ -69,16 +69,18 @@ private:
 	void generateHeaders ();
 	void generateHeaders_py ();
 	void generateGenericHeaders ();
-	void generateGenericHeaders_py ();
 	void generateSpecificHeaders ();
-	void generateSpecificHeaders_py ();
 	void generateEnums ();
+	void generateEnums_py();
 	void generateVariables ();
+	void generateVariables_py();
 	void generateFunctions ();
 	void generateCreateGuiSubautomataList();
 	void generateSubautomatas ();
+	void generateSubautomatas_py();
 	void generateAutomataGui();
 	void generateMain ();
+	void generateMain_py();
 
 	void generateCfg ();
 
