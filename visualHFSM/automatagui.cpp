@@ -5,7 +5,7 @@
 /*************************************************************
  * CONSTRUCTOR
  *************************************************************/
-AutomataGui::AutomataGui(int argc, char** argv) : mutex(){
+AutomataGui::AutomataGui(int argc, char** argv) : dispatcher(){
 	this->app = Gtk::Application::create(argc, argv, "jderobot.visualHFSM.automatagui");
 }
 
@@ -35,6 +35,7 @@ int AutomataGui::init(){
 	refBuilder->get_widget("scrolledwindow_schema", this->scrolledwindow_schema);
 	refBuilder->get_widget("treeview", this->treeView);
 	refBuilder->get_widget("up_button", this->pUpButton);
+	refBuilder->get_widget("check_autofocus", this->checkAutofocus);
 	refBuilder->get_widget("DialogDerived", guiDialog);
 	if(!guiDialog){
 		std::cerr << "Error: couldn't get DialogDerived" << std::endl;
@@ -54,6 +55,7 @@ int AutomataGui::init(){
 	this->scrolledwindow_schema->add(*(this->canvas));
 
 	//INIT TREEVIEW
+	this->lastExpanded = "";
 	this->refTreeModel = Gtk::TreeStore::create(this->m_Columns);
 	this->treeView->set_model(this->refTreeModel);
 	this->treeView->append_column("ID", this->m_Columns.m_col_id);
@@ -72,6 +74,9 @@ int AutomataGui::init(){
     this->treeView->signal_row_activated().connect(
     					sigc::mem_fun(*this, &AutomataGui::on_row_activated));
 
+    //Atach handler to the dispatcher
+    this->dispatcher.connect(sigc::mem_fun(*this, &AutomataGui::on_notify_received));
+
     //SETTING CANVAS BOUNDS
 	Glib::RefPtr<Gdk::Screen> screen = this->guiDialog->get_screen();
     int width = screen->get_width();
@@ -87,6 +92,7 @@ int AutomataGui::init(){
 
 
 void AutomataGui::run(){			
+	std::cerr << "running gui in PID:" << getpid() << std::endl;
 	this->app->run(*guiDialog);
   	delete guiDialog;
 }
@@ -163,6 +169,7 @@ void AutomataGui::loadGuiSubautomata(){
 				nodeListIterator->changeColor(ITEM_COLOR_GREEN);
 				this->setActiveTreeView(nodeListIterator->getName(), true,
 											this->refTreeModel->children());
+				std::cerr << "firstActiveNode marked as active " << nodeListIterator->getName() << std::endl;
 				color = ITEM_COLOR_GREEN;
 			}else{
 				color = "white";
@@ -187,7 +194,6 @@ void AutomataGui::loadGuiSubautomata(){
 	}
 
 	this->currentGuiSubautomata = this->getSubautomataWithIdFather(0);
-	this->treeView->expand_all();
 }
 
 
@@ -302,7 +308,25 @@ GuiSubautomata* AutomataGui::getSubautomataByNodeName(std::string name){
 }
 
 
-int AutomataGui::setActiveTreeView(std::string name, bool active,
+void AutomataGui::treeViewAutoFocus(Gtk::TreeModel::Children::iterator iter,
+										Glib::ustring name){
+
+	if(this->lastExpanded != name){
+		bool checked = this->checkAutofocus->get_active();
+
+		if(this->lastExpanded != "" && checked){
+			this->treeView->collapse_row(this->pathLastExp);
+		}
+		this->pathLastExp = this->refTreeModel->get_path(iter);
+		if(checked){
+			this->treeView->expand_to_path(this->pathLastExp);
+			this->lastExpanded = name;
+		}
+	}
+}
+
+
+bool AutomataGui::setActiveTreeView(std::string name, bool active,
 										Gtk::TreeModel::Children children){
 
 	bool finded = false;
@@ -322,15 +346,9 @@ int AutomataGui::setActiveTreeView(std::string name, bool active,
 		} else {
 			finded = this->setActiveTreeView(name, active, row.children());
 
-		/*	if (finded){
-				if (active && (this->lastExpanded != row[m_Columns.m_col_name])){
-					
-					this->treeView->collapse_row(this->pathLastExp);
-					this->pathLastExp = this->refTreeModel->get_path(iter);
-					this->treeView->expand_to_path(this->pathLastExp);
-					this->lastExpanded = row[m_Columns.m_col_name];
-				}
-			}*/
+			if (finded && active){
+				this->treeViewAutoFocus(iter, row[m_Columns.m_col_name]);
+			}
 		}
 		iter++;
 	}
@@ -338,31 +356,55 @@ int AutomataGui::setActiveTreeView(std::string name, bool active,
 }
 
 
-int AutomataGui::setNodeAsActive(std::string nodeName, bool active){
-	Glib::Threads::Mutex::Lock lock(mutex);
+void AutomataGui::setNodeAsActive(GuiNode* node, GuiSubautomata* subautomata, bool active){
+	if(active){
+		subautomata->setActiveNode(node->getName());
+		node->changeColor(ITEM_COLOR_GREEN);
+	}else{
+		node->changeColor(ITEM_COLOR_BLUE);
+	}
 
- 	GuiSubautomata* subautomata = this->getSubautomataByNodeName(nodeName);
- 	GuiNode* node = subautomata->getGuiNode(nodeName);
- 	if (node == NULL)
- 		return -1;
-
- 	if (active){
- 		subautomata->setActiveNode(nodeName);
- 		node->changeColor(ITEM_COLOR_GREEN);
- 	}else{
- 		node->changeColor(ITEM_COLOR_BLUE);
- 	}
-
- 	if(!this->setActiveTreeView(nodeName, active, this->refTreeModel->children()))
- 		std::cerr << "NOT FINDED " << nodeName << std::endl;
+	if(!this->setActiveTreeView(node->getName(), active, this->refTreeModel->children()))
+ 		std::cerr << "NOT FINDED " << node->getName() << std::endl;	
 
  	int sonId = node->getIdSubautomataSon();
  	if (sonId != 0){
- 		subautomata = this->getSubautomata(sonId);
- 		lock.release();
- 		this->setNodeAsActive(subautomata->getActiveNode(), active);
+ 		GuiSubautomata* subSon = this->getSubautomata(sonId);
+ 		std::string nodeName = subSon->getActiveNode();
+ 		GuiNode* nodeAux = subSon->getGuiNode(nodeName);
+ 		this->setNodeAsActive(nodeAux, subSon, active);
  	}
- 	return 0;
+}
+
+
+void AutomataGui::on_notify_received(){
+
+	pthread_mutex_lock(&this->activesNodesNames.lock);
+	if (this->activesNodesNames.queue.empty()){
+		std::cerr << "ERROR: actives nodes names queue is empty" << std::endl;
+		return;
+	}
+	std::string activeName = this->activesNodesNames.queue.front();
+	this->activesNodesNames.queue.pop();
+	pthread_mutex_unlock(&this->activesNodesNames.lock);
+
+	GuiSubautomata* subautomata = this->getSubautomataByNodeName(activeName);
+	std::string lastActive = subautomata->getActiveNode();
+	GuiNode* node;
+
+	node = subautomata->getGuiNode(lastActive);
+	this->setNodeAsActive(node, subautomata, false);
+
+	node = subautomata->getGuiNode(activeName);
+	this->setNodeAsActive(node, subautomata, true);
+}
+
+
+void AutomataGui::notifySetNodeAsActive(std::string nodeName){
+	pthread_mutex_lock(&this->activesNodesNames.lock);
+	this->activesNodesNames.queue.push(nodeName);
+	pthread_mutex_unlock(&this->activesNodesNames.lock);
+	this->dispatcher.emit();
 }
 
 

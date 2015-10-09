@@ -201,7 +201,7 @@ private:
 
     // Of the treeview
     bool fillTreeView ( std::string nameNode, Gtk::TreeModel::Children child, int idNodeFather );
-    bool clearTreeView (Gtk::TreeModel::Children children);
+    bool clearTreeView ();
     bool removeFromTreeView ( int id, Gtk::TreeModel::Children child );
     bool changeNameInTreeView ( int id, std::string nameNode, Gtk::TreeModel::Children child );
 

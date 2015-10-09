@@ -205,12 +205,8 @@ void VisualHFSM::on_load_file ( std::string path ) {
         this->listInterfaces = parser.getConfigFile();
         this->listLibraries = parser.getListLibs();
         
-        std::cout << "parseado" << std::endl;
-
         this->removeAllGui();
-        std::cerr << "before cleaning treeview" << std::endl;
-        this->clearTreeView(this->refTreeModel->children());
-        std::cerr << "tree cleaned" << std::endl;
+        this->clearTreeView();
         if (!this->loadSubautomata(parser.getListSubautomata()))
             std::cout << BEGIN_RED << VISUAL << "ERROR loading subautomata" << END_COLOR << std::endl;
     } catch ( const xmlpp::exception& ex ) {
@@ -591,15 +587,16 @@ bool VisualHFSM::fillTreeView ( std::string nameNode, Gtk::TreeModel::Children c
     return cont;
 }
 
-bool VisualHFSM::clearTreeView (Gtk::TreeModel::Children children){
+bool VisualHFSM::clearTreeView (){
+    
+    Gtk::TreeModel::Children children = this->refTreeModel->children();
     Gtk::TreeModel::Children::iterator iter = children.begin();
-
-    /*while (iter != children.end()){
-        Gtk::TreeModel::Row therow = *iter;
-        this->clearTreeView(therow.children());
-        this->refTreeModel->erase(therow);
-        iter++;
-    }*/
+    while(iter != children.end()){
+        Gtk::TreeModel::Row row = *iter;
+        this->refTreeModel->erase(row);
+        children = this->refTreeModel->children();
+        iter = children.begin();
+    }
     return true;
 }
 
@@ -956,9 +953,7 @@ bool VisualHFSM::on_transition_leave_notify_event ( const Glib::RefPtr<Goocanvas
 // New automata, remove all
 void VisualHFSM::on_menubar_clicked_new () {
     this->removeAllGui();
-    std::cerr << "before cleaning treeview" << std::endl;
-    this->clearTreeView(this->refTreeModel->children());
-    std::cerr << "tree cleaned" << std::endl;
+    this->clearTreeView();
     this->removeAllSubautomata();
     this->filepath = std::string("");
 }

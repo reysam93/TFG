@@ -5,6 +5,7 @@
 #include <iostream>
 #include <err.h>
 #include <pthread.h>
+#include <queue>
 #include <gtkmm-3.0/gtkmm.h>
 
 #include "../visualHFSM/guisubautomata.h"
@@ -28,12 +29,9 @@ public:
 	void setGuiSubautomataList(std::list<GuiSubautomata> guiSubList);
 	void loadGuiSubautomata();
 	void run();
-	int setNodeAsActive(std::string nodeName);
-	int setNodeAsActive(std::string nodeName, bool active);
+	void notifySetNodeAsActive(std::string nodeName);
 
 private:
-	mutable Glib::Threads::Mutex mutex;
-
 	Glib::RefPtr<Gtk::Builder> refBuilder;
 	Gtk::Dialog *guiDialog;
 	Glib::RefPtr<Gtk::Application> app;
@@ -42,7 +40,19 @@ private:
 	Goocanvas::Canvas* canvas;
 	Gtk::ScrolledWindow* scrolledwindow_schema;
 	Gtk::Button* pUpButton;
+	Gtk::CheckButton* checkAutofocus;
 	Glib::RefPtr<Goocanvas::ItemModel> root;
+
+	//Allow MultiThreading
+	Glib::Dispatcher dispatcher;
+	std::string activeNodeName;
+
+	class Queue{
+	public:
+		std::queue<std::string> queue;
+		pthread_mutex_t lock;
+	};
+	Queue activesNodesNames;
 
 	class ModelColumns : public Gtk::TreeModel::ColumnRecord{
 	public:
@@ -81,10 +91,13 @@ private:
 						Gtk::TreeModel::Children child, int idNodeFather);
 	GuiSubautomata* getSubautomataByNodeName(std::string name);
 	void showSubautomata(int id);
-	int setActiveTreeView(std::string name, bool active,
+	bool setActiveTreeView(std::string name, bool active,
 								Gtk::TreeModel::Children children);
+	void treeViewAutoFocus(Gtk::TreeModel::Children::iterator iter, Glib::ustring name);
+	void setNodeAsActive(GuiNode* node, GuiSubautomata* subautomata, bool active);
 
 	//Handlers
+	void on_notify_received();
 	void on_up_button_clicked ();
 	void on_item_created(const Glib::RefPtr<Goocanvas::Item>& item, 
 							const Glib::RefPtr<Goocanvas::ItemModel>& model);
