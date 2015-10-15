@@ -524,6 +524,8 @@ void Generate::generateSubautomatas () {
 }
 
 void Generate::generateSubautomatas_py(){
+	bool firstState = true;
+
 	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
             subListIterator != this->subautomataList.end(); subListIterator++ ) {
        	int id = subListIterator->getId();		
@@ -531,12 +533,13 @@ void Generate::generateSubautomatas_py(){
 		
 		/* DECLARACIONES NO NECESARIAS EN PYTHON
 		this->fs << "\tstruct timeval a, b;" << std::endl;
-		this->fs << "\tint cycle = " << subListIterator->getTime() << ";" << std::endl;
+		
 		this->fs << "\tlong totala, totalb;" << std::endl;
 		this->fs << "\tlong diff;" << std::endl;
 		this->fs << "\ttime_t t_ini;" << std::endl;
 		this->fs << "\ttime_t t_fin;" << std::endl;
 		this->fs << "\tdouble secs;" << std::endl;*/
+		this->fs << "\tcycle = " << subListIterator->getTime() << std::endl;
 		this->fs << "\tt_activated = false" << std::endl;
 		this->fs << std::endl;
 
@@ -576,7 +579,7 @@ void Generate::generateSubautomatas_py(){
 
 
 		this->fs << "\twhile(true):" << std::endl;
-		this->fs << "\t\ttotala = time.time()" << std::endl;
+		this->fs << "\t\ttotala = time.time() * 1000000" << std::endl;
 		this->fs << std::endl;
 
 		/* PRIMERO 1 NIVEL
@@ -614,11 +617,15 @@ void Generate::generateSubautomatas_py(){
 		}*/
 
 		this->fs << "\t\t# Evaluation if" << std::endl;
-		// NO HAY SWITH this->fs << "\t\tswitch (sub_" << id << ") {" << std::endl;
 		for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
 				nodeListIterator != nodeList.end(); nodeListIterator++ ) {
 			int idNode = nodeListIterator->getId();
-			this->fs << "\t\tif(sub_" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+			if(firstState){
+				this->fs << "\t\tif(sub_" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+				firstState = false;
+			}else{
+				this->fs << "\t\telif(sub_" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+			}
 			
 			for ( std::list<Transition>::iterator transListIterator = transList.begin();
 					transListIterator != transList.end(); transListIterator++ ) {
@@ -646,47 +653,44 @@ void Generate::generateSubautomatas_py(){
 
 							this->fs << "\t\t\t\tif (secs > " << (ms / 1000.0) << "):" << std::endl;
 						} else
-							this->fs << "\t\t\t\t\tif (secs > t_" << subListIterator->getNodeName(idNode) << "_max):" << std::endl;
+							this->fs << "\t\t\t\tif (secs > t_" << subListIterator->getNodeName(idNode) << "_max):" << std::endl;
 
-
-						//POR AQUI!
-						this->fs << "\t\t\t\t\t\tsub_" << id << " = " << subListIterator->getNodeName(idDestiny) << ";" << std::endl;
-						this->fs << "\t\t\t\t\t\tt_activated = false;" << std::endl;
+						this->fs << "\t\t\t\t\tsub_" << id << " = \"" << subListIterator->getNodeName(idDestiny) << "\"" << std::endl;
+						this->fs << "\t\t\t\t\tt_activated = false" << std::endl;
 						std::istringstream f(transListIterator->getCode());
 						std::string line;
 						while (std::getline(f, line))
 							this->fs << "\t\t\t\t\t\t" << line << std::endl;
-						this->fs << "\t\t\t\t\t\tautomatagui->notifySetNodeAsActive(\"" << subListIterator->getNodeName(idDestiny) << "\");" << std::endl;
-						if (id != 1)
-							this->fs << "\t\t\t\t\t\tt_" << subListIterator->getNodeName(idNode) << "_max = " << mapNameTime[subListIterator->getNodeName(idNode)] << ";" << std::endl;
-						this->fs << "\t\t\t\t\t}" << std::endl;
-						this->fs << "\t\t\t\t}" << std::endl;
+						//TODO NOTIFYSETASACTIVE
+						//if (id != 1)
+						//	this->fs << "\t\t\t\t\t\tt_" << subListIterator->getNodeName(idNode) << "_max = " << mapNameTime[subListIterator->getNodeName(idNode)] << ";" << std::endl;
 					}
 					this->fs << std::endl;
 				}
 			}
-			this->fs << "\t\t\t\tbreak;" << std::endl;
-			this->fs << "\t\t\t}" << std::endl;
 			this->fs.flush();
 		}
-		this->fs << "\t\t}" << std::endl;
 		this->fs << std::endl;
 
-		this->fs << "\t\t// Actuation switch" << std::endl;
-		this->fs << "\t\tswitch (sub_" << id << ") {" << std::endl;
+		firstState = true;
+		this->fs << "\t\t# Actuation if" << std::endl;
 		for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
 				nodeListIterator != nodeList.end(); nodeListIterator++ ) {
-			this->fs << "\t\t\tcase " << nodeListIterator->getName() << ": {" << std::endl;
+
+			if(firstState){
+				this->fs << "\t\tif(sub_" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+				firstState = false;	
+			}else{
+				this->fs << "\t\telif(sub_" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+			}
+
 			std::istringstream f(nodeListIterator->getCode());
 			std::string line;
 			while (std::getline(f, line))
-				this->fs << "\t\t\t\t" << line << std::endl;
-			this->fs << "\t\t\t\tbreak;" << std::endl;
-			this->fs << "\t\t\t}" << std::endl;
+				this->fs << "\t\t\t" << line << std::endl;
 			this->fs.flush();
 		}
-		this->fs << "\t\t}" << std::endl;
-		if (id != 1) {
+		/*if (id != 1) {
 			this->fs << "\t\t} else {" << std::endl;
 			this->fs << "\t\t\tswitch (sub_" << id << ") {" << std::endl;
 			for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
@@ -702,24 +706,21 @@ void Generate::generateSubautomatas_py(){
 			this->fs << "\t\t\t\t\tbreak;" << std::endl;
 			this->fs << "\t\t\t}" << std::endl;
 			this->fs << "\t\t}" << std::endl;
-		}
+		}*/
 		this->fs << std::endl;
 
-		this->fs << "\t\tgettimeofday(&b, NULL);" << std::endl;
-		this->fs << "\t\ttotalb = b.tv_sec * 1000000 + b.tv_usec;" << std::endl;
-		this->fs << "\t\tdiff = (totalb - totala) / 1000;" << std::endl;
-		this->fs << "\t\tif (diff < 0 || diff > cycle)" << std::endl;
-		this->fs << "\t\t\tdiff = cycle;" << std::endl;
-		this->fs << "\t\telse" << std::endl;
-		this->fs << "\t\t\tdiff = cycle - diff;" << std::endl;
+		this->fs << "\t\ttotalb = time.time() * 1000000" << std::endl;
+		this->fs << "\t\tmsecs = (totalb - totala) / 1000;" << std::endl;
+		this->fs << "\t\tif (msecs < 0 or msecs > cycle):" << std::endl;
+		this->fs << "\t\t\tmsecs = cycle" << std::endl;
+		this->fs << "\t\telse:" << std::endl;
+		this->fs << "\t\t\tmsecs = cycle - diff" << std::endl;
 		this->fs << std::endl;
-		this->fs << "\t\tusleep(diff * 1000);" << std::endl;
-		this->fs << "\t\tif (diff < 33 )" << std::endl;
-		this->fs << "\t\t\tusleep (33 * 1000);" << std::endl;
+		this->fs << "\t\ttime.sleep(msecs / 1000)" << std::endl;
+		this->fs << "\t\tif(msecs < 33 ):" << std::endl;
+		this->fs << "\t\t\time.sleep(33 / 1000);" << std::endl;
 
-		this->fs << "\t}" << std::endl;
-		this->fs << "}" << std::endl;
-
+		this->fs << std::endl;
 		this->fs << std::endl;
 		this->fs.flush();
 	}
