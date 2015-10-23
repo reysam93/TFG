@@ -67,24 +67,32 @@ private:
 	std::list<std::string> listLibraries;
 
 	void generateHeaders ();
-	void generateHeaders_py ();
 	void generateGenericHeaders ();
 	void generateSpecificHeaders ();
 	void generateEnums ();
-	void generateEnums_py();
 	void generateVariables ();
-	void generateVariables_py();
 	void generateFunctions ();
 	void generateCreateGuiSubautomataList();
 	void generateSubautomatas ();
-	void generateSubautomatas_py();
 	void generateAutomataGui();
 	void generateMain ();
-	void generateMain_py();
 
 	void generateCfg ();
-
 	void generateCmake ();
+
+	void generateHeaders_py ();
+	void generateGenericHeaders_py();
+	void generateSpecificHeaders_py();
+	void generateAutomataClass_py();
+	void generateAutomataInit_py();
+	void generateEnums_py();
+	void generateVariables_py();
+	void generateSubautomatas_py();
+	void generateConnectToProxys_py();
+	void generateDestroyIc_py();
+	void generateStart_py();
+	void generaitJoin_py();
+	void generateMain_py();
 
 	std::string getCppName ();
 
