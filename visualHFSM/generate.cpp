@@ -44,6 +44,7 @@ Generate::Generate ( std::list<SubAutomata> subautomataList, std::string cpppath
 	this->mapTab[T_FOUR] = std::string("\t\t\t\t");
 	this->mapTab[T_FIVE] = std::string("\t\t\t\t\t");
 	this->mapTab[T_SIX] = std::string("\t\t\t\t\t\t");
+	this->mapTab[T_SEVEN] = std::string("\t\t\t\t\t\t\t");
 }
 
 /*************************************************************
@@ -693,7 +694,7 @@ void Generate::generateEnums_py(){
 
 		std::list<Node> nodeList = subListIterator->getNodeList();
 		this->fs << this->mapTab[T_TWO];
-		this->fs << "self.NamesSub" << id << " = [" << std::endl;
+		this->fs << "self.StatesSub" << id << " = [" << std::endl;
 		for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
 				nodeListIterator != nodeList.end(); nodeListIterator++ ) {
 			this->fs << this->mapTab[T_THREE];
@@ -701,7 +702,7 @@ void Generate::generateEnums_py(){
 
 			if (id != 1) {
 				std::string ghost = std::string(nodeListIterator->getName() + "_ghost");
-				this->fs << "\t\"" << ghost << "\"," << std::endl;
+				this->fs << this->mapTab[T_THREE] << "\"" << ghost << "\"," << std::endl;
 			}
 		}
 		this->fs << this->mapTab[T_TWO] << "]" << std::endl;
@@ -737,6 +738,7 @@ void Generate::generateVariables_py(){
 
 void Generate::generateSubautomatas_py(){
 	bool firstState = true;
+	int addTab;
 
 	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
             subListIterator != this->subautomataList.end(); subListIterator++ ) {
@@ -782,14 +784,12 @@ void Generate::generateSubautomatas_py(){
 			this->fs << this->mapTab[T_TWO] << line << std::endl;
 		this->fs << std::endl;
 
-
-
 		this->fs << this->mapTab[T_TWO] << "while(True):" << std::endl;
 		this->fs << this->mapTab[T_THREE] << "totala = time.time() * 1000000" << std::endl;
 		this->fs << std::endl;
 
-		/* PRIMERO 1 NIVEL
 		if (id != 1) {
+			addTab = 1;
 			int idfather = subListIterator->getIdFather();
 
 			std::list<SubAutomata>::iterator subFatherListIterator = this->subautomataList.begin();
@@ -803,30 +803,40 @@ void Generate::generateSubautomatas_py(){
 					(nodeFatherListIterator != nodeFatherList.end()) )
 				nodeFatherListIterator++;
 
-			this->fs << "\t\tif(sub_" << idfather << " == \"" << nodeFatherListIterator->getName() << "\"):" << std::endl;
-			this->fs << "\t\t\tif (";
+			this->fs << mapTab[T_THREE];
+			this->fs << "if(self.sub" << idfather << " == \"" << nodeFatherListIterator->getName() << "\"):" << std::endl;
+			this->fs << mapTab[T_FOUR] << "if (";
 
 			int count = 0;
 			for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
 					nodeListIterator != nodeList.end(); nodeListIterator++ ) {
-				this->fs << " sub_" << id << " == \"" << nodeListIterator->getName() + "_ghost\"";
+				this->fs << "(self.sub" << id << " == \"" << nodeListIterator->getName() + "_ghost\")";
 				count++;
 				if (count != countNodes) {
 					this->fs << " or ";
 				}
 			}
 			this->fs << "):" << std::endl;
+			
+			this->fs << mapTab[T_FIVE];
+			this->fs << "ghostStateIndex = self.StatesSub" << id << ".index(self.sub" << id << ")" << std::endl;
+			this->fs << mapTab[T_FIVE];
+			this->fs << "self.sub" << id << " = self.StatesSub" << id << "[ghostStateIndex - 1]" << std::endl;
+			this->fs << mapTab[T_FIVE];
+			this->fs << "t_ini = time.time()" << std::endl << std::endl;;
+		}else{
+			addTab = 0;
+		}
 
-			this->fs << "\t\t\t\tsub_" << id << " = (State_Sub_" << id << ")(sub_" << id << " - 1);" << std::endl;
-			this->fs << "\t\t\t\tt_ini = time(NULL);" << std::endl;
-			this->fs << "\t\t\t}" << std::endl;
-		}*/
 
-		this->fs << this->mapTab[T_THREE] << "# Evaluation if" << std::endl;
+		firstState = true;
+		this->fs << this->mapTab[(TabEnum)(T_THREE + addTab)];
+		this->fs << "# Evaluation if" << std::endl;
+		
 		for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
 				nodeListIterator != nodeList.end(); nodeListIterator++ ) {
 			int idNode = nodeListIterator->getId();
-			this->fs << this->mapTab[T_THREE];
+			this->fs << this->mapTab[(TabEnum)(T_THREE + addTab)];
 
 			if(transList.begin() != transList.end()){
 				if(firstState){
@@ -843,38 +853,42 @@ void Generate::generateSubautomatas_py(){
 					int idDestiny = transListIterator->getIdDestiny();
 					int idOrigin = transListIterator->getIdOrigin();
 					if (transListIterator->getType().compare("condition") == 0) {
-						this->fs << this->mapTab[T_FOUR];
+
+						this->fs << this->mapTab[(TabEnum)(T_FOUR + addTab)];						
 						this->fs << "if(" << transListIterator->getCodeTrans().c_str() << "):" << std::endl;
-						this->fs << this->mapTab[T_FIVE];
+						this->fs << this->mapTab[(TabEnum)(T_FIVE + addTab)];
 						this->fs << "self.sub" << id << " = \"" << subListIterator->getNodeName(idDestiny) << "\"" << std::endl;
 						std::istringstream f(transListIterator->getCode());
 						std::string line;
 						while (std::getline(f, line))
-							this->fs << this->mapTab[T_FIVE] << line << std::endl;
-							//TODO AÑADIR CAMBIAR NODOS ACTIVOS
+							this->fs << this->mapTab[(TabEnum)(T_FIVE + addTab)];
+							this->fs << line << std::endl;
+							//TODO AÑADIR CAMBIAR NODOS ACTIVOS (AUTOMATAGUI)
 					} else {
-						this->fs << this->mapTab[T_FOUR] << "if(not t_activated):" << std::endl;
-						this->fs << this->mapTab[T_FIVE] << "t_ini = time.time()" << std::endl;
-						this->fs << this->mapTab[T_FIVE] << "t_activated = True" << std::endl;
-						this->fs << this->mapTab[T_FOUR] << "else:" << std::endl;
-						this->fs << this->mapTab[T_FIVE] << "t_fin = time.time()" << std::endl;
-						this->fs << this->mapTab[T_FIVE] << "secs = t_fin - t_ini" << std::endl;
-						this->fs << this->mapTab[T_FIVE];
+						this->fs << this->mapTab[(TabEnum)(T_FOUR + addTab)] << "if(not t_activated):" << std::endl;
+						this->fs << this->mapTab[(TabEnum)(T_FIVE + addTab)] << "t_ini = time.time()" << std::endl;
+						this->fs << this->mapTab[(TabEnum)(T_FIVE + addTab)] << "t_activated = True" << std::endl;
+						this->fs << this->mapTab[(TabEnum)(T_FOUR + addTab)] << "else:" << std::endl;
+						this->fs << this->mapTab[(TabEnum)(T_FIVE + addTab)] << "t_fin = time.time()" << std::endl;
+						this->fs << this->mapTab[(TabEnum)(T_FIVE + addTab)] << "secs = t_fin - t_ini" << std::endl;
+						this->fs << this->mapTab[(TabEnum)(T_FIVE + addTab)];
 						if (id == 1) {
 							float ms = atof(transListIterator->getCodeTrans().c_str());
 							this->fs << "if(secs > " << (ms / 1000.0) << "):" << std::endl;
 						} else
 							this->fs << "if(secs > t_" << subListIterator->getNodeName(idNode) << "_max):" << std::endl;
-						this->fs << this->mapTab[T_SIX];
+						this->fs << this->mapTab[(TabEnum)(T_SIX + addTab)];
 						this->fs << "self.sub" << id << " = \"" << subListIterator->getNodeName(idDestiny) << "\"" << std::endl;
-						this->fs << this->mapTab[T_SIX] << "t_activated = False" << std::endl;
+						this->fs << this->mapTab[(TabEnum)(T_SIX + addTab)] << "t_activated = False" << std::endl;
 						std::istringstream f(transListIterator->getCode());
 						std::string line;
 						while (std::getline(f, line))
-							this->fs << this->mapTab[T_SIX] << line << std::endl;
-						//TODO NOTIFYSETASACTIVE
-						//if (id != 1)
-						//	this->fs << "\t\t\t\t\t\tt_" << subListIterator->getNodeName(idNode) << "_max = " << mapNameTime[subListIterator->getNodeName(idNode)] << ";" << std::endl;
+							this->fs << this->mapTab[(TabEnum)(T_SIX + addTab)] << line << std::endl;
+						//TODO NOTIFYSETASACTIVE (AUTOMATAGUI)
+						if (id != 1){
+							this->fs << this->mapTab[(TabEnum)(T_SIX + addTab)];
+							this->fs << "t_" << subListIterator->getNodeName(idNode) << "_max = " << mapNameTime[subListIterator->getNodeName(idNode)] << std::endl;
+						}
 					}
 					this->fs << std::endl;
 				}
@@ -884,41 +898,55 @@ void Generate::generateSubautomatas_py(){
 		this->fs << std::endl;
 
 		firstState = true;
-		this->fs << this->mapTab[T_THREE] << "# Actuation if" << std::endl;
+		this->fs << this->mapTab[(TabEnum)(T_THREE + addTab)] << "# Actuation if" << std::endl;
 		for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
 				nodeListIterator != nodeList.end(); nodeListIterator++ ) {
 
-			this->fs << this->mapTab[T_THREE];
-			if(firstState){
-				this->fs << "if(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
-				firstState = false;	
-			}else{
-				this->fs << "elif(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
-			}
-
 			std::istringstream f(nodeListIterator->getCode());
+			std::stringstream code;
+			code << "";
+
 			std::string line;
 			while (std::getline(f, line))
-				this->fs << this->mapTab[T_FOUR] << line << std::endl;
+				code << this->mapTab[(TabEnum)(T_FOUR + addTab)] << line << std::endl;
+
+			if(code.str().compare("") != 0){
+				this->fs << this->mapTab[(TabEnum)(T_THREE + addTab)];
+				if(firstState){
+					this->fs << "if(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+					firstState = false;	
+				}else{
+					this->fs << "elif(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+				}
+				this->fs << code.str();
+			}
 			this->fs.flush();
+			
 		}
-		/*if (id != 1) {
-			this->fs << "\t\t} else {" << std::endl;
-			this->fs << "\t\t\tswitch (sub_" << id << ") {" << std::endl;
+		if (id != 1) {
+
+			firstState = true;
 			for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
 					nodeListIterator != nodeList.end(); nodeListIterator++ ) {
+				
+				this->fs << this->mapTab[(TabEnum)(T_FOUR + addTab)];
 				if (mapNameTime.find(nodeListIterator->getName()) != mapNameTime.end()) {
-					this->fs << "\t\t\t\tcase " << nodeListIterator->getName() << ":" << std::endl;
-					this->fs << "\t\t\t\t\tt_" << nodeListIterator->getName() << "_max = " << mapNameTime[nodeListIterator->getName()] << " - difftime(t_fin, t_ini);" << std::endl;
-					this->fs << "\t\t\t\t\tsub_" << id << " = (State_Sub_" << id << ")(sub_" << id << " + 1);" << std::endl;
-					this->fs << "\t\t\t\t\tbreak;" << std::endl;
+					if (firstState){
+						this->fs << this->mapTab[T_THREE] << "else:" << std::endl;
+						this->fs << this->mapTab[T_FOUR] << "if(sub" << id << "):" << std::endl;
+						this->fs << "if(sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+					}else{
+						this->fs << "elif(sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+					}
+					this->fs << this->mapTab[T_FOUR];
+					this->fs << "t_" << nodeListIterator->getName() << "_max = " << mapNameTime[nodeListIterator->getName()] << " - (t_fin - t_ini)" << std::endl;
+					this->fs << this->mapTab[T_FOUR];
+					this->fs << "ghostStateIndex = self.StateSub" << id << ".index(self.sub" << id << ") + 1" << std::endl;					
+					this->fs << this->mapTab[T_FOUR];
+					this->fs << "sub" << id << " = self.StatesSub" << id << "[ghostStateIndex]" << std::endl;
 				} 
 			}
-			this->fs << "\t\t\t\tdefault:" << std::endl;
-			this->fs << "\t\t\t\t\tbreak;" << std::endl;
-			this->fs << "\t\t\t}" << std::endl;
-			this->fs << "\t\t}" << std::endl;
-		}*/
+		}
 		this->fs << std::endl;
 
 		this->fs << this->mapTab[T_THREE] << "totalb = time.time() * 1000000" << std::endl;

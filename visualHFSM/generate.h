@@ -39,7 +39,8 @@
     T_THREE,
     T_FOUR,
     T_FIVE,
-    T_SIX
+    T_SIX,
+    T_SEVEN
 } TabEnum;
 
 class Generate {
