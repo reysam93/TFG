@@ -47,10 +47,16 @@ class Automata():
 		]
 
 		self.sub1 = "TakeOff"
+		self.run1 = True
 		self.sub2 = "TakingOff_ghost"
+		self.run2 = True
 		self.sub3 = "GoingFront_ghost"
+		self.run3 = True
 
-	
+	def shutDown(self):
+		self.run1 = False
+		self.run2 = False
+		self.run3 = False
 
 	def subautomata1(self):
 		run = True
@@ -91,7 +97,6 @@ class Automata():
 					self.sub1 = "Finish"
 
 
-			elif(self.sub1 == "Finish"):
 
 			# Actuation if
 			if(self.sub1 == "GoFront"):
@@ -154,7 +159,6 @@ class Automata():
 							t_activated = False
 							t_Stabilizing_max = 2.5
 
-				elif(self.sub2 == "ENDSUBAUTOMATA"):
 
 				# Actuation if
 				if(self.sub2 == "TakingOff"):
@@ -169,7 +173,6 @@ class Automata():
 					if(not self.endTakeOff):
 						print "TakeOff ended"
 					self.endTakeOff = True
-					run = False
 			else:
 				if(sub2):
 					if(sub2 == "Stabilizing"):
@@ -232,7 +235,6 @@ class Automata():
 							t_activated = False
 							t_Stabilizing_max = 3
 
-				elif(self.sub3 == "ENDSUBAUTOMATA"):
 
 				# Actuation if
 				if(self.sub3 == "GoingFront"):
@@ -245,16 +247,13 @@ class Automata():
 					self.lock.release()
 				elif(self.sub3 == "ENDSUBAUTOMATA"):
 					self.endGoFront = True
-					run = False
 			else:
 				if(sub3):
 					if(sub3 == "GoingFront"):
 						t_GoingFront_max = 4 - (t_fin - t_ini)
 						ghostStateIndex = self.StateSub3.index(self.sub3) + 1
 						sub3 = self.StatesSub3[ghostStateIndex]
-			else:
-				if(sub3):
-					if(sub3 == "Stabilizing"):
+					elif(sub3 == "Stabilizing"):
 						t_Stabilizing_max = 3 - (t_fin - t_ini)
 						ghostStateIndex = self.StateSub3.index(self.sub3) + 1
 						sub3 = self.StatesSub3[ghostStateIndex]

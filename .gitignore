@@ -2,3 +2,5 @@ visualHFSM/CMakeFiles/
 visualHFSM/build/
 *.cmake
 examples/build/
+examples/automata
+examples/CMakeLists.txt

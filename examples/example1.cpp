@@ -80,6 +80,7 @@ bool displayAutomataGui;
 bool run1 = true;
 bool run2 = true;
 bool run3 = true;
+
 State_Sub_1 sub_1 = square;
 State_Sub_2 sub_2 = go_up_ghost;
 State_Sub_3 sub_3 = wait1_ghost;
@@ -91,6 +92,7 @@ void shutDown(){
 	run1 = false;
 	run2 = false;
 	run3 = false;
+	automatagui->close();
 }
 
 
