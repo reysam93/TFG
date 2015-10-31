@@ -181,7 +181,7 @@ void Generate::generateVariables () {
 	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
             subListIterator != this->subautomataList.end(); subListIterator++ )
 		this->fs << "bool run" << subListIterator->getId() << " = true;" << std::endl;
-	this->fs < std::endl;
+	this->fs << std::endl;
 
 	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
             subListIterator != this->subautomataList.end(); subListIterator++ ) {
