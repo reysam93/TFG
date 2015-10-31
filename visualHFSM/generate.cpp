@@ -114,7 +114,7 @@ void Generate::generateHeaders () {
 void Generate::generateGenericHeaders () {
 	this->fs << "#include <Ice/Ice.h>" << std::endl;
 	this->fs << "#include <IceUtil/IceUtil.h>" << std::endl;
-	this->fs << "#include \"../visualHFSM/automatagui.h\"" << std::endl;
+	this->fs << "#include <jderobot/visualHFSM/automatagui.h>" << std::endl;
 	this->fs << std::endl;
 	for ( std::list<std::string>::iterator listLibsIterator = this->listLibraries.begin();
 			listLibsIterator != this->listLibraries.end(); listLibsIterator++ )
@@ -177,6 +177,12 @@ void Generate::generateVariables () {
 	this->fs << "AutomataGui *automatagui;" << std::endl;
 	this->fs << "bool displayAutomataGui;" << std::endl;
 	this->fs << std::endl;
+
+	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
+            subListIterator != this->subautomataList.end(); subListIterator++ )
+		this->fs << "bool run" << subListIterator->getId() << " = true;" << std::endl;
+	this->fs < std::endl;
+
 	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
             subListIterator != this->subautomataList.end(); subListIterator++ ) {
 		int id = subListIterator->getId();
@@ -204,8 +210,20 @@ void Generate::generateVariables () {
 	this->fs << std::endl;
 	this->fs.flush();
 }
+
+void Generate::generateShutDown(){
+	this->fs << "void shutDown(){" << std::endl;
+	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
+            subListIterator != this->subautomataList.end(); subListIterator++ )
+		this->fs << "\trun" << subListIterator->getId() << " = false;" << std::endl;
+	this->fs << "\tautomatagui->close();" << std::endl;
+	this->fs << "}" << std::endl;
+	this->fs << std::endl;
+	this->fs.flush();
+}
 	
 void Generate::generateFunctions () {
+	this->generateShutDown();
 	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
             subListIterator != this->subautomataList.end(); subListIterator++ ) {		
 		this->fs << subListIterator->getFunctions() << std::endl;
@@ -326,7 +344,7 @@ void Generate::generateSubautomatas () {
 			this->fs << "\t" << line << std::endl;
 		this->fs << std::endl;
 
-		this->fs << "\twhile (true) {" << std::endl;
+		this->fs << "\twhile (run" << id << ") {" << std::endl;
 		this->fs << "\t\tgettimeofday(&a, NULL);" << std::endl;
 		this->fs << "\t\ttotala = a.tv_sec * 1000000 + a.tv_usec;" << std::endl;
 		this->fs << std::endl;
@@ -673,6 +691,7 @@ void Generate::generateAutomataClass_py(){
 	this->fs << "class Automata():" << std::endl;
 	this->fs << std::endl;
 	this->generateAutomataInit_py();
+	this->generateShutDown_py();
 	this->generateSubautomatas_py();
 	this->generateConnectToProxys_py();
 	this->generateDestroyIc_py();
@@ -731,6 +750,21 @@ void Generate::generateVariables_py(){
 			nameState = std::string(nodeListIterator->getName());
 		this->fs << this->mapTab[T_TWO];
 		this->fs << "self.sub" << id << " = \"" << nameState.c_str() << "\"" << std::endl;
+		this->fs << this->mapTab[T_TWO];
+		this->fs << "self.run" << id << " = True" << std::endl; 
+	}
+	this->fs << std::endl;
+	this->fs.flush();
+}
+
+void Generate::generateShutDown_py(){
+	this->fs << this->mapTab[T_ONE] << "def shutDown(self):" << std::endl;
+	int id;
+	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
+            subListIterator != this->subautomataList.end(); subListIterator++ ){
+		id = subListIterator->getId();
+		this->fs << this->mapTab[T_TWO];
+		this->fs << "self.run" << id << " = False" << std::endl;
 	}
 	this->fs << std::endl;
 	this->fs.flush();
@@ -745,7 +779,8 @@ void Generate::generateSubautomatas_py(){
        	int id = subListIterator->getId();
        	this->fs << this->mapTab[T_ONE];	
 		this->fs << "def subautomata" << id << "(self):" << std::endl;
-		
+
+		this->fs << this->mapTab[T_TWO] << "run = True" << std::endl;		
 		this->fs << this->mapTab[T_TWO] << "cycle = " << subListIterator->getTime() << std::endl;
 		this->fs << this->mapTab[T_TWO] << "t_activated = False" << std::endl;
 		this->fs << std::endl;
@@ -784,7 +819,7 @@ void Generate::generateSubautomatas_py(){
 			this->fs << this->mapTab[T_TWO] << line << std::endl;
 		this->fs << std::endl;
 
-		this->fs << this->mapTab[T_TWO] << "while(True):" << std::endl;
+		this->fs << this->mapTab[T_TWO] << "while(run):" << std::endl;
 		this->fs << this->mapTab[T_THREE] << "totala = time.time() * 1000000" << std::endl;
 		this->fs << std::endl;
 
@@ -838,17 +873,23 @@ void Generate::generateSubautomatas_py(){
 			int idNode = nodeListIterator->getId();
 			this->fs << this->mapTab[(TabEnum)(T_THREE + addTab)];
 
-			if(transList.begin() != transList.end()){
+			/*if(transList.begin() != transList.end()){
 				if(firstState){
 					this->fs << "if(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
 					firstState = false;
 				}else {
 					this->fs << "elif(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
 				}
-			}	
+			}	*/
 			
 			for ( std::list<Transition>::iterator transListIterator = transList.begin();
 					transListIterator != transList.end(); transListIterator++ ) {
+				if(firstState){
+					this->fs << "if(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+					firstState = false;
+				}else {
+					this->fs << "elif(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+				}
 				if (transListIterator->getIdOrigin() == idNode) {
 					int idDestiny = transListIterator->getIdDestiny();
 					int idOrigin = transListIterator->getIdOrigin();
@@ -929,20 +970,21 @@ void Generate::generateSubautomatas_py(){
 			for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
 					nodeListIterator != nodeList.end(); nodeListIterator++ ) {
 				
-				this->fs << this->mapTab[(TabEnum)(T_FOUR + addTab)];
 				if (mapNameTime.find(nodeListIterator->getName()) != mapNameTime.end()) {
 					if (firstState){
 						this->fs << this->mapTab[T_THREE] << "else:" << std::endl;
 						this->fs << this->mapTab[T_FOUR] << "if(sub" << id << "):" << std::endl;
+						this->fs << this->mapTab[T_FIVE];
 						this->fs << "if(sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
 					}else{
+						this->fs << this->mapTab[T_FIVE];
 						this->fs << "elif(sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
 					}
-					this->fs << this->mapTab[T_FOUR];
+					this->fs << this->mapTab[T_SIX];
 					this->fs << "t_" << nodeListIterator->getName() << "_max = " << mapNameTime[nodeListIterator->getName()] << " - (t_fin - t_ini)" << std::endl;
-					this->fs << this->mapTab[T_FOUR];
+					this->fs << this->mapTab[T_SIX];
 					this->fs << "ghostStateIndex = self.StateSub" << id << ".index(self.sub" << id << ") + 1" << std::endl;					
-					this->fs << this->mapTab[T_FOUR];
+					this->fs << this->mapTab[T_SIX];
 					this->fs << "sub" << id << " = self.StatesSub" << id << "[ghostStateIndex]" << std::endl;
 				} 
 			}

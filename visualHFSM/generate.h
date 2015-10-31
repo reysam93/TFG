@@ -72,6 +72,7 @@ private:
 	void generateSpecificHeaders ();
 	void generateEnums ();
 	void generateVariables ();
+	void generateShutDown();
 	void generateFunctions ();
 	void generateCreateGuiSubautomataList();
 	void generateSubautomatas ();
@@ -88,6 +89,7 @@ private:
 	void generateAutomataInit_py();
 	void generateEnums_py();
 	void generateVariables_py();
+	void generateShutDown_py();
 	void generateSubautomatas_py();
 	void generateConnectToProxys_py();
 	void generateDestroyIc_py();
