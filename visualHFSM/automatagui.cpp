@@ -19,7 +19,13 @@ int AutomataGui::init(){
 	//CREATE REFBUILDER
 	this->refBuilder = Gtk::Builder::create();
 	try{
-    	refBuilder->add_from_file("../visualHFSM/automatagui.glade");
+		if(access("/usr/local/share/jderobot/glade/visualHFSM/automatagui.glade", F_OK) == 0){
+			std::cerr << "/usr/local/share/jderobot/glade/visualHFSM/automatagui.glade" << std::endl;
+			refBuilder->add_from_file("/usr/local/share/jderobot/glade/visualHFSM/automatagui.glade");
+		}else{
+			refBuilder->add_from_file("./automatagui.glade");
+			std::cerr << "otro sitio" << std::endl;
+		}
 	}catch (const Glib::FileError& ex){
 		std::cerr << "FileError: " << ex.what() << std::endl;
 	  	return -1;
@@ -95,6 +101,11 @@ void AutomataGui::run(){
 	std::cerr << "running gui in PID:" << getpid() << std::endl;
 	this->app->run(*guiDialog);
   	delete guiDialog;
+}
+
+
+void AutomataGui::close(){
+	this->app->quit();
 }
 
 

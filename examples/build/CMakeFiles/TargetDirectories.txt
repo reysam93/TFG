@@ -1,1 +1,0 @@
-/home/samuel/University/TFG/examples/build/CMakeFiles/automata.dir

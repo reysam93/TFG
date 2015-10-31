@@ -8,14 +8,13 @@
 #include <queue>
 #include <gtkmm-3.0/gtkmm.h>
 
-#include "../visualHFSM/guisubautomata.h"
+#include "guisubautomata.h"
 
 
 typedef enum ItemType {
 	NONE,
 	STATE,
 } ItemType;
-
 
 //Class definition
 class AutomataGui {
@@ -30,8 +29,10 @@ public:
 	void loadGuiSubautomata();
 	void run();
 	void notifySetNodeAsActive(std::string nodeName);
+	void close();
 
 private:
+
 	Glib::RefPtr<Gtk::Builder> refBuilder;
 	Gtk::Dialog *guiDialog;
 	Glib::RefPtr<Gtk::Application> app;
