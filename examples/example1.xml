@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VisualHFSM><SubAutomata id="1" idFather="0"><state initial="true" id="1"><posx>134</posx><posy>347</posy><name>square</name><idSubautomataSon>2</idSubautomataSon><code></code></state><state initial="false" id="2"><posx>534</posx><posy>349</posy><name>wait</name><idSubautomataSon>3</idSubautomataSon><code>
+<VisualHFSM><SubAutomata id="1" idFather="0"><state initial="true" id="1"><posx>134</posx><posy>346</posy><name>square</name><idSubautomataSon>2</idSubautomataSon><code></code></state><state initial="false" id="2"><posx>534</posx><posy>349</posy><name>wait</name><idSubautomataSon>3</idSubautomataSon><code>
 
 Motorsprx-&gt;setV(0.0);
 Motorsprx-&gt;setW(0.0);</code></state><transition id="1"><posx>337</posx><posy>230</posy><origin>1</origin><destiny>2</destiny><transcode></transcode><name>transition</name><trans type="time">20000</trans></transition><transition id="4"><posx>335</posx><posy>457</posy><origin>2</origin><destiny>1</destiny><transcode></transcode><name>transition</name><trans type="time">5000</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><SubAutomata id="2" idFather="1"><state initial="true" id="5"><posx>168</posx><posy>559</posy><name>go_up</name><idSubautomataSon>0</idSubautomataSon><code>

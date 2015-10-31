@@ -1,6 +1,6 @@
 #include <Ice/Ice.h>
 #include <IceUtil/IceUtil.h>
-#include "../visualHFSM/automatagui.h"
+#include <jderobot/visualHFSM/automatagui.h>
 
 #include <iostream>
 
@@ -77,12 +77,21 @@ pthread_t thr_automatagui;
 AutomataGui *automatagui;
 bool displayAutomataGui;
 
+bool run1 = true;
+bool run2 = true;
+bool run3 = true;
 State_Sub_1 sub_1 = square;
 State_Sub_2 sub_2 = go_up_ghost;
 State_Sub_3 sub_3 = wait1_ghost;
 
 jderobot::EncodersPrx Encodersprx;
 jderobot::MotorsPrx Motorsprx;
+
+void shutDown(){
+	run1 = false;
+	run2 = false;
+	run3 = false;
+}
 
 
 
@@ -95,7 +104,7 @@ std::list<GuiSubautomata> createGuiSubAutomataList(){
 
 	GuiSubautomata* guiSubautomata1 = new GuiSubautomata(1, 0);
 
-	guiSubautomata1->newGuiNode(1, 2, 134, 347);
+	guiSubautomata1->newGuiNode(1, 2, 134, 346);
 	guiSubautomata1->setIsInitialLastGuiNode(1);
 	guiSubautomata1->setNameLastGuiNode("square");
 
@@ -103,13 +112,13 @@ std::list<GuiSubautomata> createGuiSubAutomataList(){
 	guiSubautomata1->setIsInitialLastGuiNode(0);
 	guiSubautomata1->setNameLastGuiNode("wait");
 
-	Point* origin11 = new Point(134, 347);
+	Point* origin11 = new Point(134, 346);
 	Point* destiny11 = new Point(534, 349);
 	Point* midPoint11 = new Point(337, 230);
 	guiSubautomata1->newGuiTransition(*origin11, *destiny11, *midPoint11, 1, 1, 2);
 
 	Point* origin14 = new Point(534, 349);
-	Point* destiny14 = new Point(134, 347);
+	Point* destiny14 = new Point(134, 346);
 	Point* midPoint14 = new Point(335, 457);
 	guiSubautomata1->newGuiTransition(*origin14, *destiny14, *midPoint14, 4, 2, 1);
 
@@ -227,7 +236,7 @@ void* subautomata_1 ( void* ) {
 	bool t_activated;
 
 
-	while (true) {
+	while (run1) {
 		gettimeofday(&a, NULL);
 		totala = a.tv_sec * 1000000 + a.tv_usec;
 
@@ -243,8 +252,7 @@ void* subautomata_1 ( void* ) {
 					if (secs > (double) 20) {
 						sub_1 = wait;
 						t_activated = false;
-						automatagui->setNodeAsActive("square", false);
-						automatagui->setNodeAsActive("wait", true);
+						automatagui->notifySetNodeAsActive("wait");
 					}
 				}
 
@@ -260,8 +268,7 @@ void* subautomata_1 ( void* ) {
 					if (secs > (double) 5) {
 						sub_1 = square;
 						t_activated = false;
-						automatagui->setNodeAsActive("wait", false);
-						automatagui->setNodeAsActive("square", true);
+						automatagui->notifySetNodeAsActive("square");
 					}
 				}
 
@@ -315,7 +322,7 @@ void* subautomata_2 ( void* ) {
 	float thetapos = 0;
 	float angle = 0;
 
-	while (true) {
+	while (run2) {
 		gettimeofday(&a, NULL);
 		totala = a.tv_sec * 1000000 + a.tv_usec;
 
@@ -336,8 +343,7 @@ void* subautomata_2 ( void* ) {
 					if (secs > (double) t_go_up_max) {
 						sub_2 = turn_rigth;
 						t_activated = false;
-						automatagui->setNodeAsActive("go_up", false);
-						automatagui->setNodeAsActive("turn_rigth", true);
+						automatagui->notifySetNodeAsActive("turn_rigth");
 						t_go_up_max = 2;
 					}
 				}
@@ -347,8 +353,7 @@ void* subautomata_2 ( void* ) {
 			case turn_rigth: {
 				if (angle > 90) {
 					sub_2 = go_rigth;
-					automatagui->setNodeAsActive("turn_rigth", false);
-					automatagui->setNodeAsActive("go_rigth", true);
+					automatagui->notifySetNodeAsActive("go_rigth");
 				}
 
 				break;
@@ -363,8 +368,7 @@ void* subautomata_2 ( void* ) {
 					if (secs > (double) t_go_rigth_max) {
 						sub_2 = turn_down;
 						t_activated = false;
-						automatagui->setNodeAsActive("go_rigth", false);
-						automatagui->setNodeAsActive("turn_down", true);
+						automatagui->notifySetNodeAsActive("turn_down");
 						t_go_rigth_max = 2;
 					}
 				}
@@ -374,8 +378,7 @@ void* subautomata_2 ( void* ) {
 			case turn_down: {
 				if (angle > 90) {
 					sub_2 = go_down;
-					automatagui->setNodeAsActive("turn_down", false);
-					automatagui->setNodeAsActive("go_down", true);
+					automatagui->notifySetNodeAsActive("go_down");
 				}
 
 				break;
@@ -390,8 +393,7 @@ void* subautomata_2 ( void* ) {
 					if (secs > (double) t_go_down_max) {
 						sub_2 = turn_left;
 						t_activated = false;
-						automatagui->setNodeAsActive("go_down", false);
-						automatagui->setNodeAsActive("turn_left", true);
+						automatagui->notifySetNodeAsActive("turn_left");
 						t_go_down_max = 2;
 					}
 				}
@@ -401,8 +403,7 @@ void* subautomata_2 ( void* ) {
 			case turn_left: {
 				if (angle > 90) {
 					sub_2 = go_left;
-					automatagui->setNodeAsActive("turn_left", false);
-					automatagui->setNodeAsActive("go_left", true);
+					automatagui->notifySetNodeAsActive("go_left");
 				}
 
 				break;
@@ -417,8 +418,7 @@ void* subautomata_2 ( void* ) {
 					if (secs > (double) t_go_left_max) {
 						sub_2 = turn_up;
 						t_activated = false;
-						automatagui->setNodeAsActive("go_left", false);
-						automatagui->setNodeAsActive("turn_up", true);
+						automatagui->notifySetNodeAsActive("turn_up");
 						t_go_left_max = 2;
 					}
 				}
@@ -428,8 +428,7 @@ void* subautomata_2 ( void* ) {
 			case turn_up: {
 				if (angle > 90) {
 					sub_2 = go_up;
-					automatagui->setNodeAsActive("turn_up", false);
-					automatagui->setNodeAsActive("go_up", true);
+					automatagui->notifySetNodeAsActive("go_up");
 				}
 
 				break;
@@ -589,7 +588,7 @@ void* subautomata_3 ( void* ) {
 	float t_wait1_max = 2;
 	float t_wait2_max = 2.1;
 
-	while (true) {
+	while (run3) {
 		gettimeofday(&a, NULL);
 		totala = a.tv_sec * 1000000 + a.tv_usec;
 
@@ -610,8 +609,7 @@ void* subautomata_3 ( void* ) {
 					if (secs > (double) t_wait1_max) {
 						sub_3 = wait2;
 						t_activated = false;
-						automatagui->setNodeAsActive("wait1", false);
-						automatagui->setNodeAsActive("wait2", true);
+						automatagui->notifySetNodeAsActive("wait2");
 						t_wait1_max = 2;
 					}
 				}
@@ -628,8 +626,7 @@ void* subautomata_3 ( void* ) {
 					if (secs > (double) t_wait2_max) {
 						sub_3 = wait1;
 						t_activated = false;
-						automatagui->setNodeAsActive("wait2", false);
-						automatagui->setNodeAsActive("wait1", true);
+						automatagui->notifySetNodeAsActive("wait1");
 						t_wait2_max = 2.1;
 					}
 				}

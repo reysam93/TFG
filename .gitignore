@@ -1,0 +1,4 @@
+visualHFSM/CMakeFiles/
+visualHFSM/build/
+*.cmake
+examples/build/
