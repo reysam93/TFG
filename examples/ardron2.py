@@ -174,11 +174,10 @@ class Automata():
 						print "TakeOff ended"
 					self.endTakeOff = True
 			else:
-				if(sub2):
-					if(sub2 == "Stabilizing"):
-						t_Stabilizing_max = 2.5 - (t_fin - t_ini)
-						ghostStateIndex = self.StateSub2.index(self.sub2) + 1
-						sub2 = self.StatesSub2[ghostStateIndex]
+				if(self.sub2 == "Stabilizing"):
+					t_Stabilizing_max = 2.5 - (t_fin - t_ini)
+					ghostStateIndex = self.StateSub2.index(self.sub2) + 1
+					sub2 = self.StatesSub2[ghostStateIndex]
 
 			totalb = time.time() * 1000000
 			msecs = (totalb - totala) / 1000;
@@ -248,15 +247,14 @@ class Automata():
 				elif(self.sub3 == "ENDSUBAUTOMATA"):
 					self.endGoFront = True
 			else:
-				if(sub3):
-					if(sub3 == "GoingFront"):
-						t_GoingFront_max = 4 - (t_fin - t_ini)
-						ghostStateIndex = self.StateSub3.index(self.sub3) + 1
-						sub3 = self.StatesSub3[ghostStateIndex]
-					elif(sub3 == "Stabilizing"):
-						t_Stabilizing_max = 3 - (t_fin - t_ini)
-						ghostStateIndex = self.StateSub3.index(self.sub3) + 1
-						sub3 = self.StatesSub3[ghostStateIndex]
+				if(self.sub3 == "GoingFront"):
+					t_GoingFront_max = 4 - (t_fin - t_ini)
+					ghostStateIndex = self.StateSub3.index(self.sub3) + 1
+					sub3 = self.StatesSub3[ghostStateIndex]
+				elif(self.sub3 == "Stabilizing"):
+					t_Stabilizing_max = 3 - (t_fin - t_ini)
+					ghostStateIndex = self.StateSub3.index(self.sub3) + 1
+					sub3 = self.StatesSub3[ghostStateIndex]
 
 			totalb = time.time() * 1000000
 			msecs = (totalb - totala) / 1000;
