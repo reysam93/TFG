@@ -665,13 +665,14 @@ void Generate::generateHeaders_py (){
 }
 
 void Generate::generateGenericHeaders_py(){
-	this->fs << "#!/usr/bin/python" << std::endl;
-	this->fs << "# -*- coding: utf-8 -*-" << std::endl;
-	this->fs << std::endl;
-	this->fs << "import Ice" << std::endl;
-	this->fs << "import sys, signal" << std::endl;
-	this->fs << "import traceback, threading, time" << std::endl;
-	this->fs << std::endl;
+	this-> fs << 
+"#!/usr/bin/python\n\
+# -*- coding: utf-8 -*-\n\n\
+import Ice\n\
+import sys, signal\n\
+import traceback, threading, time\n\
+import automatagui\n\n";
+
 	for ( std::list<std::string>::iterator listLibsIterator = this->listLibraries.begin();
 			listLibsIterator != this->listLibraries.end(); listLibsIterator++ )
 		this->fs << "import " << *listLibsIterator << std::endl;
@@ -694,6 +695,7 @@ void Generate::generateAutomataClass_py(){
 	this->fs << std::endl;
 	this->generateAutomataInit_py();
 	this->generateShutDown_py();
+	this->generateRunGui_py();
 	this->generateSubautomatas_py();
 	this->generateConnectToProxys_py();
 	this->generateDestroyIc_py();
@@ -770,6 +772,12 @@ void Generate::generateShutDown_py(){
 	}
 	this->fs << std::endl;
 	this->fs.flush();
+}
+
+void Generate::generateRunGui_py(){
+	this->fs <<
+"	def runGui(self):\n\
+		print 'Hemos Iniciado la GUI'\n\n";
 }
 
 void Generate::generateSubautomatas_py(){
@@ -1036,15 +1044,21 @@ void Generate::generateDestroyIc_py(){
 }
 
 void Generate::generateStart_py(){
-	this->fs << this->mapTab[T_ONE] << "def start(self):" << std::endl;
+	this->fs <<
+"	def start(self):\n\
+		self.guiThread = threading.Thread(target=self.runGui)\n\
+		self.guiThread.start()\n\n"; 
+
+	boos::format fmt_threads(
+"	self.t%1% = threading.Thread(target=self.self.subautomata%1%)\n\
+	self.t%1%.start()\n");
+
 	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
             subListIterator != this->subautomataList.end(); subListIterator++ ) {
 		int id = subListIterator->getId();
-		this->fs << this->mapTab[T_TWO];
-		this->fs << "self.t" << id << " = threading.Thread(target=self.subautomata" << id << ")"<< std::endl;
-		this->fs << this->mapTab[T_TWO];
-		this->fs << "self.t" << id << ".start()" << std::endl;
+		this->fs << boost::str(fmt_threads % id);
 	}
+
 	this->fs << std::endl << std::endl;
 }
 

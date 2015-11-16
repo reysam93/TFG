@@ -90,6 +90,7 @@ private:
 	void generateEnums_py();
 	void generateVariables_py();
 	void generateShutDown_py();
+	void generateRunGui_py();
 	void generateSubautomatas_py();
 	void generateConnectToProxys_py();
 	void generateDestroyIc_py();
