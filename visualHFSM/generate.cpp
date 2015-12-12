@@ -671,7 +671,7 @@ void Generate::generateGenericHeaders_py(){
 import Ice\n\
 import sys, signal\n\
 import traceback, threading, time\n\
-import automatagui\n\n";
+from automatagui import AutomataGui, QtGui\n\n";
 
 	for ( std::list<std::string>::iterator listLibsIterator = this->listLibraries.begin();
 			listLibsIterator != this->listLibraries.end(); listLibsIterator++ )
@@ -694,6 +694,7 @@ void Generate::generateAutomataClass_py(){
 	this->fs << "class Automata():" << std::endl;
 	this->fs << std::endl;
 	this->generateAutomataInit_py();
+	this->generateCreateGuiSubautomataList_py();
 	this->generateShutDown_py();
 	this->generateRunGui_py();
 	this->generateSubautomatas_py();
@@ -704,8 +705,9 @@ void Generate::generateAutomataClass_py(){
 }
 
 void Generate::generateAutomataInit_py(){
-	this->fs << this->mapTab[T_ONE] << "def __init__(self):" << std::endl;
-	this->fs << this->mapTab[T_TWO] << "self.lock = threading.Lock()" << std::endl;
+	this->fs <<
+"	def __init__(self):\n\
+		self.lock = threading.Lock()" << std::endl;
 	this->generateEnums_py();
 	this->generateVariables_py();
 }
@@ -761,6 +763,67 @@ void Generate::generateVariables_py(){
 	this->fs.flush();
 }
 
+void Generate::generateCreateGuiSubautomataList_py(){
+	this->fs << 
+"	def createGuiSubAutomataList(self):\n\
+		guiSubautomataList = []\n" << std::endl;
+
+
+	boost::format fmt_newSubaut( /* %1%: subId %2%: idFather */
+"		# Creating subAutomata%1%\n\
+		guiSubautomata%1% = automatagui.GuiSubautomata(%1%,%2%)\n\n");
+	boost::format fmt_node(/* 1:subId 2:nodeId 3:sonId 4:x 5:y 6:isInit 7:nodeName*/
+"		guiSubautomata%1%.newGuiNode(%2%,%3%,%4%,%5%,%6%,%7%)\n");
+	boost::format fmt_trans(/*1:subId 2:transId 3:orX 4:orY 5:destX 
+							6:destY 7:midX 8:midY 9:idOrig 10:idDest*/
+"		orig%1%%2% = automatagui.Point(%3%,%4%)\n\
+		dest%1%%2% = automatagui.Point(%5%%6%)\n\
+		mid%1%%2% = automatagui.Point(%7%%8%)\n\
+		guiSubautomata%1%.newGuiTransition(orig%1%%2%, dest%1%%2%, mid%1%%2%, %2%, %9%, %10%)");
+
+	for (std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
+		subListIterator != this->subautomataList.end(); subListIterator++ ) {
+		int subId = subListIterator->getId();
+		int subIdFather = subListIterator->getIdFather();
+		this->fs << boost::str(fmt_newSubaut % subId % subIdFather);
+
+		std::list<Node> nodeList = subListIterator->getNodeList();
+		std::list<Node>::iterator nodeListIterator = nodeList.begin();
+		while (nodeListIterator != nodeList.end()){
+			int nodeId = nodeListIterator->getId();
+			int sonId = nodeListIterator->getIdSubautomataSon();
+			Point* point = subListIterator->getNodePoint(nodeId);
+			float x = point->getX();
+			float y = point->getY();
+			bool isInit = nodeListIterator->isInitial();
+			std::string nodeName = nodeListIterator->getName();
+			this->fs << boost::str(fmt_node %subId %nodeId %sonId %x %y %isInit %nodeName);
+			nodeListIterator++;
+		}
+		this->fs << std::endl;
+
+		while (transListIterator != transList.end()){
+        	int transId = transListIterator->getId();
+        	int idOrig = transListIterator->getIdOrigin();
+        	int idDest = transListIterator->getIdDestiny();
+        	Point* orig = subListIterator->getNodePoint(originId);
+        	Point* dest = subListIterator->getNodePoint(destinyId);
+        	Point* mid = subListIterator->getTransPoint(transId);
+        	this->fs << boost::str(fmt_trans %subId %transId %orig->getX() %orig->getY()
+        			%dest->getX() %dest->getY() %mid->getX() %mid->getY() %idOrig %idDest);
+        	this->fs << std::endl;
+			transListIterator++;
+		}
+		this->fs << std::endl;
+		this->fs << "\tguiSubautomataList.append(guiSubautomata" << subId << ");";
+        this->fs << std::endl << std::endl;
+	}
+	this->fs << std::endl;
+
+	this->fs << "\treturn guiSubautomataList;" << std::endl;
+	this->fs << std::endl;
+}
+
 void Generate::generateShutDown_py(){
 	this->fs << this->mapTab[T_ONE] << "def shutDown(self):" << std::endl;
 	int id;
@@ -777,7 +840,10 @@ void Generate::generateShutDown_py(){
 void Generate::generateRunGui_py(){
 	this->fs <<
 "	def runGui(self):\n\
-		print 'Hemos Iniciado la GUI'\n\n";
+		app = QtGui.QApplication(sys.argv)\n\
+		self.automataGui = AutomataGui()\n\
+		self.automataGui.show()\n\
+		app.exec_()\n\n";
 }
 
 void Generate::generateSubautomatas_py(){
@@ -1063,7 +1129,10 @@ void Generate::generateStart_py(){
 }
 
 void Generate::generaitJoin_py(){
-	this->fs << this->mapTab[T_ONE] << "def join(self):" << std::endl;
+	this->fs <<
+"	def join(self):\n\
+		self.guiThread.join()\n";
+
 	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
             subListIterator != this->subautomataList.end(); subListIterator++ ) {
 		int id = subListIterator->getId();
