@@ -9,15 +9,6 @@ class GuiSubautomata():
 		self.transList = []
 
 
-	#Setters
-
-	#Getters
-	def getId(self):
-		return self.id
-
-
-	def getIdFather(self):
-		return self.idFather
 
 	def newGuiNode(self, id, idSubSon, x, y, isInit, name):
 		gnode = GuiNode(id, idSubSon, x, y, isInit, name)

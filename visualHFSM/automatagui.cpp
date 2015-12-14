@@ -171,7 +171,6 @@ void AutomataGui::loadGuiSubautomata(){
 		std::list<GuiNode> nodeList = *(subListIterator->getListGuiNodes());
 		std::list<GuiNode>::iterator nodeListIterator = nodeList.begin();
 		while (nodeListIterator != nodeList.end()){
-			this->idGuiNode = nodeListIterator->getId();
 			if (nodeListIterator->itIsInitial())
 				currentGuiSubautomata->setActiveNode(nodeListIterator->getName());
 			if (this->isFirstActiveNode(&*nodeListIterator)){
@@ -190,8 +189,6 @@ void AutomataGui::loadGuiSubautomata(){
 		std::list<GuiTransition> transList = *(subListIterator->getListGuiTransitions());
 		std::list<GuiTransition>:: iterator transListIterator = transList.begin();
 		while (transListIterator != transList.end()){
-			int idOrigin = transListIterator->getIdOrigin();
-			int idDestiny = transListIterator->getIdDestiny();
 
 			this->create_new_transition(&(*transListIterator));
 			transListIterator++;

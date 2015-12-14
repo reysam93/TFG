@@ -28,7 +28,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <algorithm>
-
+#include <boost/format.hpp>
+ 
 #include "subautomata.h"
 #include "iceinterface.h"
 
@@ -87,6 +88,7 @@ private:
 	void generateSpecificHeaders_py();
 	void generateAutomataClass_py();
 	void generateAutomataInit_py();
+	void generateCreateGuiSubautomataList_py();
 	void generateEnums_py();
 	void generateVariables_py();
 	void generateShutDown_py();

@@ -1,17 +1,32 @@
+from PyQt4 import QtGui
+from PyQt4 import QtCore
+
+
+#CONST
+NODE_WIDTH = 40
+INIT_WIDTH = 30
+
+
 class GuiNode:
 	def __init__(self, id, idSubSon, x, y, isInit, name):
 		self.id = id
 		self.idSubautSon = idSubSon
-		self.x = x
-		self.y = y
+		self.x = x - NODE_WIDTH/2
+		self.y = y - NODE_WIDTH/2
 		self.isInit = isInit
 		self.name = name
-		#Creat it and draw it
 
+		#CREATE GUI ELEMENTS
+		self.pen = QtGui.QPen(QtGui.QColor("black"))
+		self.brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+		self.brush.setColor(QtGui.QColor("blue"))
 
-	#Getters
-	def getId(self):
-		return self.id
+		self.ellipse = QtGui.QGraphicsEllipseItem(self.x, self.y, 
+									NODE_WIDTH, NODE_WIDTH)
 
-	def getIdSubautomataSon(self):
-		return self.idSubautSon
+		self.text = QtGui.QGraphicsSimpleTextItem(self.name, self.ellipse)
+		self.text.setPos(self.x, self.y+NODE_WIDTH)
+
+		if self.isInit:
+			self.ellipseInit = QtGui.QGraphicsEllipseItem(self.x+5, self.y+5, 
+									INIT_WIDTH, INIT_WIDTH)

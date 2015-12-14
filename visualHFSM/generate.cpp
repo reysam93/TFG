@@ -765,20 +765,19 @@ void Generate::generateVariables_py(){
 
 void Generate::generateCreateGuiSubautomataList_py(){
 	this->fs << 
-"	def createGuiSubAutomataList(self):\n\
+"	def createAutomata(self):\n\
 		guiSubautomataList = []\n" << std::endl;
-
 
 	boost::format fmt_newSubaut( /* %1%: subId %2%: idFather */
 "		# Creating subAutomata%1%\n\
 		guiSubautomata%1% = automatagui.GuiSubautomata(%1%,%2%)\n\n");
 	boost::format fmt_node(/* 1:subId 2:nodeId 3:sonId 4:x 5:y 6:isInit 7:nodeName*/
-"		guiSubautomata%1%.newGuiNode(%2%,%3%,%4%,%5%,%6%,%7%)\n");
+"		guiSubautomata%1%.newGuiNode(%2%, %3%, %4%, %5%, %6%, '%7%')\n");
 	boost::format fmt_trans(/*1:subId 2:transId 3:orX 4:orY 5:destX 
 							6:destY 7:midX 8:midY 9:idOrig 10:idDest*/
-"		orig%1%%2% = automatagui.Point(%3%,%4%)\n\
-		dest%1%%2% = automatagui.Point(%5%%6%)\n\
-		mid%1%%2% = automatagui.Point(%7%%8%)\n\
+"		orig%1%%2% = automatagui.Point(%3%, %4%)\n\
+		dest%1%%2% = automatagui.Point(%5%, %6%)\n\
+		mid%1%%2% = automatagui.Point(%7%, %8%)\n\
 		guiSubautomata%1%.newGuiTransition(orig%1%%2%, dest%1%%2%, mid%1%%2%, %2%, %9%, %10%)");
 
 	for (std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
@@ -802,26 +801,27 @@ void Generate::generateCreateGuiSubautomataList_py(){
 		}
 		this->fs << std::endl;
 
+		std::list<Transition> transList = subListIterator->getTransList();
+        std::list<Transition>::iterator transListIterator = transList.begin();
 		while (transListIterator != transList.end()){
         	int transId = transListIterator->getId();
         	int idOrig = transListIterator->getIdOrigin();
         	int idDest = transListIterator->getIdDestiny();
-        	Point* orig = subListIterator->getNodePoint(originId);
-        	Point* dest = subListIterator->getNodePoint(destinyId);
+        	Point* orig = subListIterator->getNodePoint(idOrig);
+        	Point* dest = subListIterator->getNodePoint(idDest);
         	Point* mid = subListIterator->getTransPoint(transId);
         	this->fs << boost::str(fmt_trans %subId %transId %orig->getX() %orig->getY()
         			%dest->getX() %dest->getY() %mid->getX() %mid->getY() %idOrig %idDest);
-        	this->fs << std::endl;
+        	this->fs << std::endl << std::endl;
 			transListIterator++;
 		}
-		this->fs << std::endl;
-		this->fs << "\tguiSubautomataList.append(guiSubautomata" << subId << ");";
-        this->fs << std::endl << std::endl;
+		this->fs << "\t\tguiSubautomataList.append(guiSubautomata" << subId << ");";
+        this->fs << std::endl;
 	}
 	this->fs << std::endl;
 
-	this->fs << "\treturn guiSubautomataList;" << std::endl;
-	this->fs << std::endl;
+	this->fs << "\t\treturn guiSubautomataList;" << std::endl;
+	this->fs << std::endl << std::endl;
 }
 
 void Generate::generateShutDown_py(){
@@ -842,6 +842,8 @@ void Generate::generateRunGui_py(){
 "	def runGui(self):\n\
 		app = QtGui.QApplication(sys.argv)\n\
 		self.automataGui = AutomataGui()\n\
+		self.automataGui.setAutomata(self.createAutomata())\n\
+		self.automataGui.loadAutomata()\n\
 		self.automataGui.show()\n\
 		app.exec_()\n\n";
 }
@@ -1080,19 +1082,19 @@ void Generate::generateSubautomatas_py(){
 
 void Generate::generateConnectToProxys_py(){
 	this->fs << 
-	"	def connectToProxys(self):\n\
-			self.ic = Ice.initialize(sys.argv)\n\
-	\n";
+"	def connectToProxys(self):\n\
+		self.ic = Ice.initialize(sys.argv)\n\n";
+
 	boost::format fmt_iConnect( /* %1%: getName() %2%: getInterface() */
-	"		# Contact to %1%\n\
-			%1% = self.ic.propertyToProxy('automata.%2%.Proxy')\n\
-			if(not %1%):\n\
-				raise Exception('could not create proxy with %1%')\n\
-			self.%1%Prx = %2%Prx.checkedCast(%1%)\n\
-			if(not self.%1%Prx):\n\
-				raise Exception('invalid proxy automata.%2%.Proxy')\n\
-			print '%1% connected'\n\
-	\n");
+"		# Contact to %1%\n\
+		%1% = self.ic.propertyToProxy('automata.%2%.Proxy')\n\
+		if(not %1%):\n\
+			raise Exception('could not create proxy with %1%')\n\
+		self.%1%Prx = %2%Prx.checkedCast(%1%)\n\
+		if(not self.%1%Prx):\n\
+			raise Exception('invalid proxy automata.%2%.Proxy')\n\
+		print '%1% connected'\n\n");
+
 	for ( std::list<IceInterface>::iterator listInterfacesIterator = this->listInterfaces->begin();
 			listInterfacesIterator != this->listInterfaces->end(); listInterfacesIterator++ ) {
 		std::string iName = listInterfacesIterator->getName();
@@ -1115,9 +1117,9 @@ void Generate::generateStart_py(){
 		self.guiThread = threading.Thread(target=self.runGui)\n\
 		self.guiThread.start()\n\n"; 
 
-	boos::format fmt_threads(
-"	self.t%1% = threading.Thread(target=self.self.subautomata%1%)\n\
-	self.t%1%.start()\n");
+	boost::format fmt_threads(
+"		self.t%1% = threading.Thread(target=self.subautomata%1%)\n\
+		self.t%1%.start()\n");
 
 	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
             subListIterator != this->subautomataList.end(); subListIterator++ ) {
@@ -1143,22 +1145,20 @@ void Generate::generaitJoin_py(){
 
 void Generate::generateMain_py (){
 	this->fs <<
-	"if __name__ == '__main__':\n\
-		signal.signal(signal.SIGINT, signal.SIG_DFL)\n\
-		automata = Automata()\n\
-		try:\n\
-			automata.connectToProxys()\n\
-	";
-		//TODO more automatagui
-		this->fs.flush();
-		this->fs <<
-	"		automata.start()\n\
-			automata.join()\n\
-			\n\
-			sys.exit(0)\n\
-		except:\n\
-			traceback.print_exc()\n\
-			automata.destroyIc()\n\
-			sys.exit(-1)\n\
-	";
+"if __name__ == '__main__':\n\
+	signal.signal(signal.SIGINT, signal.SIG_DFL)\n\
+	automata = Automata()\n\
+	try:\n\
+		automata.connectToProxys()\n";
+
+	//TODO more automatagui
+	this->fs.flush();
+	this->fs <<
+"		automata.start()\n\
+		automata.join()\n\n\
+		sys.exit(0)\n\
+	except:\n\
+		traceback.print_exc()\n\
+		automata.destroyIc()\n\
+		sys.exit(-1)\n";
 }

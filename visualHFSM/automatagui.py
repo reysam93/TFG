@@ -3,48 +3,71 @@
 
 from PyQt4 import QtGui, uic, QtCore
 import sys, signal, math
-import guisubautomata, point
+from guisubautomata import GuiSubautomata
+from point import Point
+
 
 class AutomataGui(QtGui.QMainWindow):
 
-	
 
 	def __init__(self, parent=None):
-		self.RADIUS_DIAMETER = 40;
-		self.RADIUS_INIT = 30;
-		self.SQUARE_SIDE = 10;
-		self.SQUARE_SIDE_MID = self.SQUARE_SIDE / 2;
 		QtGui.QMainWindow.__init__(self, parent)
 		try:
 			uic.loadUi('../visualHFSM/gui/mainGui.ui', self)
 		except IOError:
 			raise Exception("mainGui.ui doesn't found")
+
+		self.subautomataList = []
+		self.currentSubautomara = None
+
 		self.schemaScene = QtGui.QGraphicsScene()
 		self.schemaView.setScene(self.schemaScene)
 		self.schemaView.show()
 
 
-	def draw(self):
-		self.drawEllipses()
-		self.drawTransitions()
-		
+	def setAutomata(self, subautomataList):
+		self.subautomataList = subautomataList
 
-	def drawEllipses(self):
-		print "drawing ellipses example"
-		pen = QtGui.QPen(QtGui.QColor("black"))
-		pen.setWidth(2)
-		brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
-		brush.setColor(QtGui.QColor("blue"))
-		
-		self.schemaScene.addEllipse(50,15,self.RADIUS_DIAMETER,self.RADIUS_DIAMETER, pen, brush)
-		self.schemaScene.addSimpleText("State1").setPos(50,60)
-		self.schemaScene.addEllipse(50+5,15+5,self.RADIUS_INIT,self.RADIUS_INIT, pen, brush)
-		
-		self.schemaScene.addEllipse(50,150,self.RADIUS_DIAMETER,self.RADIUS_DIAMETER, pen, brush)
-		self.schemaScene.addSimpleText("State2").setPos(50,195)
-		
-		self.schemaScene.addEllipse(200,15,self.RADIUS_DIAMETER,self.RADIUS_DIAMETER, pen, brush)
-		self.schemaScene.addSimpleText("State3").setPos(200,60)
+
+	def loadAutomata(self):
+		self.myView = QtGui.QGraphicsView(self.schemaScene)
+		for subautomata in self.subautomataList:
+			self.currentSubautomata = subautomata
+
+			nodeList = subautomata.nodeList
+			for node in nodeList:
+				#if(node.isInitial()):
+				#	self.currentSubautomata.setActiveNode(node.getName())
+				#if(self.isFirstActiveNode())......
+					#color = green
+				self.createNewState(node, "color")
+
+			transList = subautomata.transList
+			for trans in transList:
+				self.createNewTransition(trans)
+			#SETVISIBLE for see or not or better, show/hide
+			node.brush.setColor(QtGui.QColor("red"))
+			node.ellipse.setBrush(node.brush)
+			self.myView.updateSceneRect(self.schemaScene.itemsBoundingRect())
+
+
+	def createNewState(self, node, color):
+		#TODO TREEVIEW PART
+
+		self.schemaScene.addEllipse(node.ellipse.boundingRect(), node.pen, node.brush)
+		self.schemaScene.addItem(node.text)
+		if node.isInit:
+			self.schemaScene.addEllipse(node.ellipseInit.boundingRect(), node.pen, 
+																	node.brush)
+
+	def createNewTransition(self, trans):
+		#AUTOTRANSITIOn
+		self.schemaScene.addLine(trans.leftLine, trans.pen)
+		self.schemaScene.addLine(trans.rigthLine, trans.pen)
+		self.schemaScene.addRect(trans.square, trans.pen, trans.squareBrush)
+		self.schemaScene.addPolygon(trans.arrow, trans.pen, trans.arrowBrush)
+
+	#TRYING MODE!!!
 
 
 	def calculateGoodArrowPosition(self,x1,y1,x2,y2):
@@ -102,12 +125,6 @@ class AutomataGui(QtGui.QMainWindow):
 		brush.setColor(QtGui.QColor("black"))
 		pen.setWidth(1)
 		self.schemaScene.addPolygon(arrowHead, pen,brush)
-
-
-	def drawTransitions(self):
-		self.drawTransition(50+20,15+20,40,(15+20 + 150+20)/2, 50+20,150+20)
-		self.drawTransition(50+20,15+20,50,-10, 200+20,15+20)
-		self.drawTransition(200+20,15+20,100,200, 50+20,150+20)
 
 
 if __name__ == '__main__':
