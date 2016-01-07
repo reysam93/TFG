@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from PyQt4 import QtGui, uic, QtCore
+from treeModel import TreeModel
 import sys, signal, math
 from guisubautomata import GuiSubautomata
 from point import Point
 
 
 class AutomataGui(QtGui.QMainWindow):
-
-
 	def __init__(self, parent=None):
 		QtGui.QMainWindow.__init__(self, parent)
 		try:
@@ -18,15 +17,34 @@ class AutomataGui(QtGui.QMainWindow):
 			raise Exception("mainGui.ui doesn't found")
 
 		self.subautomataList = []
-		self.currentSubautomara = None
+		self.currentSubautomata = None
 
 		self.schemaScene = QtGui.QGraphicsScene()
 		self.schemaView.setScene(self.schemaScene)
-		self.schemaView.show()
+
+		#Tree view
+		self.treeModel = TreeModel()
+		self.treeView.setModel(self.treeModel)
+
+		QtCore.QObject.connect(self.upButton, QtCore.SIGNAL("clicked()"), self.upButtonClicked)
+		QtCore.QObject.connect(self.treeView, QtCore.SIGNAL("doubleClicked(QModelIndex)"), self.rowClicked)
 
 
 	def setAutomata(self, subautomataList):
 		self.subautomataList = subautomataList
+
+
+	def isFirstActiveNode(self, node):
+		nodeAux = node
+		subAux = self.currentSubautomata
+
+		while nodeAux != None:
+			if not nodeAux.isInit:
+				return False
+			idNodeFather = nodeAux.subautomata.idFather
+			nodeAux = self.getNode(idNodeFather)
+
+		return True
 
 
 	def loadAutomata(self):
@@ -34,102 +52,176 @@ class AutomataGui(QtGui.QMainWindow):
 		for subautomata in self.subautomataList:
 			self.currentSubautomata = subautomata
 
-			nodeList = subautomata.nodeList
-			for node in nodeList:
-				#if(node.isInitial()):
-				#	self.currentSubautomata.setActiveNode(node.getName())
-				#if(self.isFirstActiveNode())......
-					#color = green
-				self.createNewState(node, "color")
+			for node in subautomata.nodeList:
+				if node.isInit:
+					self.currentSubautomata.activeNode = node.name
+
+				if self.isFirstActiveNode(node):
+					color = "green"
+					node.setColor(color)
+					#setActiveTreeView
+				else:
+					color = "white"
+				self.createNewState(node, color)
 
 			transList = subautomata.transList
 			for trans in transList:
 				self.createNewTransition(trans)
-			#SETVISIBLE for see or not or better, show/hide
-			node.brush.setColor(QtGui.QColor("red"))
-			node.ellipse.setBrush(node.brush)
-			self.myView.updateSceneRect(self.schemaScene.itemsBoundingRect())
+			
+			if subautomata.idFather != 0:
+				subautomata.hide()
+
+		if self.currentSubautomata.idFather != 0:
+			self.currentSubautomata = self.getRootSubautomata()
 
 
 	def createNewState(self, node, color):
-		#TODO TREEVIEW PART
+		if self.currentSubautomata.id == 1:
+			self.treeModel.insertState(node, color)
+		else:
+			self.fillTreeView(node, self.treeModel.getChildren(), color)
 
-		self.schemaScene.addEllipse(node.ellipse.boundingRect(), node.pen, node.brush)
+		self.schemaScene.addItem(node.ellipse)
 		self.schemaScene.addItem(node.text)
 		if node.isInit:
-			self.schemaScene.addEllipse(node.ellipseInit.boundingRect(), node.pen, 
-																	node.brush)
+			self.schemaScene.addItem(node.ellipseInit)
+
 
 	def createNewTransition(self, trans):
-		#AUTOTRANSITIOn
-		self.schemaScene.addLine(trans.leftLine, trans.pen)
-		self.schemaScene.addLine(trans.rigthLine, trans.pen)
-		self.schemaScene.addRect(trans.square, trans.pen, trans.squareBrush)
-		self.schemaScene.addPolygon(trans.arrow, trans.pen, trans.arrowBrush)
+		#TODO    AUTOTRANSICIONES  
 
-	#TRYING MODE!!!
+		self.schemaScene.addItem(trans.leftLine)
+		self.schemaScene.addItem(trans.rigthLine)
+		self.schemaScene.addItem(trans.square)
+		self.schemaScene.addItem(trans.arrow)
 
 
-	def calculateGoodArrowPosition(self,x1,y1,x2,y2):
-		distance_op = y1 - y2
-		distance_ad = x1 - x2
+	def fillTreeView(self, node, children, color):
+		added = False
+		for child in children:
+			if node.getIdFather() == child.id:
+				self.treeModel.insertState(node, color, child)
+				added = True
+			else:
+				added = self.fillTreeView(node, child.childItems, color)
+			if added:
+				break
+		return added
 
-		alpha = math.atan(distance_op/distance_ad)
 
-		poss1_final_x = x1 + self.RADIUS_DIAMETER / 2 + math.cos(alpha)
-		poss1_final_y = y1 + self.RADIUS_DIAMETER / 2 + math.sin(alpha)
-		d1 = math.sqrt(math.pow(poss1_final_x - x1, 2) + math.pow(poss1_final_y - y1, 2))
+	def getSubautomata(self, id):
+		for subautomata in self.subautomataList:
+			if subautomata.id == id:
+				return subautomata
+		return None
 
-		poss2_final_x = x1 - self.RADIUS_DIAMETER / 2 + math.cos(alpha)
-		poss2_final_y = y1 + self.RADIUS_DIAMETER / 2 + math.sin(alpha)
-		d2 = math.sqrt(math.pow(poss2_final_x - x1, 2) + math.pow(poss2_final_y - y1, 2))
 
-		if(d1 < d2):
-			return (poss1_final_x, poss1_final_y)
+	def getSubautomataWithNode(self, nodeName):
+		for subautomata in self.subautomataList:
+			for node in subautomata.nodeList:
+				if node.name == nodeName:
+					return subautomata
+		return None
+
+
+	def getRootSubautomata(self):
+		for subautomata in self.subautomataList:
+			if subautomata.idFather == 0:
+				return subautomata
+
+
+	def getNode(self, nodeId):
+		for subautomata in self.subautomataList:
+			for node in subautomata.nodeList:
+				if nodeId == node.id:
+					return node
+
+		return None
+
+
+	def changeCurrentSubautomata(self, id):
+		self.currentSubautomata.hide()
+		self.currentSubautomata = self.getSubautomata(id)
+		self.currentSubautomata.show()
+
+
+	def upButtonClicked(self):
+		fatherId = self.currentSubautomata.idFather 
+		if fatherId != 0:
+			nodeFather = self.getNode(fatherId)
+			self.changeCurrentSubautomata(nodeFather.subautomata.id)
 		else:
-			return (poss2_final_x, poss2_final_y) 
+			print "This subautomata does not have any parent"
 
 
-	def drawTransition(self, x1,y1,x2,y2,x3,y3):
-		print "drawing transitions example"
-		pen = QtGui.QPen(QtGui.QColor("black"))
-		pen.setWidth(2)
-
-		(orX,orY) = (x1,y1)#self.calculateGoodArrowPosition(x1,y1,x2,y2)
-		(desX,desY) = (x3,y3)#self.calculateGoodArrowPosition(x3,y3,x2,y2)
-
-		#left line
-		self.schemaScene.addLine(orX,orY,x2,y2,pen)
-
-		#rigth line
-		line = self.schemaScene.addLine(x2,y2,desX,desY,pen).line()
-
-		#midpoint		
-		brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
-		brush.setColor(QtGui.QColor("red"))
-		self.schemaScene.addRect(x2-self.SQUARE_SIDE_MID, y2-self.SQUARE_SIDE_MID,
-									self.SQUARE_SIDE,self.SQUARE_SIDE, pen, brush)
-
-		#ARROWS 
-		arrowSize = 7;
-		angle = math.acos(line.dx()/line.length())
-		if(line.dy() >=0 ):
-			angle=(math.pi*2.0) - angle
-		arrowP1 = line.p2() - QtCore.QPointF(math.sin(angle + math.pi / 3.0) * arrowSize,
-											math.cos(angle + math.pi / 3) * arrowSize)
-		arrowP2 = line.p2() - QtCore.QPointF(math.sin(angle + math.pi - math.pi / 3.0) * arrowSize,
-                                        	math.cos(angle + math.pi - math.pi / 3.0) * arrowSize)
-		arrowHead = QtGui.QPolygonF()
-		for point in [line.p2(), arrowP1, arrowP2]:
-			arrowHead.append(point)
-		brush.setColor(QtGui.QColor("black"))
-		pen.setWidth(1)
-		self.schemaScene.addPolygon(arrowHead, pen,brush)
+	def rowClicked(self, index):
+		node = self.getNode(index.internalPointer().id)
+		if self.currentSubautomata.id != node.subautomata.id:
+			self.changeCurrentSubautomata(node.subautomata.id)
 
 
-if __name__ == '__main__':
-	signal.signal(signal.SIGINT, signal.SIG_DFL)
-	app = QtGui.QApplication(sys.argv)
-	automataGui = AutomataGui(None)
-	automataGui.show()
-	app.exec_()
+	def setActiveTreeView(self, node, isActive, children):
+		finded = False
+
+		for child in children:
+			if finded:
+				break
+
+			if child.name == node.name:
+				if isActive:
+					child.color = "green"
+				else:
+					child.color = "pink"
+				finded = True
+			
+			else:
+				finded = self.setActiveTreeView(node, isActive, child.getChildren())
+
+				#TODO  AUTOFOCUS!!!
+
+
+
+	def setNodeAsActive(self, node, subautomata, isActive):
+		#CONDICIONES DE CARRERA!!
+		if isActive:
+			subautomata.activeNode = node.name
+			node.setColor("green")
+		else:
+			node.setColor("pink")
+			
+		self.setActiveTreeView(node, isActive, self.treeModel.getChildren())
+
+		if node.idSubautSon != 0:
+			subSon = self.getSubautomata(node.idSubautSon)
+			lastActiveNode = subSon.getNodeByName(subSon.activeNode)
+			self.setNodeAsActive(lastActiveNode, subSon, isActive)
+
+
+	def notifySetNodeAsActive(self, nodeName):
+		subAux = self.getSubautomataWithNode(nodeName)
+		nodeAux = subAux.getNodeByName(subAux.activeNode)		
+
+		if nodeAux != None:
+			self.setNodeAsActive(nodeAux, subAux, False)
+
+		nodeAux = subAux.getNodeByName(nodeName)
+		self.setNodeAsActive(nodeAux, subAux, True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
