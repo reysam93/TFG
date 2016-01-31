@@ -26,6 +26,7 @@
  *************************************************************/
 Generate::Generate ( std::list<SubAutomata> subautomataList, std::string cpppath,
 										std::string cfgpath, std::string cmakepath,
+										std::string execpath,
 										std::list<IceInterface>* listInterfaces,
 										std::map<std::string, std::string> mapInterfacesHeader,
 										std::list<std::string> listLibraries ) {
@@ -33,6 +34,7 @@ Generate::Generate ( std::list<SubAutomata> subautomataList, std::string cpppath
 	this->path = cpppath;
 	this->cfgpath = cfgpath;
 	this->cmakepath = cmakepath;
+	this->execpath = execpath;
 	this->listInterfaces = listInterfaces;
 	this->mapInterfacesHeader = mapInterfacesHeader;
 	this->listLibraries = listLibraries;
@@ -57,6 +59,7 @@ Generate::~Generate () {}
  *************************************************************/
 int Generate::init () {
 	this->fs.open(this->path.c_str(), std::fstream::out);
+	std::cout << "Generating: " << this->path << std::endl;
 	if (this->fs.is_open()) {
 		this->generateHeaders();
 		this->generateEnums();
@@ -178,7 +181,7 @@ void Generate::generateVariables () {
 	this->fs << "pthread_t thr_automatagui;" << std::endl;
 	this->fs << std::endl;
 	this->fs << "AutomataGui *automatagui;" << std::endl;
-	this->fs << "bool displayAutomataGui;" << std::endl;
+	this->fs << "bool displayGui = false;" << std::endl;
 	this->fs << std::endl;
 
 	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
@@ -403,7 +406,9 @@ void Generate::generateSubautomatas () {
 						std::string line;
 						while (std::getline(f, line))
 							this->fs << "\t\t\t\t\t\t" << line << std::endl;
-						this->fs << "\t\t\t\t\tautomatagui->notifySetNodeAsActive(\"" << subListIterator->getNodeName(idDestiny) << "\");" << std::endl;
+						this->fs << "\t\t\t\t\tif(displayGui){" < std::endl;
+						this->fs << "\t\t\t\t\t\tautomatagui->notifySetNodeAsActive(\"" << subListIterator->getNodeName(idDestiny) << "\");" << std::endl;
+						this->fs << "\t\t\t\t\t}" << std::endl;
 						this->fs << "\t\t\t\t}" << std::endl;
 					} else {
 						this->fs << "\t\t\t\tif (!t_activated) {" << std::endl;
@@ -423,7 +428,9 @@ void Generate::generateSubautomatas () {
 						std::string line;
 						while (std::getline(f, line))
 							this->fs << "\t\t\t\t\t\t" << line << std::endl;
-						this->fs << "\t\t\t\t\t\tautomatagui->notifySetNodeAsActive(\"" << subListIterator->getNodeName(idDestiny) << "\");" << std::endl;
+						this->fs << "\t\t\t\t\t\tif (displayGui){" <<std::endl;
+						this->fs << "\t\t\t\t\t\t\tautomatagui->notifySetNodeAsActive(\"" << subListIterator->getNodeName(idDestiny) << "\");" << std::endl;
+						this->fs << "\t\t\t\t\t\t}" << std::endl:
 						if (id != 1)
 							this->fs << "\t\t\t\t\t\tt_" << subListIterator->getNodeName(idNode) << "_max = " << mapNameTime[subListIterator->getNodeName(idNode)] << ";" << std::endl;
 						this->fs << "\t\t\t\t\t}" << std::endl;
@@ -458,12 +465,12 @@ void Generate::generateSubautomatas () {
 			this->fs << "\t\t\tswitch (sub_" << id << ") {" << std::endl;
 			for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
 					nodeListIterator != nodeList.end(); nodeListIterator++ ) {
-				if (mapNameTime.find(nodeListIterator->getName()) != mapNameTime.end()) {
 					this->fs << "\t\t\t\tcase " << nodeListIterator->getName() << ":" << std::endl;
+				if (mapNameTime.find(nodeListIterator->getName()) != mapNameTime.end()) {
 					this->fs << "\t\t\t\t\tt_" << nodeListIterator->getName() << "_max = " << mapNameTime[nodeListIterator->getName()] << " - difftime(t_fin, t_ini);" << std::endl;
+				}
 					this->fs << "\t\t\t\t\tsub_" << id << " = (State_Sub_" << id << ")(sub_" << id << " + 1);" << std::endl;
 					this->fs << "\t\t\t\t\tbreak;" << std::endl;
-				} 
 			}
 			this->fs << "\t\t\t\tdefault:" << std::endl;
 			this->fs << "\t\t\t\t\tbreak;" << std::endl;
@@ -510,6 +517,26 @@ void Generate::generateAutomataGui () {
 	this->fs << std::endl;
 }
 
+void Generate::generateReadArgs() {
+	this->fs << 
+"	void readArgs(int argc, char* argv){\n\
+		int i;\n\
+		char* splitedArg;\n\n\
+		for(i = 0; i < argc; i++){\n\
+			splitedArg = strtok(argv[i], \"=\");\n\
+			if (splitedArg.compare(\"--displaygui\" == 0)){\n\
+				splitedArg = strtok(NULL, \"=\");\n\
+				if (splitedArg.compare(\"true\") == 0 || splitedArg.compare(\"True\") == 0){\n\
+					displayGui = true;\n\
+					std::cout << \"displayGui ENABLED\" << std::endl;\n\
+				}else{\n\
+					displayGui = false\n\
+					std::cout << \"displayGui DISABLED\" << std::endl;\n\
+				}\n\
+			}\n\
+		}\n" << std::endl;
+}
+
 void Generate::generateMain () {
 	this->fs << "int main (int argc, char* argv[]) {" << std::endl;
 	this->fs << "\tint status;" << std::endl;
@@ -517,6 +544,7 @@ void Generate::generateMain () {
 	this->fs << std::endl;
 	this->fs << "\ttry {" << std::endl;
 	this->fs << "\t\tic = Ice::initialize(argc, argv);" << std::endl;
+	this->fs << "\t\treadArgs(argc, argv);" << std::endl;
 	this->fs << std::endl;
 
 	for ( std::list<IceInterface>::iterator listInterfacesIterator = this->listInterfaces->begin();
@@ -531,8 +559,10 @@ void Generate::generateMain () {
 		this->fs << "\t\tstd::cout << \"" << listInterfacesIterator->getName() << " connected\" << std::endl;" << std::endl;
 		this->fs << std::endl;
 	}
-	this->fs << "\t\tautomatagui = new AutomataGui(argc, argv);" << std::endl;
-	this->fs << "\t\tdisplayAutomataGui = showAutomataGui();" << std::endl;
+	this.>fs <<
+"		if (displayGui){\n\
+			automatagui = new AutomataGui(argc, argv);\n\
+			displayGui = showAutomataGui();\n" << std::endl;
 	this->fs.flush();
 
 	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
@@ -547,7 +577,7 @@ void Generate::generateMain () {
 		int id = subListIterator->getId();
 		this->fs << "\t\tpthread_join(thr_sub_" << id << ", NULL);" << std::endl;
 	}
-	this->fs << "\t\tif (displayAutomataGui)" << std::endl;
+	this->fs << "\t\tif (displayGui)" << std::endl;
 	this->fs << "\t\t\tpthread_join(thr_automatagui, NULL);" << std::endl;
 	this->fs << std::endl;
 
@@ -587,7 +617,7 @@ void Generate::generateCfg () {
 }
 
 void Generate::generateCmake () {
-	this->fs << "project (AUTOMATA)" << std::endl;
+	this->fs << "project (" << this->execpath << ")" << std::endl;
 	this->fs << std::endl;
 	this->fs << "cmake_minimum_required(VERSION 2.8)" << std::endl;
 	this->fs << "include(FindPkgConfig)" << std::endl;
@@ -635,11 +665,11 @@ void Generate::generateCmake () {
 	this->fs << std::endl;
 	this->fs << "link_directories(${GTKMM_LIBRARY_DIRS})" << std::endl;
 	this->fs << std::endl;
-	this->fs << "add_executable (automata ${SOURCE_FILES_AUTOMATA})" << std::endl;
+	this->fs << "add_executable ("<< this->execpath << " ${SOURCE_FILES_AUTOMATA})" << std::endl;
 	this->fs << std::endl;
 	this->fs << "SET(goocanvasmm_LIBRARIES goocanvasmm-2.0 goocanvas-2.0)" << std::endl;
 	this->fs << std::endl;
-	this->fs << "TARGET_LINK_LIBRARIES ( automata " << std::endl;
+	this->fs << "TARGET_LINK_LIBRARIES (" << this->execpath << std::endl;
 	this->fs << "\t${GTKMM_LIBRARIES}" << std::endl;
 	this->fs << "\t${goocanvasmm_LIBRARIES}" <<std::endl;
 	this->fs << "\t${LIBS_DIR}/jderobot/libJderobotInterfaces.so" << std::endl;
@@ -670,8 +700,9 @@ void Generate::generateGenericHeaders_py(){
 # -*- coding: utf-8 -*-\n\n\
 import Ice\n\
 import sys, signal\n\
+sys.path.append('/usr/local/share/jderobot/python/visualHFSM_py')\n\
 import traceback, threading, time\n\
-from automatagui import AutomataGui, QtGui\n\n";
+from automatagui import AutomataGui, QtGui, GuiSubautomata\n";
 
 	for ( std::list<std::string>::iterator listLibsIterator = this->listLibraries.begin();
 			listLibsIterator != this->listLibraries.end(); listLibsIterator++ )
@@ -701,13 +732,14 @@ void Generate::generateAutomataClass_py(){
 	this->generateConnectToProxys_py();
 	this->generateDestroyIc_py();
 	this->generateStart_py();
-	this->generaitJoin_py();
+	this->generateJoin_py();
+	this->generateReadArgs_py();
 }
 
 void Generate::generateAutomataInit_py(){
 	this->fs <<
 "	def __init__(self):\n\
-		self.lock = threading.Lock()" << std::endl;
+		self.displayGui = False" << std::endl;
 	this->generateEnums_py();
 	this->generateVariables_py();
 }
@@ -738,7 +770,6 @@ void Generate::generateEnums_py(){
 }
 
 void Generate::generateVariables_py(){
-	//TODO! AUTOMATAGUI
 	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
             subListIterator != this->subautomataList.end(); subListIterator++ ) {
 		int id = subListIterator->getId();
@@ -763,28 +794,48 @@ void Generate::generateVariables_py(){
 	this->fs.flush();
 }
 
+int Generate::getIdNodeFather(int subId, int subFatherId){
+	if (subFatherId == 0){
+		return 0;
+	}
+
+	for (std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
+		subListIterator != this->subautomataList.end(); subListIterator++ ){
+
+		if (subListIterator->getId() == subFatherId){
+			std::list<Node> nodeList = subListIterator->getNodeList();
+			std::list<Node>::iterator nodeListIterator = nodeList.begin();
+			while(nodeListIterator != nodeList.end()){
+				if (nodeListIterator->getIdSubautomataSon() == subId){
+					return nodeListIterator->getId();
+				}
+				nodeListIterator++;
+			}
+			return 0;
+		}
+	}
+}
+
 void Generate::generateCreateGuiSubautomataList_py(){
 	this->fs << 
 "	def createAutomata(self):\n\
 		guiSubautomataList = []\n" << std::endl;
 
-	boost::format fmt_newSubaut( /* %1%: subId %2%: idFather */
+	boost::format fmt_newSubaut( /* %1%: subId %2%: idNodeFather */
 "		# Creating subAutomata%1%\n\
-		guiSubautomata%1% = automatagui.GuiSubautomata(%1%,%2%)\n\n");
+		guiSubautomata%1% = GuiSubautomata(%1%,%2%, self.automataGui)\n\n");
 	boost::format fmt_node(/* 1:subId 2:nodeId 3:sonId 4:x 5:y 6:isInit 7:nodeName*/
 "		guiSubautomata%1%.newGuiNode(%2%, %3%, %4%, %5%, %6%, '%7%')\n");
 	boost::format fmt_trans(/*1:subId 2:transId 3:orX 4:orY 5:destX 
 							6:destY 7:midX 8:midY 9:idOrig 10:idDest*/
-"		orig%1%%2% = automatagui.Point(%3%, %4%)\n\
-		dest%1%%2% = automatagui.Point(%5%, %6%)\n\
-		mid%1%%2% = automatagui.Point(%7%, %8%)\n\
-		guiSubautomata%1%.newGuiTransition(orig%1%%2%, dest%1%%2%, mid%1%%2%, %2%, %9%, %10%)");
+"		guiSubautomata%1%.newGuiTransition((%3%, %4%), (%5%, %6%), (%7%, %8%), %2%, %9%, %10%)");
 
 	for (std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
 		subListIterator != this->subautomataList.end(); subListIterator++ ) {
 		int subId = subListIterator->getId();
 		int subIdFather = subListIterator->getIdFather();
-		this->fs << boost::str(fmt_newSubaut % subId % subIdFather);
+		int idNodeFather = this->getIdNodeFather(subId, subIdFather);
+		this->fs << boost::str(fmt_newSubaut % subId % idNodeFather);
 
 		std::list<Node> nodeList = subListIterator->getNodeList();
 		std::list<Node>::iterator nodeListIterator = nodeList.begin();
@@ -812,16 +863,15 @@ void Generate::generateCreateGuiSubautomataList_py(){
         	Point* mid = subListIterator->getTransPoint(transId);
         	this->fs << boost::str(fmt_trans %subId %transId %orig->getX() %orig->getY()
         			%dest->getX() %dest->getY() %mid->getX() %mid->getY() %idOrig %idDest);
-        	this->fs << std::endl << std::endl;
+        	this->fs << std::endl;
 			transListIterator++;
 		}
-		this->fs << "\t\tguiSubautomataList.append(guiSubautomata" << subId << ");";
+		this->fs << "\t\tguiSubautomataList.append(guiSubautomata" << subId << ")\n";
         this->fs << std::endl;
 	}
 	this->fs << std::endl;
 
-	this->fs << "\t\treturn guiSubautomataList;" << std::endl;
-	this->fs << std::endl << std::endl;
+	this->fs << "\t\treturn guiSubautomataList" << std::endl << std::endl;
 }
 
 void Generate::generateShutDown_py(){
@@ -861,6 +911,7 @@ void Generate::generateSubautomatas_py(){
 		this->fs << this->mapTab[T_TWO] << "run = True" << std::endl;		
 		this->fs << this->mapTab[T_TWO] << "cycle = " << subListIterator->getTime() << std::endl;
 		this->fs << this->mapTab[T_TWO] << "t_activated = False" << std::endl;
+		this->fs << this->mapTab[T_TWO] << "t_fin = 0" << std::endl;
 		this->fs << std::endl;
 
 		int countNodes = 0;
@@ -976,7 +1027,10 @@ void Generate::generateSubautomatas_py(){
 						while (std::getline(f, line))
 							this->fs << this->mapTab[(TabEnum)(T_FIVE + addTab)];
 							this->fs << line << std::endl;
-							//TODO AÑADIR CAMBIAR NODOS ACTIVOS (AUTOMATAGUI)
+						this->fs << this->mapTab[(TabEnum)(T_FIVE + addTab)];
+						this->fs << "if self.displayGui:" << std::endl;
+						this->fs << this->mapTab[(TabEnum)(T_FIVE + addTab)];
+						this->fs << "\tself.automataGui.notifySetNodeAsActive('" << subListIterator->getNodeName(idDestiny) << "')" << std::endl;
 					} else {
 						this->fs << this->mapTab[(TabEnum)(T_FOUR + addTab)] << "if(not t_activated):" << std::endl;
 						this->fs << this->mapTab[(TabEnum)(T_FIVE + addTab)] << "t_ini = time.time()" << std::endl;
@@ -997,7 +1051,10 @@ void Generate::generateSubautomatas_py(){
 						std::string line;
 						while (std::getline(f, line))
 							this->fs << this->mapTab[(TabEnum)(T_SIX + addTab)] << line << std::endl;
-						//TODO NOTIFYSETASACTIVE (AUTOMATAGUI)
+						this->fs << this->mapTab[(TabEnum)(T_SIX + addTab)];
+						this->fs << "if self.displayGui:" << std::endl;
+						this->fs << this->mapTab[(TabEnum)(T_SIX + addTab)];
+						this->fs << "\tself.automataGui.notifySetNodeAsActive('" << subListIterator->getNodeName(idDestiny) << "')" << std::endl;						
 						if (id != 1){
 							this->fs << this->mapTab[(TabEnum)(T_SIX + addTab)];
 							this->fs << "t_" << subListIterator->getNodeName(idNode) << "_max = " << mapNameTime[subListIterator->getNodeName(idNode)] << std::endl;
@@ -1041,24 +1098,23 @@ void Generate::generateSubautomatas_py(){
 			firstState = true;
 			for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
 					nodeListIterator != nodeList.end(); nodeListIterator++ ) {
-				
+				if (firstState){
+					this->fs << this->mapTab[T_THREE] << "else:" << std::endl;
+					this->fs << this->mapTab[T_FOUR];
+					this->fs << "if(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+					firstState = false;
+				}else{
+					this->fs << this->mapTab[T_FOUR];
+					this->fs << "elif(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+				}
 				if (mapNameTime.find(nodeListIterator->getName()) != mapNameTime.end()) {
-					if (firstState){
-						this->fs << this->mapTab[T_THREE] << "else:" << std::endl;
-						this->fs << this->mapTab[T_FOUR];
-						this->fs << "if(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
-						firstState = false;
-					}else{
-						this->fs << this->mapTab[T_FOUR];
-						this->fs << "elif(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
-					}
 					this->fs << this->mapTab[T_FIVE];
 					this->fs << "t_" << nodeListIterator->getName() << "_max = " << mapNameTime[nodeListIterator->getName()] << " - (t_fin - t_ini)" << std::endl;
-					this->fs << this->mapTab[T_FIVE];
-					this->fs << "ghostStateIndex = self.StateSub" << id << ".index(self.sub" << id << ") + 1" << std::endl;					
-					this->fs << this->mapTab[T_FIVE];
-					this->fs << "sub" << id << " = self.StatesSub" << id << "[ghostStateIndex]" << std::endl;
-				} 
+				}				}
+				this->fs << this->mapTab[T_FIVE];
+				this->fs << "ghostStateIndex = self.StatesSub" << id << ".index(self.sub" << id << ") + 1" << std::endl;					
+				this->fs << this->mapTab[T_FIVE];
+				this->fs << "self.sub" << id << " = self.StatesSub" << id << "[ghostStateIndex]" << std::endl;
 			}
 		}
 		this->fs << std::endl;
@@ -1114,8 +1170,9 @@ void Generate::generateDestroyIc_py(){
 void Generate::generateStart_py(){
 	this->fs <<
 "	def start(self):\n\
-		self.guiThread = threading.Thread(target=self.runGui)\n\
-		self.guiThread.start()\n\n"; 
+		if self.displayGui:\n\
+			self.guiThread = threading.Thread(target=self.runGui)\n\
+			self.guiThread.start()\n\n";
 
 	boost::format fmt_threads(
 "		self.t%1% = threading.Thread(target=self.subautomata%1%)\n\
@@ -1130,10 +1187,11 @@ void Generate::generateStart_py(){
 	this->fs << std::endl << std::endl;
 }
 
-void Generate::generaitJoin_py(){
+void Generate::generateJoin_py(){
 	this->fs <<
 "	def join(self):\n\
-		self.guiThread.join()\n";
+		if self.displayGui:\n\
+			self.guiThread.join()\n";
 
 	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
             subListIterator != this->subautomataList.end(); subListIterator++ ) {
@@ -1143,15 +1201,30 @@ void Generate::generaitJoin_py(){
 	this->fs << std::endl << std::endl;
 }
 
+void Generate::generateReadArgs_py(){
+	this->fs <<
+"	def readArgs(self):\n\
+		for arg in sys.argv:\n\
+			splitedArg = arg.split('=')\n\
+			if splitedArg[0] == '--displaygui':\n\
+				if splitedArg[1] == 'True' or splitedArg[1] == 'true':\n\
+					self.displayGui = True\n\
+					print 'runtime gui enabled'\n\
+				else:\n\
+					self.displayGui = False\n\
+					print 'runtime gui disabled'\n\n" << std::endl;
+	this->fs.flush();
+}
+
 void Generate::generateMain_py (){
 	this->fs <<
 "if __name__ == '__main__':\n\
 	signal.signal(signal.SIGINT, signal.SIG_DFL)\n\
 	automata = Automata()\n\
 	try:\n\
-		automata.connectToProxys()\n";
+		automata.connectToProxys()\n\
+		automata.readArgs()\n";
 
-	//TODO more automatagui
 	this->fs.flush();
 	this->fs <<
 "		automata.start()\n\

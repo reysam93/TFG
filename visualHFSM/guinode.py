@@ -1,6 +1,6 @@
 from PyQt4 import QtGui
 from PyQt4 import QtCore
-
+import threading
 
 #CONST
 NODE_WIDTH = 40
@@ -29,7 +29,7 @@ class GuiNode():
 			self.state.notifyChangeCurrentSubautomata(self.state.idSubautSon)
 
 
-	def __init__(self, id, idSubSon, subautomata, x, y, isInit, name):
+	def __init__(self, id, idSubSon, subautomata, x, y, isInit, name, windowId=0):
 		self.id = id
 		self.idSubautSon = idSubSon
 		self.subautomata = subautomata
@@ -37,6 +37,9 @@ class GuiNode():
 		self.y = y - NODE_WIDTH/2
 		self.isInit = isInit
 		self.name = name
+		self.copies = []
+		self.windowId = windowId
+		self.color = "blue"
 
 		#CREATE GUI ELEMENTS
 		self.ellipse = self.State(self, self.x, self.y, NODE_WIDTH)
@@ -45,11 +48,13 @@ class GuiNode():
 		if self.isInit:
 			self.ellipseInit = QtGui.QGraphicsEllipseItem(self.x+5, self.y+5, 
 									INIT_WIDTH, INIT_WIDTH)
+		else:
+			self.ellipseInit = None
 		self.paint("blue", PEN_NORMAL_WIDTH)
 
 
-	def getIdFather(self):
-		return self.subautomata.idFather
+	def getIdNodeFather(self):
+		return self.subautomata.idNodeFather
 
 	def show(self):
 		self.ellipse.show()
@@ -74,7 +79,7 @@ class GuiNode():
 
 	def setColor(self, color):
 		self.paint(color, PEN_NORMAL_WIDTH)
-
+		
 
 	def paint(self, color, width):
 		pen = QtGui.QPen(QtGui.QColor("black"), width)
@@ -82,10 +87,38 @@ class GuiNode():
 		brush.setColor(QtGui.QColor(color))
 		self.ellipse.setPen(pen)
 		self.ellipse.setBrush(brush)
+		self.color = color
+		for copy in self.copies:
+			copy.paint(color, width)
 
 
 	def notifyChangeCurrentSubautomata(self, idNewSub):
-		if idNewSub != 0:
-			self.subautomata.automataGui.changeCurrentSubautomata(idNewSub)
-		else:
-			print "This node does not have any subautomata son"
+		if self.windowId == 0:
+			if idNewSub != 0:
+				self.setWidth(PEN_NORMAL_WIDTH)
+				self.subautomata.automataGui.changeCurrentSubautomata(idNewSub)
+			else:
+				print "This node does not have any subautomata son"
+
+
+	def draw(self, view):
+		view.addItem(self.ellipse)
+		view.addItem(self.text)
+		if self.isInit:
+			view.addItem(self.ellipseInit)
+
+
+	def createCopy(self, windowId):
+		x = self.x + NODE_WIDTH/2
+		y = self.y + NODE_WIDTH/2
+		nodeAux = GuiNode(self.id, self.idSubautSon, self.subautomata,
+					 		x, y, self.isInit, self.name, windowId)
+		nodeAux.color = self.color
+		self.copies.append(nodeAux)
+		return self.copies[-1]
+
+
+	def removeCopy(self, windowId):
+		for copy in self.copies:
+			if copy.windowId == windowId:
+				self.copies.remove(copy)

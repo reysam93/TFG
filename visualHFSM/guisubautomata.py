@@ -1,10 +1,12 @@
 from guinode import GuiNode
 from guitransition import GuiTransition
+import threading
+
 
 class GuiSubautomata():
-	def __init__(self, id, idFather, automataGui):
+	def __init__(self, id, idNodeFather, automataGui):
 		self.id = id
-		self.idFather = idFather
+		self.idNodeFather = idNodeFather
 		self.automataGui = automataGui
 		self.activeNode = ""
 		self.nodeList = []
@@ -49,3 +51,30 @@ class GuiSubautomata():
 			if node.name == name:
 				return node
 		return None
+
+
+	def setActiveNode(self, nodeName):
+		self.activeNode = nodeName
+
+
+	def getActiveNode(self):
+		return self.activeNode
+
+
+	def drawCopy(self, view, windowId):
+		for node in self.nodeList:
+			nodeAux = node.createCopy(windowId)
+			nodeAux.draw(view)
+			if nodeAux.color == "green":
+				nodeAux.setColor("green")
+				
+		for transition in self.transList:
+			transAux = transition.createCopy(windowId)
+			transAux.draw(view)
+
+
+	def removeCopy(self, windowId):
+		for node in self.nodeList:
+			node.removeCopy(windowId)
+		for transition in self.transList:
+			transition.removeCopy(windowId)

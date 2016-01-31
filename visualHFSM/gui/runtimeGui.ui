@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>761</width>
+    <height>553</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,6 +48,13 @@
        </item>
        <item>
         <widget class="QTreeView" name="treeView"/>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="autofocus">
+         <property name="text">
+          <string>Autofocus</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QPushButton" name="upButton">

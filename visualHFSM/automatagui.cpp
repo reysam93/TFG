@@ -138,7 +138,6 @@ GuiSubautomata* AutomataGui::getSubautomata(int id){
 
 
 bool AutomataGui::isFirstActiveNode(GuiNode* gnode){
-	bool isActive = true;
 	int sonSubId, nodeId;
 	GuiSubautomata* subAux = this->currentGuiSubautomata;
 
@@ -175,9 +174,9 @@ void AutomataGui::loadGuiSubautomata(){
 				currentGuiSubautomata->setActiveNode(nodeListIterator->getName());
 			if (this->isFirstActiveNode(&*nodeListIterator)){
 				nodeListIterator->changeColor(ITEM_COLOR_GREEN);
+				//Prescindible??? BORRAR
 				this->setActiveTreeView(nodeListIterator->getName(), true,
 											this->refTreeModel->children());
-				std::cerr << "firstActiveNode marked as active " << nodeListIterator->getName() << std::endl;
 				color = ITEM_COLOR_GREEN;
 			}else{
 				color = "white";
@@ -437,7 +436,6 @@ void AutomataGui::showSubautomata(int id){
 
 
 //HANDLERS
-
 bool AutomataGui::on_item_button_press_event(const Glib::RefPtr<Goocanvas::Item>& item,
                                               GdkEventButton* event ){
 

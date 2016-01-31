@@ -1,9 +1,11 @@
 from PyQt4 import QtCore, QtGui
+import threading
 
 
 class TreeNode(QtGui.QTreeWidgetItem):
 	def __init__(self, id, name, color, parent=None):
 		QtGui.QTreeWidgetItem.__init__(self)
+
 		self.parentItem = parent
 		self.id = id
 		self.name = name
@@ -12,7 +14,8 @@ class TreeNode(QtGui.QTreeWidgetItem):
 
 
 	def background(self):
-		return QtCore.QVariant(QtGui.QColor(self.color))
+		background = QtCore.QVariant(QtGui.QColor(self.color))
+		return background
 
 	def appendChild(self, item):
 		self.childItems.append(item)
@@ -43,6 +46,9 @@ class TreeNode(QtGui.QTreeWidgetItem):
 	def getChildren(self):
 		return self.childItems
 
+	def setColor(self, color):
+		self.color = color
+		
 
 class TreeModel(QtCore.QAbstractItemModel):
 	def __init__(self, parent=None):
@@ -107,6 +113,9 @@ class TreeModel(QtCore.QAbstractItemModel):
 			return self.createIndex(row, column, childItem)
 		else:
 			return QtCore.QModelIndex()
+
+	def indexOf(self, child):
+		return self.createIndex(child.row(), 0, child)
 
 	def parent(self, index):
 		if not index.isValid():

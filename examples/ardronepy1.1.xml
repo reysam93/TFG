@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualHFSM><SubAutomata id="1" idFather="0"><state initial="true" id="1"><posx>61</posx><posy>101</posy><name>TakeOff</name><idSubautomataSon>3</idSubautomataSon><code>print "Taking Off"
+self.lock.acquire()
+self.extraPrx.takeoff()
+self.lock.release()
+hasTakenOff = True</code></state><state initial="false" id="2"><posx>283</posx><posy>75</posy><name>Stabilizing1</name><idSubautomataSon>0</idSubautomataSon><code>print "Stabilizing"</code></state><state initial="false" id="3"><posx>497</posx><posy>130</posy><name>GoFront</name><idSubautomataSon>0</idSubautomataSon><code>cmd = jderobot.CMDVelData()
+cmd.linearX = 1
+cmd.linearY = 0
+cmd.linearZ = 0
+self.lock.acquire()
+self.cmdPrx.setCMDVelData(cmd)
+self.lock.release()</code></state><state initial="false" id="4"><posx>489</posx><posy>320</posy><name>Stoping</name><idSubautomataSon>0</idSubautomataSon><code>cmd = jderobot.CMDVelData()
+cmd.linearX = 0
+cmd.linearY = 0
+cmd.linearZ = 0
+self.lock.acquire()
+self.cmdPrx.setCMDVelData(cmd)
+self.lock.release()
+print "Stoping"</code></state><state initial="false" id="5"><posx>250</posx><posy>408</posy><name>Landing</name><idSubautomataSon>0</idSubautomataSon><code>print "Landing"
+self.lock.acquire()
+self.extraPrx.land()
+self.lock.release()
+hasLanded = True</code></state><state initial="false" id="6"><posx>66</posx><posy>283</posy><name>Stabilizing2</name><idSubautomataSon>0</idSubautomataSon><code>finished()</code></state><transition id="1"><posx>9</posx><posy>212</posy><origin>1</origin><destiny>2</destiny><transcode>print "Going to Stabilizing"</transcode><name>transition</name><trans type="condition">hasTakenOff</trans></transition><transition id="2"><posx>413</posx><posy>79</posy><origin>2</origin><destiny>3</destiny><transcode>print "going to GoFront"</transcode><name>transition</name><trans type="time">1500</trans></transition><transition id="3"><posx>570</posx><posy>239</posy><origin>3</origin><destiny>4</destiny><transcode>print "going to Stoping"</transcode><name>transition</name><trans type="time">3000</trans></transition><transition id="4"><posx>410</posx><posy>411</posy><origin>4</origin><destiny>5</destiny><transcode>print "going to Land"</transcode><name>transition</name><trans type="time">3500</trans></transition><transition id="6"><posx>152</posx><posy>338</posy><origin>5</origin><destiny>6</destiny><transcode></transcode><name>transition</name><trans type="condition">hasLanded</trans></transition><transition id="1"><posx>9</posx><posy>212</posy><origin>6</origin><destiny>1</destiny><transcode>print "Restarting"</transcode><name>transition</name><trans type="time">3000</trans></transition><iteration_time>100</iteration_time><variables>hasTakenOff = False
+hasLanded = False</variables><functions>def finished():
+	print "FINISHED!"</functions></SubAutomata><SubAutomata id="3" idFather="1"><state initial="true" id="7"><posx>175</posx><posy>146</posy><name>A</name><idSubautomataSon>0</idSubautomataSon><code>print "A"
+</code></state><state initial="false" id="8"><posx>468</posx><posy>201</posy><name>B</name><idSubautomataSon>5</idSubautomataSon><code>print "B"</code></state><transition id="1"><posx>348</posx><posy>79</posy><origin>7</origin><destiny>8</destiny><transcode></transcode><name>transition</name><trans type="time">23</trans></transition><transition id="2"><posx>303</posx><posy>215</posy><origin>8</origin><destiny>7</destiny><transcode></transcode><name>transition</name><trans type="time">55</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><SubAutomata id="5" idFather="3"><state initial="true" id="9"><posx>70</posx><posy>146</posy><name>C</name><idSubautomataSon>0</idSubautomataSon><code>print "C"</code></state><transition id="3"><posx>70</posx><posy>186</posy><origin>9</origin><destiny>9</destiny><transcode></transcode><name></name><trans type="time">567</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><libraries><lib>jderobot</lib></libraries><config><iceinterface><nameinterface>camera</nameinterface><ip>localhost</ip><port>9994</port><interface>Camera</interface></iceinterface><iceinterface><nameinterface>pose3d</nameinterface><ip>localhost</ip><port>9000</port><interface>Pose3D</interface></iceinterface><iceinterface><nameinterface>cmd</nameinterface><ip>localhost</ip><port>9850</port><interface>CMDVel</interface></iceinterface><iceinterface><nameinterface>extra</nameinterface><ip>localhost</ip><port>9701</port><interface>ArDroneExtra</interface></iceinterface><iceinterface><nameinterface>navdata</nameinterface><ip>localhost</ip><port>9700</port><interface>Navdata</interface></iceinterface></config></VisualHFSM>

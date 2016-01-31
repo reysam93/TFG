@@ -48,7 +48,8 @@ class Generate {
 public:
 	// Constructor
 	Generate ( std::list<SubAutomata> subautomataList, std::string cpppath,
-								std::string cfgpath, std::string cmakepath,
+								std::string cfgpath, std::string cmakepath, 
+								std::string execpath,
 								std::list<IceInterface>* listInterfaces,
 								std::map<std::string, std::string> mapInterfacesHeader,
 								std::list<std::string> listLibraries );
@@ -61,7 +62,7 @@ public:
 	int init_py ();
 private:
 	std::list<SubAutomata> subautomataList;
-	std::string path, cfgpath, cmakepath;
+	std::string path, cfgpath, cmakepath, execpath;
 	std::list<IceInterface>* listInterfaces;
 	std::fstream fs;
 	std::map<TabEnum, std::string> mapTab;
@@ -97,10 +98,12 @@ private:
 	void generateConnectToProxys_py();
 	void generateDestroyIc_py();
 	void generateStart_py();
-	void generaitJoin_py();
+	void generateJoin_py();
+	void generateReadArgs_py();
 	void generateMain_py();
 
 	std::string getCppName ();
+	int getIdNodeFather(int subId, int subFatherId);
 
 }; // Class Generate
 

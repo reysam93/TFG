@@ -1,23 +1,42 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from PyQt4 import QtGui, uic, QtCore
+from PyQt4 import QtGui, QtCore
 from treeModel import TreeModel
 import sys, signal, math
 from guisubautomata import GuiSubautomata
-from point import Point
+from gui.runtimeGui import Ui_visualHFSM
+from gui.additionalSubautWind import Ui_SubautomataWindow
 
 
-class AutomataGui(QtGui.QMainWindow):
+class AdditionalWindow(QtGui.QWidget, Ui_SubautomataWindow):
+	def __init__(self, automatagui, scene, subautomata):
+		QtGui.QWidget.__init__(self)
+		self.setupUi(self)
+		automatagui.nextWindowId += 1
+		self.id = automatagui.nextWindowId
+		self.scene = scene
+		self.subautomata = subautomata
+		self.automatagui = automatagui
+
+	def closeEvent(self, event):
+		self.automatagui.removeWindow(self)
+		self.close()
+
+
+class AutomataGui(QtGui.QMainWindow, Ui_visualHFSM):
+
+	activeNodeSignal = QtCore.pyqtSignal(str)
+
 	def __init__(self, parent=None):
 		QtGui.QMainWindow.__init__(self, parent)
-		try:
-			uic.loadUi('../visualHFSM/gui/mainGui.ui', self)
-		except IOError:
-			raise Exception("mainGui.ui doesn't found")
+		self.setupUi(self)
 
 		self.subautomataList = []
+		self.additionalWindows = []
 		self.currentSubautomata = None
+		self.selectedNodeId = 0
+		self.nextWindowId = 0
 
 		self.schemaScene = QtGui.QGraphicsScene()
 		self.schemaView.setScene(self.schemaScene)
@@ -25,6 +44,13 @@ class AutomataGui(QtGui.QMainWindow):
 		#Tree view
 		self.treeModel = TreeModel()
 		self.treeView.setModel(self.treeModel)
+		self.treeView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+		self.treeView.customContextMenuRequested.connect(self.createMenu)
+
+		self.lastExpanded = QtCore.QModelIndex()
+
+		self.activeNodeSignal.connect(self.notifySetNodeAsActiveReceived)
+		self.autofocus.stateChanged.connect(self.autofocusChanged)
 
 		QtCore.QObject.connect(self.upButton, QtCore.SIGNAL("clicked()"), self.upButtonClicked)
 		QtCore.QObject.connect(self.treeView, QtCore.SIGNAL("doubleClicked(QModelIndex)"), self.rowClicked)
@@ -41,25 +67,23 @@ class AutomataGui(QtGui.QMainWindow):
 		while nodeAux != None:
 			if not nodeAux.isInit:
 				return False
-			idNodeFather = nodeAux.subautomata.idFather
+			idNodeFather = nodeAux.subautomata.idNodeFather
 			nodeAux = self.getNode(idNodeFather)
 
 		return True
 
 
 	def loadAutomata(self):
-		self.myView = QtGui.QGraphicsView(self.schemaScene)
 		for subautomata in self.subautomataList:
 			self.currentSubautomata = subautomata
 
 			for node in subautomata.nodeList:
 				if node.isInit:
-					self.currentSubautomata.activeNode = node.name
+					self.currentSubautomata.setActiveNode(node.name)
 
 				if self.isFirstActiveNode(node):
 					color = "green"
 					node.setColor(color)
-					#setActiveTreeView
 				else:
 					color = "white"
 				self.createNewState(node, color)
@@ -68,10 +92,10 @@ class AutomataGui(QtGui.QMainWindow):
 			for trans in transList:
 				self.createNewTransition(trans)
 			
-			if subautomata.idFather != 0:
+			if subautomata.idNodeFather != 0:
 				subautomata.hide()
 
-		if self.currentSubautomata.idFather != 0:
+		if self.currentSubautomata.idNodeFather != 0:
 			self.currentSubautomata = self.getRootSubautomata()
 
 
@@ -81,25 +105,18 @@ class AutomataGui(QtGui.QMainWindow):
 		else:
 			self.fillTreeView(node, self.treeModel.getChildren(), color)
 
-		self.schemaScene.addItem(node.ellipse)
-		self.schemaScene.addItem(node.text)
-		if node.isInit:
-			self.schemaScene.addItem(node.ellipseInit)
+		node.draw(self.schemaScene)
 
 
 	def createNewTransition(self, trans):
 		#TODO    AUTOTRANSICIONES  
-
-		self.schemaScene.addItem(trans.leftLine)
-		self.schemaScene.addItem(trans.rigthLine)
-		self.schemaScene.addItem(trans.square)
-		self.schemaScene.addItem(trans.arrow)
+		trans.draw(self.schemaScene)
 
 
 	def fillTreeView(self, node, children, color):
 		added = False
 		for child in children:
-			if node.getIdFather() == child.id:
+			if node.getIdNodeFather() == child.id:
 				self.treeModel.insertState(node, color, child)
 				added = True
 			else:
@@ -126,7 +143,7 @@ class AutomataGui(QtGui.QMainWindow):
 
 	def getRootSubautomata(self):
 		for subautomata in self.subautomataList:
-			if subautomata.idFather == 0:
+			if subautomata.idNodeFather == 0:
 				return subautomata
 
 
@@ -146,7 +163,7 @@ class AutomataGui(QtGui.QMainWindow):
 
 
 	def upButtonClicked(self):
-		fatherId = self.currentSubautomata.idFather 
+		fatherId = self.currentSubautomata.idNodeFather 
 		if fatherId != 0:
 			nodeFather = self.getNode(fatherId)
 			self.changeCurrentSubautomata(nodeFather.subautomata.id)
@@ -160,6 +177,29 @@ class AutomataGui(QtGui.QMainWindow):
 			self.changeCurrentSubautomata(node.subautomata.id)
 
 
+	def treeViewAutoFocus(self, index):	
+		print "autofocus: ", index.internalPointer().name
+		if index.parent() != self.lastExpanded:
+			if self.treeView.isExpanded(self.lastExpanded):
+				print "collapsing", self.lastExpanded.internalPointer().name
+				self.treeView.collapse(self.lastExpanded)
+
+			self.treeView.expand(index.parent())
+			if index.parent().isValid():
+				print "expanding", index.parent().internalPointer().name
+			else:
+				print "has no parent"
+		self.lastExpanded = index.parent()
+		if index.parent().isValid():
+			print "last expanded:", index.parent().internalPointer().name
+		else:
+			print "has no parent"
+
+
+	def refreshTreeView(self, index):
+		self.treeView.dataChanged(self.treeView.rootIndex(), index)
+
+
 	def setActiveTreeView(self, node, isActive, children):
 		finded = False
 
@@ -168,38 +208,43 @@ class AutomataGui(QtGui.QMainWindow):
 				break
 
 			if child.name == node.name:
+				index = self.treeModel.indexOf(child)
 				if isActive:
-					child.color = "green"
+					child.setColor("green")
+					self.refreshTreeView(index)
+					if self.autofocus.isChecked():
+						self.treeViewAutoFocus(index)
+					
 				else:
-					child.color = "pink"
+					self.refreshTreeView(index)
+					child.setColor("white")
 				finded = True
 			
 			else:
 				finded = self.setActiveTreeView(node, isActive, child.getChildren())
 
-				#TODO  AUTOFOCUS!!!
-
 
 
 	def setNodeAsActive(self, node, subautomata, isActive):
-		#CONDICIONES DE CARRERA!!
 		if isActive:
-			subautomata.activeNode = node.name
+			subautomata.setActiveNode(node.name)
 			node.setColor("green")
 		else:
-			node.setColor("pink")
+			node.setColor("blue")
 			
-		self.setActiveTreeView(node, isActive, self.treeModel.getChildren())
+		rootChildren = self.treeModel.getChildren()
+		rootIndex = self.treeView.rootIndex()
+		self.setActiveTreeView(node, isActive, rootChildren)
 
 		if node.idSubautSon != 0:
 			subSon = self.getSubautomata(node.idSubautSon)
-			lastActiveNode = subSon.getNodeByName(subSon.activeNode)
+			lastActiveNode = subSon.getNodeByName(subSon.getActiveNode())
 			self.setNodeAsActive(lastActiveNode, subSon, isActive)
 
 
-	def notifySetNodeAsActive(self, nodeName):
+	def notifySetNodeAsActiveReceived(self, nodeName):
 		subAux = self.getSubautomataWithNode(nodeName)
-		nodeAux = subAux.getNodeByName(subAux.activeNode)		
+		nodeAux = subAux.getNodeByName(subAux.getActiveNode())		
 
 		if nodeAux != None:
 			self.setNodeAsActive(nodeAux, subAux, False)
@@ -208,20 +253,42 @@ class AutomataGui(QtGui.QMainWindow):
 		self.setNodeAsActive(nodeAux, subAux, True)
 
 
+	def notifySetNodeAsActive(self, nodeName):
+		self.activeNodeSignal.emit(nodeName)
 
 
+	def autofocusChanged(self):
+		if self.autofocus.isChecked():
+			self.treeView.collapseAll()
 
 
+	def createMenu(self, position):
+		index = self.treeView.indexAt(position)
+		if not index.isValid():
+			return
+		self.selectedNodeId = index.internalPointer().id
+		menu = QtGui.QMenu()
+		action = menu.addAction("Open subautomata")
+		action.triggered.connect(self.openSubautomataInNewWindow)
+		menu.exec_(self.treeView.viewport().mapToGlobal(position))
 
 
+	def openSubautomataInNewWindow(self):
+		subautomata = self.getNode(self.selectedNodeId).subautomata
+
+		if subautomata:
+			newWindow = AdditionalWindow(self, QtGui.QGraphicsScene(), subautomata)
+			newWindow.schema.setScene(newWindow.scene)
+			title = "Subautomata " + str(subautomata.id)
+			newWindow.title.setText(title)
+			subautomata.drawCopy(newWindow.scene, newWindow.id)
+			self.additionalWindows.append(newWindow)
+			self.additionalWindows[-1].show()
 
 
-
-
-
-
-
-
-
-
-
+	def removeWindow(self, window):
+		for windowAux in self.additionalWindows:
+			if windowAux.id == window.id:
+				break
+		window.subautomata.removeCopy(window.id)
+		self.additionalWindows.remove(window)

@@ -11,12 +11,15 @@ ARROW_SIZE = 7
 
 
 class GuiTransition():
-	def __init__(self, orig, dest, midp, id, idOrig, idDest):
+	def __init__(self, orig, dest, midp, id, idOrig, idDest, windowId=0):
 		self.orig = orig
 		self.dest = dest
 		self.midp = midp
+		self.id = id
 		self.idOrigin = idOrig
 		self.idDestiny = idDest
+		self.copies = []
+		self.windowId = windowId
 
 		leftLine = QtCore.QLineF(midp[0], midp[1], orig[0], orig[1])
 		rigthLine = QtCore.QLineF(midp[0], midp[1], dest[0], dest[1])
@@ -71,3 +74,23 @@ class GuiTransition():
 		self.square.setBrush(brush)
 		brush.setColor(QtGui.QColor("black"))
 		self.arrow.setBrush(brush)		
+
+
+	def draw(self, view):
+		view.addItem(self.leftLine)
+		view.addItem(self.rigthLine)
+		view.addItem(self.square)
+		view.addItem(self.arrow)
+
+
+	def createCopy(self, windowId):
+		transAux = GuiTransition(self.orig, self.dest, self.midp, self.id,
+								self.idOrigin, self.idDestiny, windowId)
+		self.copies.append(transAux)
+		return self.copies[-1]
+
+
+	def removeCopy(self, windowId):
+		for copy in self.copies:
+			if copy.windowId == windowId:
+				self.copies.remove(copy)

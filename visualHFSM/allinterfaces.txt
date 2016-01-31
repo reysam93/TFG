@@ -1,8 +1,11 @@
+ArDroneExtra ardroneextra
 BodyEncoders bodyencoders
 BodyMotors bodymotors
 BodyMovements bodymovements
 Camera camera
+CMDVel cmdvel
 Encoders encoders
+genericDataProvider genericData
 ImageConsumer image
 ImageProvider image
 JointMotor jointmotor
@@ -12,6 +15,7 @@ Motors motors
 NamingService namingService
 NaoFollowBall naofollowball
 NaoMotions naomotions
+Navdata navdata
 pointCloud pointcloud
 Pose3DEncoders pose3dencoders
 Pose3D pose3d
