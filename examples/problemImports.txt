@@ -1,4 +1,4 @@
-#/usr/lib/python2.7/jderobot
+#/usr/lib/python2.7/jderobot/__init__.py
 
 import Ice
 Ice.updateModule("RoboCompJointMotor")

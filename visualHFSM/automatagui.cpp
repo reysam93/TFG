@@ -96,7 +96,6 @@ int AutomataGui::init(){
 
 
 void AutomataGui::run(){			
-	std::cerr << "running gui in PID:" << getpid() << std::endl;
 	this->app->run(*guiDialog);
   	delete guiDialog;
 }
@@ -170,13 +169,12 @@ void AutomataGui::loadGuiSubautomata(){
 		std::list<GuiNode> nodeList = *(subListIterator->getListGuiNodes());
 		std::list<GuiNode>::iterator nodeListIterator = nodeList.begin();
 		while (nodeListIterator != nodeList.end()){
+			this->idGuiNode = nodeListIterator->getId();
+
 			if (nodeListIterator->itIsInitial())
 				currentGuiSubautomata->setActiveNode(nodeListIterator->getName());
 			if (this->isFirstActiveNode(&*nodeListIterator)){
 				nodeListIterator->changeColor(ITEM_COLOR_GREEN);
-				//Prescindible??? BORRAR
-				this->setActiveTreeView(nodeListIterator->getName(), true,
-											this->refTreeModel->children());
 				color = ITEM_COLOR_GREEN;
 			}else{
 				color = "white";
