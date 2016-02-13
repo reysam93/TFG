@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualHFSM><SubAutomata id="1" idFather="0"><state initial="true" id="1"><posx>76</posx><posy>158</posy><name>TakeOff</name><idSubautomataSon>2</idSubautomataSon><code></code></state><state initial="false" id="5"><posx>323</posx><posy>136</posy><name>GoFront</name><idSubautomataSon>3</idSubautomataSon><code></code></state><state initial="false" id="14"><posx>587</posx><posy>181</posy><name>DoSquare</name><idSubautomataSon>5</idSubautomataSon><code></code></state><state initial="false" id="15"><posx>395</posx><posy>467</posy><name>Landing</name><idSubautomataSon>0</idSubautomataSon><code>print "landing"
+self.lock.acquire()
+self.extraPrx.land()
+self.lock.release()</code></state><state initial="false" id="16"><posx>89</posx><posy>421</posy><name>END</name><idSubautomataSon>0</idSubautomataSon><code>print "END"</code></state><transition id="2"><posx>189</posx><posy>145</posy><origin>1</origin><destiny>5</destiny><transcode>print "From TakeOff to GoFront"</transcode><name>transition</name><trans type="time">3500</trans></transition><transition id="6"><posx>446</posx><posy>132</posy><origin>5</origin><destiny>14</destiny><transcode>self.goneFront = False</transcode><name>transition</name><trans type="condition">self.goneFront</trans></transition><transition id="8"><posx>226</posx><posy>464</posy><origin>15</origin><destiny>16</destiny><transcode></transcode><name>transition</name><trans type="time">2000</trans></transition><transition id="28"><posx>48</posx><posy>290</posy><origin>16</origin><destiny>1</destiny><transcode></transcode><name>transition</name><trans type="time">3000</trans></transition><transition id="37"><posx>491</posx><posy>324</posy><origin>14</origin><destiny>15</destiny><transcode>self.squareDone = False</transcode><name>transition</name><trans type="condition">self.squareDone</trans></transition><iteration_time>100</iteration_time><variables>self.goneFront = False
+self.squareDone = False
+self.goneBack = False</variables><functions></functions></SubAutomata><SubAutomata id="2" idFather="1"><state initial="true" id="2"><posx>106</posx><posy>141</posy><name>TakingOff</name><idSubautomataSon>0</idSubautomataSon><code>print "Taking Off"
+self.lock.acquire()
+self.extraPrx.takeoff()
+self.lock.release()</code></state><state initial="false" id="3"><posx>283</posx><posy>219</posy><name>Stabilizing1</name><idSubautomataSon>0</idSubautomataSon><code></code></state><transition id="1"><posx>138</posx><posy>243</posy><origin>2</origin><destiny>3</destiny><transcode></transcode><name>transition</name><trans type="time">2000</trans></transition><transition id="26"><posx>244</posx><posy>116</posy><origin>3</origin><destiny>2</destiny><transcode></transcode><name>transition</name><trans type="time">1700</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><SubAutomata id="3" idFather="1"><state initial="true" id="9"><posx>127</posx><posy>107</posy><name>GoingFront</name><idSubautomataSon>0</idSubautomataSon><code>pos = self.pose3dPrx.getPose3DData().x * 100
+
+if initPos == 0:
+	initPos = self.pose3dPrx.getPose3DData().x * 100
+
+print "pos:", pos, "init:", initPos
+print "distancia", pos - initPos
+
+cmd = jderobot.CMDVelData()
+cmd.linearX = 1
+cmd.linearY = 0
+cmd.linearZ = 0
+self.lock.acquire()
+self.cmdVelPrx.setCMDVelData(cmd)
+self.lock.release()</code></state><state initial="false" id="10"><posx>511</posx><posy>137</posy><name>Stabilizing2</name><idSubautomataSon>4</idSubautomataSon><code>cmd.linearX = 0
+cmd.linearY = 0
+cmd.linearZ = 0
+self.lock.acquire()
+self.cmdVelPrx.setCMDVelData(cmd)
+self.lock.release()</code></state><state initial="false" id="11"><posx>298</posx><posy>291</posy><name>goneFront</name><idSubautomataSon>0</idSubautomataSon><code>self.goneFront = True</code></state><transition id="2"><posx>319</posx><posy>123</posy><origin>9</origin><destiny>10</destiny><transcode>print "300m reached"</transcode><name>300m</name><trans type="condition">pos - initPos &gt; 300</trans></transition><transition id="3"><posx>405</posx><posy>214</posy><origin>10</origin><destiny>11</destiny><transcode>print "from stabilizing2 to GoneFront"</transcode><name>transition</name><trans type="time">3000</trans></transition><transition id="27"><posx>212</posx><posy>199</posy><origin>11</origin><destiny>9</destiny><transcode>initPos = 0
+pos = 0</transcode><name>transition</name><trans type="time">200</trans></transition><iteration_time>100</iteration_time><variables>initPos = 0
+pos = 0</variables><functions></functions></SubAutomata><SubAutomata id="4" idFather="3"><state initial="true" id="12"><posx>232</posx><posy>178</posy><name>empty1</name><idSubautomataSon>0</idSubautomataSon><code></code></state><state initial="false" id="13"><posx>445</posx><posy>217</posy><name>empty2</name><idSubautomataSon>0</idSubautomataSon><code></code></state><transition id="4"><posx>357</posx><posy>129</posy><origin>12</origin><destiny>13</destiny><transcode></transcode><name>transition</name><trans type="time">800</trans></transition><transition id="5"><posx>316</posx><posy>271</posy><origin>13</origin><destiny>12</destiny><transcode></transcode><name>transition</name><trans type="time">800</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><SubAutomata id="5" idFather="1"><state initial="true" id="17"><posx>465</posx><posy>388</posy><name>DoingRigthSide</name><idSubautomataSon>6</idSubautomataSon><code>print "Doing Rigth Side"</code></state><state initial="false" id="18"><posx>461</posx><posy>140</posy><name>DoingTopSide</name><idSubautomataSon>8</idSubautomataSon><code>print "Doing Top Side"</code></state><state initial="false" id="19"><posx>134</posx><posy>130</posy><name>DoingLeftSide</name><idSubautomataSon>9</idSubautomataSon><code>print "Doing Left Side"</code></state><state initial="false" id="20"><posx>141</posx><posy>389</posy><name>DoingBottomSide</name><idSubautomataSon>10</idSubautomataSon><code>print "Doing Bottom Side"</code></state><transition id="9"><posx>463</posx><posy>264</posy><origin>17</origin><destiny>18</destiny><transcode>print "Rigth Done"
+self.goneToTop = False</transcode><name>transition</name><trans type="condition">self.goneToTop</trans></transition><transition id="10"><posx>298</posx><posy>136</posy><origin>18</origin><destiny>19</destiny><transcode>print "Left done"
+self.goneToLeft = False</transcode><name>transition</name><trans type="condition">self.goneToLeft</trans></transition><transition id="11"><posx>137</posx><posy>260</posy><origin>19</origin><destiny>20</destiny><transcode>print "Left done"
+self.goneToBottom = False</transcode><name>transition</name><trans type="condition">self.goneToBottom</trans></transition><transition id="12"><posx>303</posx><posy>388</posy><origin>20</origin><destiny>17</destiny><transcode>
+
+self.squareDone = True
+print "Bottom done"
+self.goneToRigth = False</transcode><name>transition</name><trans type="condition">self.goneToRigth</trans></transition><iteration_time>100</iteration_time><variables>self.goneToTop = False
+self.goneToLeft = False
+self.goneToBottom = False
+self.goneToRigth = False</variables><functions></functions></SubAutomata><SubAutomata id="6" idFather="5"><state initial="true" id="21"><posx>352</posx><posy>452</posy><name>GoingToTop</name><idSubautomataSon>0</idSubautomataSon><code>cmd = jderobot.CMDVelData()
+cmd.linearX = 0.75
+cmd.linearY = 0
+cmd.linearZ = 0
+self.lock.acquire()
+self.cmdVelPrx.setCMDVelData(cmd)
+self.lock.release()</code></state><state initial="false" id="22"><posx>280</posx><posy>218</posy><name>StabilizingTop</name><idSubautomataSon>0</idSubautomataSon><code>cmd.linearX = 0
+cmd.linearY = 0
+cmd.linearZ = 0
+self.lock.acquire()
+self.cmdVelPrx.setCMDVelData(cmd)
+self.lock.release()</code></state><state initial="false" id="23"><posx>448</posx><posy>105</posy><name>GoneToTop</name><idSubautomataSon>0</idSubautomataSon><code>self.goneToTop = True</code></state><transition id="13"><posx>212</posx><posy>319</posy><origin>21</origin><destiny>22</destiny><transcode></transcode><name>transition</name><trans type="time">3000</trans></transition><transition id="14"><posx>350</posx><posy>132</posy><origin>22</origin><destiny>23</destiny><transcode></transcode><name>transition</name><trans type="time">2000</trans></transition><transition id="16"><posx>400</posx><posy>279</posy><origin>23</origin><destiny>21</destiny><transcode>self.GoneToTop = False</transcode><name>transition</name><trans type="time">100</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><SubAutomata id="8" idFather="5"><state initial="true" id="24"><posx>135</posx><posy>397</posy><name>GoingToLeft</name><idSubautomataSon>0</idSubautomataSon><code>cmd = jderobot.CMDVelData()
+cmd.linearX = 0
+cmd.linearY = 0.75
+cmd.linearZ = 0
+self.lock.acquire()
+self.cmdVelPrx.setCMDVelData(cmd)
+self.lock.release()</code></state><state initial="false" id="25"><posx>213</posx><posy>194</posy><name>StabilizingLeft</name><idSubautomataSon>0</idSubautomataSon><code>cmd = jderobot.CMDVelData()
+cmd.linearX = 0
+cmd.linearY = 0
+cmd.linearZ = 0
+self.lock.acquire()
+self.cmdVelPrx.setCMDVelData(cmd)
+self.lock.release()</code></state><state initial="false" id="26"><posx>416</posx><posy>260</posy><name>GoneToLeft</name><idSubautomataSon>0</idSubautomataSon><code>self.goneToLeft = True</code></state><transition id="17"><posx>174</posx><posy>295</posy><origin>24</origin><destiny>25</destiny><transcode></transcode><name>transition</name><trans type="time">3000</trans></transition><transition id="18"><posx>314</posx><posy>227</posy><origin>25</origin><destiny>26</destiny><transcode></transcode><name>transition</name><trans type="time">2000</trans></transition><transition id="19"><posx>275</posx><posy>328</posy><origin>26</origin><destiny>24</destiny><transcode>self.goneToLeft = False</transcode><name>transition</name><trans type="time">100</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><SubAutomata id="9" idFather="5"><state initial="true" id="27"><posx>169</posx><posy>408</posy><name>GoingToBottom</name><idSubautomataSon>0</idSubautomataSon><code>cmd = jderobot.CMDVelData()
+cmd.linearX = -0.75
+cmd.linearY = 0
+cmd.linearZ = 0
+self.lock.acquire()
+self.cmdVelPrx.setCMDVelData(cmd)
+self.lock.release()</code></state><state initial="false" id="28"><posx>243</posx><posy>164</posy><name>StabilizingBottom</name><idSubautomataSon>0</idSubautomataSon><code>cmd = jderobot.CMDVelData()
+cmd.linearX = 0
+cmd.linearY = 0
+cmd.linearZ = 0
+self.lock.acquire()
+self.cmdVelPrx.setCMDVelData(cmd)
+self.lock.release()</code></state><state initial="false" id="29"><posx>418</posx><posy>355</posy><name>GoneToBottom</name><idSubautomataSon>0</idSubautomataSon><code>self.goneToBottom = True</code></state><transition id="20"><posx>206</posx><posy>286</posy><origin>27</origin><destiny>28</destiny><transcode></transcode><name>transition</name><trans type="time">3000</trans></transition><transition id="21"><posx>330</posx><posy>259</posy><origin>28</origin><destiny>29</destiny><transcode></transcode><name>transition</name><trans type="time">2000</trans></transition><transition id="22"><posx>293</posx><posy>381</posy><origin>29</origin><destiny>27</destiny><transcode>self.goneToBottom = False</transcode><name>transition</name><trans type="time">100</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><SubAutomata id="10" idFather="5"><state initial="true" id="31"><posx>121</posx><posy>361</posy><name>GoingToRigth</name><idSubautomataSon>0</idSubautomataSon><code>cmd = jderobot.CMDVelData()
+cmd.linearX = 0
+cmd.linearY = -0.75
+cmd.linearZ = 0
+self.lock.acquire()
+self.cmdVelPrx.setCMDVelData(cmd)
+self.lock.release()</code></state><state initial="false" id="32"><posx>231</posx><posy>110</posy><name>StabilizingRigth</name><idSubautomataSon>0</idSubautomataSon><code>cmd = jderobot.CMDVelData()
+cmd.linearX = 0
+cmd.linearY = 0
+cmd.linearZ = 0
+self.lock.acquire()
+self.cmdVelPrx.setCMDVelData(cmd)
+self.lock.release()</code></state><state initial="false" id="33"><posx>371</posx><posy>331</posy><name>GoneToRigth</name><idSubautomataSon>0</idSubautomataSon><code>self.goneToRigth = True</code></state><transition id="23"><posx>176</posx><posy>235</posy><origin>31</origin><destiny>32</destiny><transcode></transcode><name>transition</name><trans type="time">3000</trans></transition><transition id="24"><posx>300</posx><posy>220</posy><origin>32</origin><destiny>33</destiny><transcode></transcode><name>transition</name><trans type="time">2000</trans></transition><transition id="25"><posx>246</posx><posy>346</posy><origin>33</origin><destiny>31</destiny><transcode>self.goneToRigth = False</transcode><name>transition</name><trans type="time">100</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><libraries><lib>jderobot</lib></libraries><config><iceinterface><nameinterface>pose3d</nameinterface><ip>0000</ip><port>9000</port><interface>Pose3D</interface></iceinterface><iceinterface><nameinterface>cmdVel</nameinterface><ip>0000</ip><port>9850</port><interface>CMDVel</interface></iceinterface><iceinterface><nameinterface>extra</nameinterface><ip>0000</ip><port>9701</port><interface>ArDroneExtra</interface></iceinterface></config></VisualHFSM>
