@@ -93,7 +93,6 @@ int Generate::init_py (){
 	this->fs.open(this->path.c_str(), std::fstream::out);
 	if (this->fs.is_open()){
 		this->generateHeaders_py();
-		this->generateFunctions();
 		this->generateAutomataClass_py();
 		//CREATE GUI SUBAUTOMATAS
 		this->generateMain_py();
@@ -730,6 +729,7 @@ void Generate::generateAutomataClass_py(){
 	this->fs << "class Automata():" << std::endl;
 	this->fs << std::endl;
 	this->generateAutomataInit_py();
+	this->generateFunctions_py();
 	this->generateStartThreads_py();
 	this->generateCreateGuiSubautomataList_py();
 	this->generateShutDown_py();
@@ -750,6 +750,15 @@ void Generate::generateAutomataInit_py(){
 
 	this->generateEnums_py();
 	this->generateVariables_py();
+}
+
+void Generate::generateFunctions_py(){
+	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
+            subListIterator != this->subautomataList.end(); subListIterator++ ) {		
+		this->fs << "\t" << subListIterator->getFunctions() << std::endl;
+		this->fs << std::endl;
+		this->fs.flush();
+	}	
 }
 
 void Generate::generateStartThreads_py(){
@@ -925,6 +934,7 @@ void Generate::generateRunGui_py(){
 
 void Generate::generateSubautomatas_py(){
 	bool firstState = true;
+	bool firstTransition = true;
 	int addTab;
 
 	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
@@ -1024,27 +1034,34 @@ void Generate::generateSubautomatas_py(){
 		
 		for ( std::list<Node>::iterator nodeListIterator = nodeList.begin();
 				nodeListIterator != nodeList.end(); nodeListIterator++ ) {
+			firstTransition = true;
 			int idNode = nodeListIterator->getId();
 			
+			this->fs << this->mapTab[(TabEnum)(T_THREE + addTab)];
+			if(firstState){
+				this->fs << "if(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+				firstState = false;
+			}else {
+				this->fs << "elif(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+			}
+
 			for ( std::list<Transition>::iterator transListIterator = transList.begin();
 					transListIterator != transList.end(); transListIterator++ ) {
 
 				if (transListIterator->getIdOrigin() == idNode) {
 
-					this->fs << this->mapTab[(TabEnum)(T_THREE + addTab)];
-					if(firstState){
-						this->fs << "if(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
-						firstState = false;
-					}else {
-						this->fs << "elif(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
-					}
-
 					int idDestiny = transListIterator->getIdDestiny();
 					int idOrigin = transListIterator->getIdOrigin();
 					if (transListIterator->getType().compare("condition") == 0) {
 
-						this->fs << this->mapTab[(TabEnum)(T_FOUR + addTab)];						
-						this->fs << "if(" << transListIterator->getCodeTrans().c_str() << "):" << std::endl;
+						this->fs << this->mapTab[(TabEnum)(T_FOUR + addTab)];
+						if(firstTransition){
+							this->fs << "if(" << transListIterator->getCodeTrans().c_str() << "):" << std::endl;
+							firstTransition = false;
+						}else{
+							this->fs << "elif(" << transListIterator->getCodeTrans().c_str() << "):" << std::endl;
+						}
+						
 						this->fs << this->mapTab[(TabEnum)(T_FIVE + addTab)];
 						this->fs << "self.sub" << id << " = \"" << subListIterator->getNodeName(idDestiny) << "\"" << std::endl;
 						std::istringstream f(transListIterator->getCode());
