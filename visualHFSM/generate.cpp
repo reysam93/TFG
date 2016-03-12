@@ -754,11 +754,15 @@ void Generate::generateAutomataInit_py(){
 
 void Generate::generateFunctions_py(){
 	for ( std::list<SubAutomata>::iterator subListIterator = this->subautomataList.begin();
-            subListIterator != this->subautomataList.end(); subListIterator++ ) {		
-		this->fs << "\t" << subListIterator->getFunctions() << std::endl;
-		this->fs << std::endl;
+            subListIterator != this->subautomataList.end(); subListIterator++ ) {
+
+        std::istringstream f(subListIterator->getFunctions());
+    	std::string line;
+    	while (std::getline(f, line))
+    		this->fs << "\t" << line << std::endl;
+
 		this->fs.flush();
-	}	
+	}
 }
 
 void Generate::generateStartThreads_py(){
