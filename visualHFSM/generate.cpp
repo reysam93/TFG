@@ -947,7 +947,7 @@ void Generate::generateSubautomatas_py(){
        	this->fs << this->mapTab[T_ONE];	
 		this->fs << "def subautomata" << id << "(self):" << std::endl;
 
-		this->fs << this->mapTab[T_TWO] << "run = True" << std::endl;		
+		this->fs << this->mapTab[T_TWO] << "self.run" << id << " = True" << std::endl;		
 		this->fs << this->mapTab[T_TWO] << "cycle = " << subListIterator->getTime() << std::endl;
 		this->fs << this->mapTab[T_TWO] << "t_activated = False" << std::endl;
 		this->fs << this->mapTab[T_TWO] << "t_fin = 0" << std::endl;
@@ -987,7 +987,7 @@ void Generate::generateSubautomatas_py(){
 			this->fs << this->mapTab[T_TWO] << line << std::endl;
 		this->fs << std::endl;
 
-		this->fs << this->mapTab[T_TWO] << "while(run):" << std::endl;
+		this->fs << this->mapTab[T_TWO] << "while(self.run" << id << "):" << std::endl;
 		this->fs << this->mapTab[T_THREE] << "totala = time.time() * 1000000" << std::endl;
 		this->fs << std::endl;
 
@@ -1041,25 +1041,32 @@ void Generate::generateSubautomatas_py(){
 			firstTransition = true;
 			int idNode = nodeListIterator->getId();
 			
-			this->fs << this->mapTab[(TabEnum)(T_THREE + addTab)];
+			std::stringstream ifHeader;
+			ifHeader << this->mapTab[(TabEnum)(T_THREE + addTab)];
 			if(firstState){
-				this->fs << "if(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+				ifHeader << "if(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
 				firstState = false;
 			}else {
-				this->fs << "elif(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
+				ifHeader << "elif(self.sub" << id << " == \"" << nodeListIterator->getName() << "\"):" << std::endl;
 			}
 
+				bool ifHeaderUsed = false;
 			for ( std::list<Transition>::iterator transListIterator = transList.begin();
 					transListIterator != transList.end(); transListIterator++ ) {
 
 				if (transListIterator->getIdOrigin() == idNode) {
+
+					if (!ifHeaderUsed){
+						this->fs << ifHeader.str();
+						ifHeaderUsed = true;
+					}
 
 					int idDestiny = transListIterator->getIdDestiny();
 					int idOrigin = transListIterator->getIdOrigin();
 					if (transListIterator->getType().compare("condition") == 0) {
 
 						this->fs << this->mapTab[(TabEnum)(T_FOUR + addTab)];
-						if(firstTransition){
+						if(firstTransition){							
 							this->fs << "if(" << transListIterator->getCodeTrans().c_str() << "):" << std::endl;
 							firstTransition = false;
 						}else{
