@@ -610,8 +610,6 @@ void Generate::generateCfg () {
 			listInterfacesIterator != this->listInterfaces->end(); listInterfacesIterator++ ){
 		if(listInterfacesIterator->getInterface().compare("ArDroneExtra") == 0){
 			interfaceName = "Extra";
-		}else if(listInterfacesIterator->getInterface().compare("Pose3D") == 0){
-			interfaceName = "ImuPlugin";
 		}else{
 			interfaceName = listInterfacesIterator->getInterface();
 		}
