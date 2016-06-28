@@ -79,7 +79,7 @@ def setVelocity(self, vx, vy, vz, yaw):
 	self.CMDVelPrx.setCMDVelData(cmd)
 
 #The factor indicate the margin of the error multipliyin the error for this factor
-def droneInPosition(self, pos,factor=1 ):
+def droneInPosition(self, pos, factor=1 ):
 	return (abs(pos[0] - self.xPos) &lt; self.minDist*factor) and (abs(pos[1] - self.yPos) &lt; self.minDist*factor)
 
 class PID:
@@ -118,10 +118,10 @@ class PID:
 			D = self.Kd * (error - self.lastError)
 		self.lastError = error
 		speed = P + I + D
-		if speed &gt; 3:
-			speed = 3
-		elif speed &lt; -3:
-			speed = -3
+		if speed &gt; 5:
+			speed = 5
+		elif speed &lt; -5:
+			speed = -5
 		return speed
 
 </functions></SubAutomata><SubAutomata id="3" idFather="1"><state initial="true" id="3"><posx>156</posx><posy>228</posy><name>FindRoad</name><idSubautomataSon>0</idSubautomataSon><code>self.setVelocity(0, 0, 0.75, 0)

@@ -84,7 +84,7 @@ class Automata():
 		self.CMDVelPrx.setCMDVelData(cmd)
 	
 	#The factor indicate the margin of the error multipliyin the error for this factor
-	def droneInPosition(self, pos,factor=1 ):
+	def droneInPosition(self, pos, factor=1 ):
 		return (abs(pos[0] - self.xPos) < self.minDist*factor) and (abs(pos[1] - self.yPos) < self.minDist*factor)
 	
 	class PID:
@@ -123,10 +123,10 @@ class Automata():
 				D = self.Kd * (error - self.lastError)
 			self.lastError = error
 			speed = P + I + D
-			if speed > 3:
-				speed = 3
-			elif speed < -3:
-				speed = -3
+			if speed > 5:
+				speed = 5
+			elif speed < -5:
+				speed = -5
 			return speed
 	
 	def startThreads(self):
