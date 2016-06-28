@@ -80,7 +80,7 @@ def setVelocity(self, vx, vy, vz, yaw):
 
 #The factor indicate the margin of the error multipliyin the error for this factor
 def droneInPosition(self, pos, factor=1 ):
-	return (abs(pos[0] - self.xPos) &lt; self.minDistVictims*factor) and (abs(pos[1] - self.yPos) &lt; self.minDistVictims*factor)
+	return (abs(pos[0] - self.xPos) &lt; self.minDist*factor) and (abs(pos[1] - self.yPos) &lt; self.minDist*factor)
 
 class PID:
 	def __init__(self, Epsilon=.01, Kp=1, Ki=1, Kd=1, Imax=300, Imin=-300):
@@ -204,11 +204,12 @@ self.setVelocity(xVel, -yVel, 0, 0)
 secondPos = (5, -30)
 thirdPos = (-10, -20)
 
-self.minDistVictims = 0.05
+#Same value in the parent subautomata
+self.minDist = 0.01
 
 #Control PID
-xDistPid = self.PID(self.minDistVictims, 1, 0.001, 0.001, 5, -5)
-yDistPid = self.PID(self.minDistVictims, 1, 0.001, 0.001, 5, -5)</variables><functions></functions></SubAutomata><SubAutomata id="6" idFather="1"><state initial="true" id="15"><posx>126</posx><posy>185</posy><name>Descending</name><idSubautomataSon>0</idSubautomataSon><code>#Controling heigh
+xDistPid = self.PID(self.minDist, 1, 0.001, 0.001, 5, -5)
+yDistPid = self.PID(self.minDist, 1, 0.001, 0.001, 5, -5)</variables><functions></functions></SubAutomata><SubAutomata id="6" idFather="1"><state initial="true" id="15"><posx>126</posx><posy>185</posy><name>Descending</name><idSubautomataSon>0</idSubautomataSon><code>#Controling heigh
 self.heigh = self.Pose3DPrx.getPose3DData().z
 zVel = self.zPid.process(targetZDescend - self.heigh)
 self.setVelocity(0, 0, zVel, 0)

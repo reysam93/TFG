@@ -85,7 +85,7 @@ class Automata():
 	
 	#The factor indicate the margin of the error multipliyin the error for this factor
 	def droneInPosition(self, pos, factor=1 ):
-		return (abs(pos[0] - self.xPos) < self.minDistVictims*factor) and (abs(pos[1] - self.yPos) < self.minDistVictims*factor)
+		return (abs(pos[0] - self.xPos) < self.minDist*factor) and (abs(pos[1] - self.yPos) < self.minDist*factor)
 	
 	class PID:
 		def __init__(self, Epsilon=.01, Kp=1, Ki=1, Kd=1, Imax=300, Imin=-300):
@@ -474,11 +474,12 @@ class Automata():
 		secondPos = (5, -30)
 		thirdPos = (-10, -20)
 		
-		self.minDistVictims = 0.05
+		#Same value in the parent subautomata
+		self.minDist = 0.01
 		
 		#Control PID
-		xDistPid = self.PID(self.minDistVictims, 1, 0.001, 0.001, 5, -5)
-		yDistPid = self.PID(self.minDistVictims, 1, 0.001, 0.001, 5, -5)
+		xDistPid = self.PID(self.minDist, 1, 0.001, 0.001, 5, -5)
+		yDistPid = self.PID(self.minDist, 1, 0.001, 0.001, 5, -5)
 
 		while(self.run5):
 			totala = time.time() * 1000000
