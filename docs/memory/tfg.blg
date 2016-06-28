@@ -1,0 +1,66 @@
+This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: tfg.aux
+A level-1 auxiliary file: portada.aux
+A level-1 auxiliary file: 1_introduccion.aux
+A level-1 auxiliary file: 2_objetivos.aux
+A level-1 auxiliary file: 3_infraestructura.aux
+A level-1 auxiliary file: 4_visualHFSM5.aux
+A level-1 auxiliary file: 5_experimentos.aux
+A level-1 auxiliary file: 6_conclusiones.aux
+The style file: acm.bst
+Database file #1: biblio.bib
+I was expecting a `,' or a `}'---line 94 of file biblio.bib
+ : 
+ : @article{rey2016visualhfsm,
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--empty journal in learningWithBlockly
+Warning--empty journal in yunta2012herramienta
+Warning--empty journal in martin2010herramienta
+Warning--empty journal in menendezprogramming
+Warning--empty journal in borja2014
+Warning--empty journal in peredadocencia
+Warning--empty journal in salamanques2012
+You've used 15 entries,
+            2253 wiz_defined-function locations,
+            607 strings with 6677 characters,
+and the built_in function-call counts, 4496 in all, are:
+= -- 433
+> -- 205
+< -- 0
++ -- 86
+- -- 70
+* -- 298
+:= -- 742
+add.period$ -- 38
+call.type$ -- 15
+change.case$ -- 80
+chr.to.int$ -- 0
+cite$ -- 22
+duplicate$ -- 187
+empty$ -- 347
+format.name$ -- 70
+if$ -- 934
+int.to.chr$ -- 0
+int.to.str$ -- 15
+missing$ -- 15
+newline$ -- 71
+num.names$ -- 30
+pop$ -- 89
+preamble$ -- 1
+purify$ -- 65
+quote$ -- 0
+skip$ -- 132
+stack$ -- 0
+substring$ -- 235
+swap$ -- 55
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 60
+warning$ -- 7
+while$ -- 45
+width$ -- 17
+write$ -- 132
+(There was 1 error message)

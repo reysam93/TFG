@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualHFSM><SubAutomata id="1" idFather="0"><state initial="true" id="1"><posx>134</posx><posy>346</posy><name>square</name><idSubautomataSon>2</idSubautomataSon><code></code></state><state initial="false" id="2"><posx>534</posx><posy>349</posy><name>wait</name><idSubautomataSon>3</idSubautomataSon><code>
+
+Motorsprx-&gt;setV(0.0);
+Motorsprx-&gt;setW(0.0);</code></state><transition id="1"><posx>337</posx><posy>230</posy><origin>1</origin><destiny>2</destiny><transcode></transcode><name>transition</name><trans type="time">20000</trans></transition><transition id="4"><posx>335</posx><posy>457</posy><origin>2</origin><destiny>1</destiny><transcode></transcode><name>transition</name><trans type="time">5000</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><SubAutomata id="2" idFather="1"><state initial="true" id="5"><posx>168</posx><posy>559</posy><name>go_up</name><idSubautomataSon>0</idSubautomataSon><code>
+
+Motorsprx-&gt;setV(100.0);
+Motorsprx-&gt;setW(0.0);
+
+encoders = Encodersprx-&gt;getEncodersData();
+thetapos = encoders-&gt;robottheta;</code></state><state initial="false" id="8"><posx>69</posx><posy>396</posy><name>turn_rigth</name><idSubautomataSon>0</idSubautomataSon><code>
+
+Motorsprx-&gt;setV(0.0);
+Motorsprx-&gt;setW(-3.0);
+
+encoders = Encodersprx-&gt;getEncodersData();
+if (encoders-&gt;robottheta &gt; thetapos + 1)
+	angle = thetapos - encoders-&gt;robottheta + 360;
+else
+	angle = thetapos - encoders-&gt;robottheta;
+
+std::cout &lt;&lt; "angle: " &lt;&lt; angle &lt;&lt; std::endl;
+</code></state><state initial="false" id="9"><posx>185</posx><posy>270</posy><name>go_rigth</name><idSubautomataSon>0</idSubautomataSon><code>
+
+Motorsprx-&gt;setV(100.0);
+Motorsprx-&gt;setW(0.0);
+
+encoders = Encodersprx-&gt;getEncodersData();
+thetapos = encoders-&gt;robottheta;</code></state><state initial="false" id="10"><posx>343</posx><posy>192</posy><name>turn_down</name><idSubautomataSon>0</idSubautomataSon><code>
+
+Motorsprx-&gt;setV(0.0);
+Motorsprx-&gt;setW(-3.0);
+
+encoders = Encodersprx-&gt;getEncodersData();
+if (encoders-&gt;robottheta &gt; thetapos + 1)
+	angle = thetapos - encoders-&gt;robottheta + 360;
+else
+	angle = thetapos - encoders-&gt;robottheta;
+
+std::cout &lt;&lt; "angle: " &lt;&lt; angle &lt;&lt; std::endl;</code></state><state initial="false" id="11"><posx>486</posx><posy>283</posy><name>go_down</name><idSubautomataSon>0</idSubautomataSon><code>
+
+Motorsprx-&gt;setV(100.0);
+Motorsprx-&gt;setW(0.0);
+
+encoders = Encodersprx-&gt;getEncodersData();
+thetapos = encoders-&gt;robottheta;</code></state><state initial="false" id="12"><posx>555</posx><posy>426</posy><name>turn_left</name><idSubautomataSon>0</idSubautomataSon><code>
+
+Motorsprx-&gt;setV(0.0);
+Motorsprx-&gt;setW(-3.0);
+
+encoders = Encodersprx-&gt;getEncodersData();
+if (encoders-&gt;robottheta &gt; thetapos + 1)
+	angle = thetapos - encoders-&gt;robottheta + 360;
+else
+	angle = thetapos - encoders-&gt;robottheta;
+
+std::cout &lt;&lt; "angle: " &lt;&lt; angle &lt;&lt; std::endl;</code></state><state initial="false" id="13"><posx>505</posx><posy>583</posy><name>go_left</name><idSubautomataSon>0</idSubautomataSon><code>
+
+Motorsprx-&gt;setV(100.0);
+Motorsprx-&gt;setW(0.0);
+
+encoders = Encodersprx-&gt;getEncodersData();
+thetapos = encoders-&gt;robottheta;</code></state><state initial="false" id="14"><posx>354</posx><posy>650</posy><name>turn_up</name><idSubautomataSon>0</idSubautomataSon><code>
+
+Motorsprx-&gt;setV(0.0);
+Motorsprx-&gt;setW(-3.0);
+
+encoders = Encodersprx-&gt;getEncodersData();
+if (encoders-&gt;robottheta &gt; thetapos + 1)
+	angle = thetapos - encoders-&gt;robottheta + 360;
+else
+	angle = thetapos - encoders-&gt;robottheta;
+
+std::cout &lt;&lt; "angle: " &lt;&lt; angle &lt;&lt; std::endl;</code></state><transition id="10"><posx>118</posx><posy>477</posy><origin>5</origin><destiny>8</destiny><transcode></transcode><name>transition</name><trans type="time">2000</trans></transition><transition id="12"><posx>127</posx><posy>333</posy><origin>8</origin><destiny>9</destiny><transcode></transcode><name>transition</name><trans type="condition">angle &gt; 90</trans></transition><transition id="13"><posx>264</posx><posy>231</posy><origin>9</origin><destiny>10</destiny><transcode></transcode><name>transition</name><trans type="time">2000</trans></transition><transition id="14"><posx>415</posx><posy>237</posy><origin>10</origin><destiny>11</destiny><transcode></transcode><name>transition</name><trans type="condition">angle &gt; 90</trans></transition><transition id="15"><posx>525</posx><posy>348</posy><origin>11</origin><destiny>12</destiny><transcode></transcode><name>transition</name><trans type="time">2000</trans></transition><transition id="16"><posx>534</posx><posy>498</posy><origin>12</origin><destiny>13</destiny><transcode></transcode><name>transition</name><trans type="condition">angle &gt; 90</trans></transition><transition id="17"><posx>430</posx><posy>616</posy><origin>13</origin><destiny>14</destiny><transcode></transcode><name>transition</name><trans type="time">2000</trans></transition><transition id="18"><posx>261</posx><posy>604</posy><origin>14</origin><destiny>5</destiny><transcode></transcode><name>transition</name><trans type="condition">angle &gt; 90</trans></transition><iteration_time>100</iteration_time><variables>jderobot::EncodersDataPtr encoders = Encodersprx-&gt;getEncodersData();
+float thetapos = 0;
+float angle = 0;</variables><functions></functions></SubAutomata><SubAutomata id="3" idFather="1"><state initial="true" id="15"><posx>166</posx><posy>223</posy><name>wait1</name><idSubautomataSon>0</idSubautomataSon><code></code></state><state initial="false" id="16"><posx>446</posx><posy>237</posy><name>wait2</name><idSubautomataSon>0</idSubautomataSon><code></code></state><transition id="1"><posx>291</posx><posy>127</posy><origin>15</origin><destiny>16</destiny><transcode></transcode><name>transition</name><trans type="time">2000</trans></transition><transition id="3"><posx>291</posx><posy>301</posy><origin>16</origin><destiny>15</destiny><transcode></transcode><name>transition</name><trans type="time">2100</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><libraries><lib>iostream</lib></libraries><config><iceinterface><nameinterface>Encoders</nameinterface><ip>localhost</ip><port>9997</port><interface>Encoders</interface></iceinterface><iceinterface><nameinterface>Motors</nameinterface><ip>localhost</ip><port>9999</port><interface>Motors</interface></iceinterface></config></VisualHFSM>

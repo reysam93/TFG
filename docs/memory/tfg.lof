@@ -1,0 +1,43 @@
+\select@language {spanish}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Aplicaciones de robots en la industria.\relax }}{3}{figure.caption.5}
+\contentsline {figure}{\numberline {1.2}{\ignorespaces Robots de Amazon.\relax }}{3}{figure.caption.6}
+\contentsline {figure}{\numberline {1.3}{\ignorespaces Aplicaciones de robots fuera de la industria.\relax }}{5}{figure.caption.7}
+\contentsline {figure}{\numberline {1.4}{\ignorespaces Distintos ejemplos de drones.\relax }}{5}{figure.caption.8}
+\contentsline {figure}{\numberline {1.5}{\ignorespaces Avances rob\IeC {\'o}ticos en autom\IeC {\'o}viles.\relax }}{6}{figure.caption.9}
+\contentsline {figure}{\numberline {1.6}{\ignorespaces Distintos esquemas de programaci\IeC {\'o}n de robots.\relax }}{7}{figure.caption.10}
+\contentsline {figure}{\numberline {1.7}{\ignorespaces Imagen RCX code de Lego.\relax }}{9}{figure.caption.11}
+\contentsline {figure}{\numberline {1.8}{\ignorespaces Aplicaciones educativas de los LPV.\relax }}{10}{figure.caption.12}
+\contentsline {figure}{\numberline {1.9}{\ignorespaces Ejemplo de aut\IeC {\'o}mata que define un comportamiento sencillo para un robot.\relax }}{11}{figure.caption.13}
+\contentsline {figure}{\numberline {1.10}{\ignorespaces Captura de XaitControl.\relax }}{12}{figure.caption.14}
+\contentsline {figure}{\numberline {1.11}{\ignorespaces Captura de SMACH viewer.\relax }}{12}{figure.caption.15}
+\contentsline {figure}{\numberline {1.12}{\ignorespaces Ejemplo de aut\IeC {\'o}mata del videojuego Halo 2.\relax }}{13}{figure.caption.16}
+\contentsline {figure}{\numberline {1.13}{\ignorespaces Evoluci\IeC {\'o}n de la GUI a lo largo de las distintas versiones de VisualHFSM\relax }}{15}{figure.caption.17}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Mundo de Gazebo creado para realizar pruebas.\relax }}{23}{figure.caption.18}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Esquema de la herencia de la clase Gtk::TreeView.\relax }}{25}{figure.caption.19}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Diagrama de flujo de GTK+.\relax }}{26}{figure.caption.20}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Glade Interface Designer.\relax }}{26}{figure.caption.21}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Qt 4 Designer.\relax }}{27}{figure.caption.22}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Esquema con los elementos de VisualHFSM\relax }}{30}{figure.caption.23}
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Editor gr\IeC {\'a}fico de VisualHFSM 5.0.\relax }}{31}{figure.caption.24}
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Formulario para editar el archivo de configuraci\IeC {\'o}n.\relax }}{33}{figure.caption.25}
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Comparaci\IeC {\'o}n de la nueva y la antigua GUI en tiempo de ejecuci\IeC {\'o}n.\relax }}{38}{figure.caption.26}
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Men\IeC {\'u} con la opci\IeC {\'o}n de generar codigo Python.\relax }}{42}{figure.caption.27}
+\contentsline {figure}{\numberline {4.6}{\ignorespaces GUI en tiempo de ejecuci\IeC {\'o}n con "Autofocus" activo.\relax }}{46}{figure.caption.28}
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Multiples subaut\IeC {\'o}matas en ejecuci\IeC {\'o}n.\relax }}{49}{figure.caption.29}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Aplicaci\IeC {\'o}n Cuadrado con un Pioneer en el editor gr\IeC {\'a}fico de VisualHFSM.\relax }}{52}{figure.caption.30}
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Aplicaci\IeC {\'o}n Cuadrado con un Pioneer con GUI en tiempo de ejecuci\IeC {\'o}n.\relax }}{53}{figure.caption.31}
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Aplicaci\IeC {\'o}n Choca-Gira en el editor gr\IeC {\'a}fico de VisualHFSM.\relax }}{53}{figure.caption.32}
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Aplicaci\IeC {\'o}n Choca-Gira con GUI en tiempo de ejecuci\IeC {\'o}n.\relax }}{56}{figure.caption.33}
+\contentsline {figure}{\numberline {5.5}{\ignorespaces C\IeC {\'o}digo de los estados de la aplicaci\IeC {\'o}n Bump \& Go.\relax }}{57}{figure.caption.34}
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Aplicaci\IeC {\'o}n Monitor an Area en el editor gr\IeC {\'a}fico de VisualHFSM.\relax }}{58}{figure.caption.35}
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Aplicaci\IeC {\'o}n Monitor an Area con GUI en ejecuci\IeC {\'o}n.\relax }}{60}{figure.caption.36}
+\contentsline {figure}{\numberline {5.8}{\ignorespaces Aplicaci\IeC {\'o}n Sigue Colores en el editor gr\IeC {\'a}fico de VisualHFSM.\relax }}{62}{figure.caption.37}
+\contentsline {figure}{\numberline {5.9}{\ignorespaces Funciones comunes declaradas usando el editor gr\IeC {\'a}fico.\relax }}{63}{figure.caption.38}
+\contentsline {figure}{\numberline {5.10}{\ignorespaces Aplicaci\IeC {\'o}n Sigue Colores en Gazebo.\relax }}{65}{figure.caption.39}
+\contentsline {figure}{\numberline {5.11}{\ignorespaces Aplicaci\IeC {\'o}n Sigue Colores utilizando un drone real.\relax }}{66}{figure.caption.40}
+\addvspace {10\p@ }

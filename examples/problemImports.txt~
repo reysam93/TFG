@@ -1,0 +1,19 @@
+#/usr/lib/python2.7/jderobot
+
+import Ice
+Ice.updateModule("RoboCompJointMotor")
+
+# Modules:
+import jointmotor_ice
+import remoteCloud_ice
+import remoteConfig_ice
+import encoders_ice
+import body_ice
+import bodymovements_ice
+
+# Submodules:
+import camera_ice
+import cmdvel_ice
+import ardroneextra_ice
+import pose3d_ice
+import navdata_ice

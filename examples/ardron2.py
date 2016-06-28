@@ -4,7 +4,6 @@
 import Ice
 import sys, signal
 import traceback, threading, time
-
 import jderobot
 
 from jderobot import CMDVelPrx
@@ -57,6 +56,14 @@ class Automata():
 		self.run1 = False
 		self.run2 = False
 		self.run3 = False
+
+	def runGui(self):
+		app = QtGui.QApplication(sys.argv)
+		self.automataGui = AutomataGui()
+		self.automataGui.draw()
+		self.automataGui.show()
+		app.exec_()
+		
 
 	def subautomata1(self):
 		run = True
@@ -270,25 +277,25 @@ class Automata():
 
 	def connectToProxys(self):
 		self.ic = Ice.initialize(sys.argv)
-
+	
 		# Contact to cmd
-		cmd = self.ic.propertyToProxy("automata.CMDVel.Proxy");
+		cmd = self.ic.propertyToProxy('automata.CMDVel.Proxy')
 		if(not cmd):
-			raise Exception("could not create proxy withcmd")
+			raise Exception('could not create proxy with cmd')
 		self.cmdPrx = CMDVelPrx.checkedCast(cmd)
 		if(not self.cmdPrx):
-			raise Exception("invalid proxy automata.cmd.Proxy")
-		print "cmd connected"
-
+			raise Exception('invalid proxy automata.CMDVel.Proxy')
+		print 'cmd connected'
+	
 		# Contact to extra
-		extra = self.ic.propertyToProxy("automata.ArDroneExtra.Proxy");
+		extra = self.ic.propertyToProxy('automata.ArDroneExtra.Proxy')
 		if(not extra):
-			raise Exception("could not create proxy withextra")
+			raise Exception('could not create proxy with extra')
 		self.extraPrx = ArDroneExtraPrx.checkedCast(extra)
 		if(not self.extraPrx):
-			raise Exception("invalid proxy automata.extra.Proxy")
-		print "extra connected"
-
+			raise Exception('invalid proxy automata.ArDroneExtra.Proxy')
+		print 'extra connected'
+	
 
 	def destroyIc(self):
 		if(self.ic):
@@ -296,31 +303,40 @@ class Automata():
 
 
 	def start(self):
+		self.guiThread = threading.Thread(target=self.runGui)
+		self.guiThread.start()
+
 		self.t1 = threading.Thread(target=self.subautomata1)
-		self.t1.start()
+		#self.t1.start()
 		self.t2 = threading.Thread(target=self.subautomata2)
-		self.t2.start()
+		#self.t2.start()
 		self.t3 = threading.Thread(target=self.subautomata3)
-		self.t3.start()
+		#self.t3.start()
+
 
 
 	def join(self):
+		self.guiThread.join()
 		self.t1.join()
 		self.t2.join()
 		self.t3.join()
 
 
 if __name__ == '__main__':
-
-	signal.signal(signal.SIGINT, signal.SIG_DFL)
-	automata = Automata()
-	try:
-		automata.connectToProxys()
-		automata.start()
-		automata.join()
-
-		sys.exit(0)
-	except:
-		traceback.print_exc()
-		automata.destroyIc()
-		sys.exit(-1)
+		sys.path.append("/home/samuelvm/TFG/visualHFSM")
+		from automatagui import AutomataGui, QtGui
+		print sys.path
+		signal.signal(signal.SIGINT, signal.SIG_DFL)
+		automata = Automata()
+		try:
+			#automata.connectToProxys()
+		
+			automata.start()
+			automata.join()
+			
+			sys.exit(0)
+		except:
+			traceback.print_exc()
+			#automata.destroyIc()
+			sys.exit(-1)
+	

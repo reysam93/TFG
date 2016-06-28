@@ -1,0 +1,175 @@
+\documentclass[notes,slidesec,a4]{seminar}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{t-gsyc-6}
+\usepackage{fancybox}
+\usepackage{graphics}
+\usepackage{moreverb}
+\usepackage{alltt}
+\usepackage{html}
+\usepackage{hthtml}
+\usepackage{amsmath}
+\usepackage[normalsize]{subfigure}
+\usepackage{url}
+\usepackage{listings}
+
+\usepackage{eurosym}
+
+\title{VisualHFSM 5.0}
+\author{Samuel Rey Escudero}
+
+\cop{Samuel Rey Escudero}
+\address{samuel.rey.escudero@gmail.com}
+
+\begin{document}
+\maketitle
+
+%%--------------------------------------------------------------
+
+\begin{hslide}
+\slsect{Índice}
+\begin{itemize}
+\item Introducción 
+\item Objetivos
+\item Infraestructura
+\item VisualHFSM 5.0
+\item Resultados Experimentales
+\item Conclusiones
+\end{itemize}
+\end{hslide}
+
+%%--------------------------------------------------------------
+
+\begin{hslide}
+\slsect{Introducción}
+\begin{itemize}
+\item La {\bf inteligencia} de los robots radica en su {\bf software}.
+\item Existen diversos métodos para su programación.
+\end{itemize}
+
+
+\begin{minipage}[t]{0.5\textwidth}
+\begin{center}
+	\begin{itemize}
+		\item Programación visual.
+	\end{itemize}
+	\begin{figure}
+		\includegraphics[height=2cm]{imgs/blockly.png}
+		\includegraphics[height=2cm]{imgs/scratch.jpg}
+	\end{figure}
+\end{center}
+\end{minipage} \hfill
+\begin{minipage}[t]{0.5\textwidth}
+\begin{center}
+	\begin{itemize}
+		\item Autómatas de estado finito.
+	\end{itemize}
+	\begin{figure}
+		\includegraphics[height=2cm]{imgs/smach.jpg}
+		%\hspace{0.6cm}
+		\includegraphics[height=2cm]{imgs/xaitControl.jpg}
+	\end{figure}
+\end{center}
+\end{minipage}
+
+\end{hslide}
+
+%%--------------------------------------------------------------
+
+\begin{hslide}
+
+VisualHFSM es una herramienta que ha ido evolucionando con el paso del tiempo.
+
+\begin{minipage}[t]{0.5\textwidth}
+\begin{center}
+	\begin{figure}
+		\includegraphics[height=2.5cm]{imgs/visualHFSM1.png}
+		\includegraphics[height=2.5cm]{imgs/visualHFSM2.jpg}
+	\end{figure}
+\end{center}
+\end{minipage} \hfill
+\begin{minipage}[t]{0.5\textwidth}
+\begin{center}
+	\begin{figure}
+		\includegraphics[height=2.5cm]{imgs/visualhfsm3.png}
+		\includegraphics[height=2.5cm]{imgs/visualHFSM4.png}
+	\end{figure}
+\end{center}
+\end{minipage}
+
+\end{hslide}
+
+%%--------------------------------------------------------------
+
+\begin{hslide}
+\slsect{Objetivos}
+
+El objetivo principal es alcanzar una versión madura y atractiva de VisualHFSM para que sea utilizada por terceros.
+Para esto, hemos establecido los siguientes subobjetivos:
+
+\begin{itemize}
+\item Mejorar la usabilidad y funcionalidad de VisualHFSM.
+\item Dar a conocer la herramienta y fomentar su uso.
+\item Crear una documentación detallada.
+\end{itemize}
+
+\end{hslide}
+
+%%--------------------------------------------------------------
+
+\begin{hslide}
+
+\slsect{Infraestructura}
+
+\begin{minipage}[t]{0.5\textwidth}
+\begin{center}
+	\begin{itemize}
+	\item JdeRobot 5.3
+	\item Gazebo
+	\item ICE
+	\item GTK+
+	\item PyQt
+	\end{itemize}
+	\begin{figure}
+		\includegraphics[height=1.5cm]{imgs/logoJdeRobot.png}
+	\end{figure}
+\end{center}
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+\begin{center}
+	\begin{figure}
+		\includegraphics[height=2.3cm]{imgs/gazeboWorld.png}
+		\vspace{0.6cm}
+		\includegraphics[height=2.3cm]{imgs/bucleGTK.png}
+	\end{figure}
+\end{center}
+\end{minipage}
+	
+\end{hslide}
+
+%%--------------------------------------------------------------
+
+\begin{hslide}
+\slsect{VisualHFSM 5.0}
+
+Con el fin de cumplir os objetivos propuestos, esta versión de VisualHFSM introduce las siguientes novedades:
+
+\begin{itemize}
+\item Mejoras en el editor gráfico.
+\item GUI en ejecución para C++.
+\item Generación de código en Python.
+\item GUI en ejecución para Python.
+\item Difusión.
+\end{itemize}
+
+\end{hslide}
+
+%%--------------------------------------------------------------
+
+\begin{hslide}
+\slsubsect{Mejoras en el editor gráfico}
+
+\end{document}
+
+%%--------------------------------------------------------------

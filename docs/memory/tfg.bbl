@@ -1,0 +1,84 @@
+\begin{thebibliography}{10}
+
+\bibitem{bohren2011towards}
+{\sc Bohren, J., Rusu, R.~B., Jones, E.~G., Marder-Eppstein, E., Pantofaru, C.,
+  Wise, M., M{\"o}senlechner, L., Meeussen, W., and Holzer, S.}
+\newblock Towards autonomous robotic butlers: Lessons learned with the pr2.
+\newblock In {\em Robotics and Automation (ICRA), 2011 IEEE International
+  Conference on\/} (2011), IEEE, pp.~5568--5575.
+
+\bibitem{canas2013recent}
+{\sc Cañas, J., Gonz{\'a}lez, M., Hern{\'a}ndez, A., and Rivas, F.}
+\newblock Recent advances in the jderobot framework for robot programming.
+\newblock In {\em Proceedings of RoboCity2030 12th Workshop, Rob{\'o}tica
+  Cognitiva\/} (2013), pp.~1--21.
+
+\bibitem{paperDavidYunta}
+{\sc David~Yunta, J. M.~C.}
+\newblock Visual automata programming for robot behaviors.
+\newblock {\em M{\'a}laga, Spain-June 2016\/} (2012).
+
+\bibitem{learningWithBlockly}
+{\sc Echaguibel~Mart{\'\i}nez, E.}
+\newblock Introducci{\'o}n a la programaci{\'o}n inform{\'a}tica mediante
+  videojuegos para estudiantes de secundaria.
+
+\bibitem{foukarakis2014combining}
+{\sc Foukarakis, M., Leonidis, A., Antona, M., and Stephanidis, C.}
+\newblock Combining finite state machine and decision-making tools for
+  adaptable robot behavior.
+\newblock In {\em HCI (6)\/} (2014), pp.~625--635.
+
+\bibitem{yunta2012herramienta}
+{\sc Garro, D.~Y.}
+\newblock Herramienta de programación visual de autómatas de estado finito
+  para aplicaciones robóticas.
+
+\bibitem{smach2013}
+{\sc Jonathan, B., and Steve, C.}
+\newblock The smach high-level executive.
+\newblock {\em IEEE Robotics \& Automation magazine\/} (2013).
+
+\bibitem{koenig2004design}
+{\sc Koenig, N., and Howard, A.}
+\newblock Design and use paradigms for gazebo, an open-source multi-robot
+  simulator.
+\newblock In {\em Intelligent Robots and Systems, 2004.(IROS 2004).
+  Proceedings. 2004 IEEE/RSJ International Conference on\/} (2004), vol.~3,
+  IEEE, pp.~2149--2154.
+
+\bibitem{martin2010herramienta}
+{\sc Mart{\'\i}n~Amor, C.~I.}
+\newblock Herramienta de programaci{\'o}n visual de aut{\'o}matas en jderobot.
+
+\bibitem{menendezprogramming}
+{\sc Men{\'e}ndez, B., Salamanqu{\'e}s, R., and Canas, J.~M.}
+\newblock Programming of a nao humanoid in gazebo using hierarchical fsm.
+
+\bibitem{scratchEducativo}
+{\sc Monjelat, N., and San~Mart{\'\i}n, P.~S.}
+\newblock Programar con scratch en contextos educativos:?` asimilar directrices
+  o co-construir tecnolog{\'\i}as para la inclusi{\'o}n social?
+\newblock {\em Praxis Educativa 20}, 1 (2016), 61--71.
+
+\bibitem{borja2014}
+{\sc Moreno, B.~M.}
+\newblock Visualhfsm 4: Programación de humanoides con autómatas de estado
+  finito usando jderobot.
+
+\bibitem{peredadocencia}
+{\sc Pereda, J.~V.}
+\newblock Docencia de rob{\'o}tica con jderobot 5.
+
+\bibitem{rey2016visualhfsm}
+{\sc Rey, S., and Canas, J.~M.}
+\newblock Visualhfsm 5: recent improvements in programming robots with automata
+  in jderobot.
+\newblock {\em M{\'a}laga, Spain-June 2016\/} (2016), 155.
+
+\bibitem{salamanques2012}
+{\sc Salamanques~Ballesteros, R.}
+\newblock Herramienta de programaci{\'o}n visual de aut{\'o}matas de estado
+  finito jer{\'a}rquicos para aplicaciones rob{\'o}ticas.
+
+\end{thebibliography}

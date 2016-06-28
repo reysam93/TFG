@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualHFSM><SubAutomata id="1" idFather="0"><state initial="true" id="1"><posx>111</posx><posy>195</posy><name>TakeOff</name><idSubautomataSon>0</idSubautomataSon><code>self.ExtraPrx.takeoff()
+
+#Get some heigh
+self.setVelocity(0, 0, 1, 0)
+
+self.heighIters += 1</code></state><state initial="false" id="2"><posx>323.716</posx><posy>206.738</posy><name>FollowTurtle</name><idSubautomataSon>2</idSubautomataSon><code>self.contours, hierarchy = self.getContours()</code></state><state initial="false" id="3"><posx>531</posx><posy>229</posy><name>Land</name><idSubautomataSon>3</idSubautomataSon><code>self.contours, hierarchy = self.getContours()</code></state><transition id="1"><posx>191</posx><posy>244</posy><origin>1</origin><destiny>2</destiny><transcode>print "Iters:", self.heighIters</transcode><name>transition</name><trans type="time">2500</trans></transition><transition id="2"><posx>419</posx><posy>267</posy><origin>2</origin><destiny>3</destiny><transcode></transcode><name>transition</name><trans type="time">90000</trans></transition><iteration_time>100</iteration_time><variables>self.heighIters = 0
+self.maxIters = 50
+self.contours = []
+
+
+#Filter Values
+self.hmin = 50
+self.hmax = 70
+self.vmin = 20
+self.vmax = 235
+self.smin = 10
+self.smax = 245
+</variables><functions>def setVelocity(self, vx, vy, vz, yaw):
+	cmd = jderobot.CMDVelData()
+	cmd.linearX = vy
+	cmd.linearY = vx
+	cmd.linearZ = vz
+	cmd.angularZ = yaw
+	cmd.angularX = cmd.angularY = 1.0
+	self.CMDVelPrx.setCMDVelData(cmd)
+
+def getImage(self):
+	img = self.CameraPrx.getImageData("RGB8")
+	height = img.description.height
+	width = img.description.width
+	imgPixels = numpy.zeros((height, width, 3), numpy.uint8)
+	imgPixels = numpy.frombuffer(img.pixelData, dtype=numpy.uint8)
+	imgPixels.shape = height, width, 3
+	return imgPixels
+
+def getContours(self):
+	img = self.getImage()
+	img = cv2.GaussianBlur(img, (5, 5), 0)
+	hsvImg = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+	maxValues = numpy.array(self.hmax, self.vmax, self.smax)
+	minValues = numpy.array(self.hmin, self.vmin, self.smin)
+	
+	thresoldImg = cv2.inRange(hsvImg, minValues, maxValues)
+	conts, hierarchy = cv2.findContours(thresoldImg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+	return conts, hierarchy	
+
+	</functions></SubAutomata><SubAutomata id="2" idFather="1"><state initial="true" id="4"><posx>118</posx><posy>156</posy><name>FindTurtle</name><idSubautomataSon>0</idSubautomataSon><code>if self.heighIters &lt;= self.maxIters:
+	self.setVelocity(0, 0, 1, 0)
+	self.heighIters += 1
+	print "iters:", self.heighIters
+else:
+	print "max hight reached"</code></state><state initial="false" id="5"><posx>410</posx><posy>171</posy><name>FollowTurtle</name><idSubautomataSon>0</idSubautomataSon><code>#We assume there is only one green target on the screen
+cnt = self.contours[0]
+
+#Locate the minimal circle enclosing the contour
+(x, y), radius = cv2.minEnclosingCircle(cnt)
+center = (int(x), int(y))
+radius = int(radius)
+
+xError = targetX - center[0]
+yError = targetY - center[1]
+
+xVel = xPid.process(xError)
+yVel = yPidprocess(yError)
+
+#Control Heigh#
+
+self.setVelocity(xVel, yVel, 0, 0)
+print "xError:", xError, "yError:", yError
+print "xVel:", xVel, "yVel:", yVel</code></state><transition id="3"><posx>276</posx><posy>101</posy><origin>4</origin><destiny>5</destiny><transcode></transcode><name>transition</name><trans type="condition">self.contours</trans></transition><transition id="4"><posx>258</posx><posy>221</posy><origin>5</origin><destiny>4</destiny><transcode></transcode><name>transition</name><trans type="condition">not self.contours</trans></transition><iteration_time>100</iteration_time><variables>targetX = 125
+targetY = 125
+
+minError = 8
+
+xPid = self.PID(minError, 0.01, 0.02, 0.03, 5, -5)
+yPid = self.PID(minError, 0.01, 0.02, 0.03, 5, -5)</variables><functions>class PID:
+	def __init__(self, Epsilon=.01, Kp=1, Ki=1, Kd=1, Imax=300, Imin=-300):
+		self.Ep = Epsilon		
+		self.Kp = Kp
+		self.Ki = Ki
+		self.Kd = Kd
+		self.Imax = Imax
+		self.Imin = Imin
+		self.lastError = 0
+		self.cumulativeError = 0
+
+	def updateCumulativeError(self, error):
+		self.cumulativeError += error
+		if self.cumulativeError &gt; self.Imax:
+			self.cumulativeError = self.Imax
+		if self.cumulativeError &lt; self.Imin:
+			self.cumulativeError = self.Imin
+
+	def process(self, error):
+		if -self.Ep &lt; error &lt; self.Ep:
+			return 0
+		P = self.Kp * error
+
+		self.updateCumulativeError(error)
+		I = self.Ki * self.cumulativeError
+
+		D = self.Kd * (error -  self.lastError)
+		self.lastError = error
+
+		vel = P + I + D
+		return vel
+		</functions></SubAutomata><SubAutomata id="3" idFather="1"><state initial="true" id="7"><posx>117</posx><posy>188</posy><name>LoseTurtle</name><idSubautomataSon>0</idSubautomataSon><code>self.setVelocity(1, 0, 0, 0)
+</code></state><state initial="false" id="8"><posx>378</posx><posy>213</posy><name>Landing</name><idSubautomataSon>0</idSubautomataSon><code>self.ExtraPrx.land()</code></state><transition id="6"><posx>271</posx><posy>109</posy><origin>8</origin><destiny>7</destiny><transcode></transcode><name>transition</name><trans type="condition">self.contours</trans></transition><transition id="7"><posx>250</posx><posy>258</posy><origin>7</origin><destiny>8</destiny><transcode></transcode><name>transition</name><trans type="condition">not self.contours</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><libraries><lib>numpy</lib><lib>jderobot</lib><lib>cv2</lib></libraries><config><iceinterface><nameinterface>Extra</nameinterface><ip>localhost</ip><port>9000</port><interface>ArDroneExtra</interface></iceinterface><iceinterface><nameinterface>CMDVel</nameinterface><ip>localhost</ip><port>9000</port><interface>CMDVel</interface></iceinterface><iceinterface><nameinterface>Camera</nameinterface><ip>localhost</ip><port>9000</port><interface>Camera</interface></iceinterface></config></VisualHFSM>

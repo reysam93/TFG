@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualHFSM><SubAutomata id="1" idFather="0"><state initial="true" id="1"><posx>62</posx><posy>66</posy><name>TakeOff</name><idSubautomataSon>0</idSubautomataSon><code>#Taking Off
+self.ExtraPrx.takeoff()
+takenOff = True</code></state><state initial="false" id="2"><posx>189</posx><posy>116</posy><name>FollowRoad</name><idSubautomataSon>3</idSubautomataSon><code>lastState = "FollowRoad"
+
+#Get and prepare image
+inImg = self.getImage()
+softenedImg = cv2.bilateralFilter(inImg, 9, 75, 75)
+hsvImg = cv2.cvtColor(softenedImg, cv2.COLOR_BGR2HSV)
+
+#Get threshold image
+minValues = numpy.array([self.hmin, self.vmin, self.smin])
+maxValues = numpy.array([self.hmax, self.vmax, self.smax])
+thresholdImg = cv2.inRange(hsvImg, minValues, maxValues)
+
+#Get contours
+self.contours, hierarchy = cv2.findContours(thresholdImg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+#Update Heigh
+self.heigh = self.Pose3DPrx.getPose3DData().z</code></state><state initial="false" id="6"><posx>309</posx><posy>268</posy><name>MonitorArea</name><idSubautomataSon>5</idSubautomataSon><code></code></state><state initial="false" id="11"><posx>263</posx><posy>428</posy><name>TurnAround</name><idSubautomataSon>0</idSubautomataSon><code>self.setVelocity(0, 0, 0, 1)
+pose= self.Pose3DPrx.getPose3DData()
+print "q0", pose.q0, "q1",pose.q1, "q2",pose.q2, "q3",pose.q3</code></state><state initial="false" id="12"><posx>53</posx><posy>239</posy><name>Landing</name><idSubautomataSon>6</idSubautomataSon><code></code></state><state initial="false" id="14"><posx>41</posx><posy>427</posy><name>END</name><idSubautomataSon>0</idSubautomataSon><code>print "SHUT DOWN"
+self.shutDown()</code></state><state initial="false" id="17"><posx>481</posx><posy>139</posy><name>HeighControl</name><idSubautomataSon>0</idSubautomataSon><code>#Controling heigh
+self.heigh = self.Pose3DPrx.getPose3DData().z
+zVel = self.zPid.process(self.targetZ - self.heigh)
+self.setVelocity(0, 0, zVel, 0)
+print "Heigh:", self.heigh
+print "Vel:", zVel</code></state><transition id="7"><posx>274</posx><posy>172</posy><origin>2</origin><destiny>6</destiny><transcode></transcode><name>transition</name><trans type="condition">(self.droneInPosition(self.initPos, 200)) and (not self.monitorComplet)</trans></transition><transition id="13"><posx>349</posx><posy>362</posy><origin>6</origin><destiny>11</destiny><transcode>self.setVelocity(0, 0, 0, 0)</transcode><name>transition</name><trans type="condition">self.monitorComplet</trans></transition><transition id="14"><posx>164</posx><posy>318</posy><origin>11</origin><destiny>2</destiny><transcode></transcode><name>transition</name><trans type="time">2500</trans></transition><transition id="19"><posx>82</posx><posy>154</posy><origin>2</origin><destiny>12</destiny><transcode>self.setVelocity(0,0,0,0)</transcode><name>transition</name><trans type="condition">(self.droneInPosition(landingPose, 75)) and (self.monitorComplet)</trans></transition><transition id="22"><posx>43</posx><posy>326</posy><origin>12</origin><destiny>14</destiny><transcode></transcode><name>transition</name><trans type="condition">self.hasLanded</trans></transition><transition id="26"><posx>328</posx><posy>116</posy><origin>17</origin><destiny>2</destiny><transcode></transcode><name>transition</name><trans type="condition">(abs(self.targetZ - self.heigh) &lt; self.minAltit) and (currentState == "FollowRoad")</trans></transition><transition id="27"><posx>430</posx><posy>27</posy><origin>1</origin><destiny>17</destiny><transcode></transcode><name>transition</name><trans type="condition">takenOff</trans></transition><transition id="28"><posx>315</posx><posy>70</posy><origin>2</origin><destiny>17</destiny><transcode>currentState = "FollowRoad"</transcode><name>transition</name><trans type="condition">abs(self.targetZ - self.heigh) &gt; heighMargin</trans></transition><transition id="29"><posx>378</posx><posy>195</posy><origin>6</origin><destiny>17</destiny><transcode>currentState = "MonitorArea"</transcode><name>transition</name><trans type="condition">abs(self.targetZ - self.heigh) &gt; heighMargin</trans></transition><transition id="30"><posx>412</posx><posy>279</posy><origin>17</origin><destiny>6</destiny><transcode></transcode><name>transition</name><trans type="condition">(abs(self.targetZ - self.heigh) &lt; self.minAltit) and (currentState == "MonitorArea")</trans></transition><iteration_time>100</iteration_time><variables>self.targetX = 125
+self.targetY = 125
+self.targetZ = 2.5
+self.initPos = (-1, -8.5)
+landingPose = (self.Pose3DPrx.getPose3DData().x, self.Pose3DPrx.getPose3DData().y)
+
+#Minimun errors
+self.minError = 10
+self.minActit = 0.5
+self.minAltit = 0.01
+self.minDist = 0.01
+heighMargin = 1
+
+#Control Variables
+self.heigh = 0
+self.contours = []
+self.monitorComplet = False
+self.xPos = landingPose[0]
+self.yPos = landingPose[1]
+initAngle = None
+self.hasLanded = False
+currentState = "FollowRoad"
+takenOff = False
+
+#Filter Values
+self.hmin = 90
+self.hmax = 97
+self.vmin = 0
+self.vmax = 50
+self.smin = 45
+self.smax = 80
+
+#Control PID
+self.xPid = self.PID(Epsilon=self.minError, Kp=0.01, Ki=0.04, Kd=0.003, Imax=5, Imin=-5)
+self.zPid = self.PID(Epsilon=self.minAltit, Kp=1, Ki=0.02, Kd=0, Imax=5, Imin=-5)
+self.aPid = self.PID(Epsilon=self.minActit, Kp=0.01, Ki=0.04, Kd=0.003, Imax=5, Imin=-5)</variables><functions>def getImage(self):
+	img = self.CameraPrx.getImageData("RGB8")
+	height = img.description.height
+	width=img.description.width
+	imgPixels = numpy.zeros((height, width, 3), numpy.uint8)
+	imgPixels = numpy.frombuffer(img.pixelData, dtype=numpy.uint8)
+	imgPixels.shape = height, width, 3
+	return imgPixels
+
+def setVelocity(self, vx, vy, vz, yaw):
+	cmd = jderobot.CMDVelData()
+	cmd.linearX = vy
+	cmd.linearY = vx
+	cmd.linearZ = vz
+	cmd.angularZ = yaw
+	cmd.angularX = cmd.angularY = 1.0
+	self.CMDVelPrx.setCMDVelData(cmd)
+
+#The factor indicate the margin of the error multipliyin the error for this factor
+def droneInPosition(self, pos,factor=1 ):
+	return (abs(pos[0] - self.xPos) &lt; self.minDist*factor) and (abs(pos[1] - self.yPos) &lt; self.minDist*factor)
+
+class PID:
+	def __init__(self, Epsilon=.01, Kp=1, Ki=1, Kd=1, Imax=300, Imin=-300):
+		self.Ep = Epsilon
+		self.Kp = Kp
+		self.Ki = Ki
+		self.Kd = Kd
+
+		self.Imax = Imax
+		self.Imin = Imin
+		self.lastError = 0
+		self.cumulativeError = 0
+
+	def updateCumulativeError(self, error):
+		self.cumulativeError += error
+		if self.cumulativeError &gt; self.Imax:
+			self.cumulativeError = self.Imax
+		elif self.cumulativeError &lt; self.Imin:
+			self.cumulativeError = self.Imin
+
+	def process(self, error, derivative=None, integral=None):
+		if -self.Ep &lt; error &lt; self.Ep:
+			return 0
+
+		P = self.Kp * error
+		self.updateCumulativeError(error)
+		if integral != None:
+			I = self.Ki * integral
+		else:
+			I = self.Ki * self.cumulativeError
+
+		if derivative != None:
+			D = self.Kd * derivative
+		else:
+			D = self.Kd * (error - self.lastError)
+		self.lastError = error
+		speed = P + I + D
+		if speed &gt; 3:
+			speed = 3
+		elif speed &lt; -3:
+			speed = -3
+		return speed
+
+</functions></SubAutomata><SubAutomata id="3" idFather="1"><state initial="true" id="3"><posx>156</posx><posy>228</posy><name>FindRoad</name><idSubautomataSon>0</idSubautomataSon><code>self.setVelocity(0, 0, 0.75, 0)
+print "Road lost"</code></state><state initial="false" id="4"><posx>427</posx><posy>255</posy><name>FollowingRoad</name><idSubautomataSon>0</idSubautomataSon><code>contour = max(self.contours, key=cv2.contourArea)
+try:
+	(x, y), radius = cv2.minEnclosingCircle(contour)
+	center = (int(x), int(y))
+	ellipse = cv2.fitEllipse(contour)
+	inclination = ellipse[2]
+
+	if inclination &lt; 90:
+		yAngle = -inclination
+	else:
+		yAngle = 180 - inclination
+
+	avel = self.aPid.process(yAngle)
+	xError = self.targetX - center[0]
+	xvel = self.xPid.process(xError)
+	speed = max((self.targetX - pow(1.09, abs(xError)))/125.,0)
+	
+	self.setVelocity(xvel, speed, 0, avel)
+except:
+	print "EXCEPTION FOUND"
+	self.contours = []
+
+self.xPos = self.Pose3DPrx.getPose3DData().x
+self.yPos = self.Pose3DPrx.getPose3DData().y
+print "Xpos:", self.xPos, "Ypos:", self.yPos
+</code></state><transition id="2"><posx>297</posx><posy>157</posy><origin>3</origin><destiny>4</destiny><transcode></transcode><name>FoundRoad</name><trans type="condition">self.contours</trans></transition><transition id="3"><posx>265</posx><posy>320</posy><origin>4</origin><destiny>3</destiny><transcode></transcode><name>LostRoad</name><trans type="condition">not self.contours</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><SubAutomata id="5" idFather="1"><state initial="true" id="7"><posx>86</posx><posy>275</posy><name>ToFirstPos</name><idSubautomataSon>0</idSubautomataSon><code>self.xPos = self.Pose3DPrx.getPose3DData().x
+self.yPos = self.Pose3DPrx.getPose3DData().y
+
+xError = firstPos[0] - self.xPos
+xVel = xDistPid.process(xError)
+yError = firstPos[1] - self.yPos
+yVel = yDistPid.process(yError)
+
+print "Xerror:", xError, "Yerror:", yError
+print "Xvel:", xVel, "Yvel:", -yVel
+
+self.setVelocity(xVel, -yVel, 0, 0)
+</code></state><state initial="false" id="8"><posx>247</posx><posy>92</posy><name>ToSecondPos</name><idSubautomataSon>0</idSubautomataSon><code>self.xPos = self.Pose3DPrx.getPose3DData().x
+self.yPos = self.Pose3DPrx.getPose3DData().y
+
+xError = secondPos[0] - self.xPos
+xVel = xDistPid.process(xError)
+yError = secondPos[1] - self.yPos
+yVel = yDistPid.process(yError)
+
+print "xError:",xError, "Yerror:", yError
+print "Xvel:", xVel, "Yvel:", -yVel
+
+self.setVelocity(xVel, -yVel, 0, 0)
+</code></state><state initial="false" id="9"><posx>491</posx><posy>303</posy><name>ToThirdPos</name><idSubautomataSon>0</idSubautomataSon><code>self.xPos = self.Pose3DPrx.getPose3DData().x
+self.yPos = self.Pose3DPrx.getPose3DData().y
+
+xError = thirdPos[0] - self.xPos
+xVel = xDistPid.process(xError)
+yError = thirdPos[1] - self.yPos
+yVel = yDistPid.process(yError)
+
+print "Xerror:", xError, "Yerror:", yError
+print "Xvel:", xVel, "Yvel:", yVel
+print "Xvel:", xVel, "Yvel:", -yVel
+
+self.setVelocity(xVel, -yVel, 0, 0)
+</code></state><state initial="false" id="10"><posx>281</posx><posy>455</posy><name>Return</name><idSubautomataSon>0</idSubautomataSon><code>self.xPos = self.Pose3DPrx.getPose3DData().x
+self.yPos = self.Pose3DPrx.getPose3DData().y
+
+xError = self.initPos[0] - self.xPos
+xVel = xDistPid.process(xError)
+yError = self.initPos[1] - self.yPos
+yVel = yDistPid.process(yError)
+
+print "Xerror:", xError, "Yerror:", yError
+print "Xvel:", xVel, "Yvel:", -yVel
+
+self.setVelocity(xVel, -yVel, 0, 0)
+</code></state><transition id="9"><posx>166</posx><posy>184</posy><origin>7</origin><destiny>8</destiny><transcode></transcode><name>transition</name><trans type="condition">self.droneInPosition(firstPos)</trans></transition><transition id="10"><posx>369</posx><posy>198</posy><origin>8</origin><destiny>9</destiny><transcode></transcode><name>transition</name><trans type="condition">self.droneInPosition(secondPos)</trans></transition><transition id="11"><posx>386</posx><posy>379</posy><origin>9</origin><destiny>10</destiny><transcode></transcode><name>transition</name><trans type="condition">self.droneInPosition(thirdPos)</trans></transition><transition id="12"><posx>184</posx><posy>365</posy><origin>10</origin><destiny>7</destiny><transcode>self.monitorComplet = True</transcode><name>transition</name><trans type="condition">self.droneInPosition(self.initPos)</trans></transition><iteration_time>100</iteration_time><variables>firstPos = (10, -20)
+secondPos = (5, -30)
+thirdPos = (-10, -20)
+
+self.minDist = 0.02
+
+#Control PID
+xDistPid = self.PID(self.minDist, 1, 0.005, 0.003, 5, -5)
+yDistPid = self.PID(self.minDist, 1, 0.005, 0.003, 5, -5)</variables><functions></functions></SubAutomata><SubAutomata id="6" idFather="1"><state initial="true" id="15"><posx>126</posx><posy>185</posy><name>Descending</name><idSubautomataSon>0</idSubautomataSon><code>#Controling heigh
+self.heigh = self.Pose3DPrx.getPose3DData().z
+zVel = self.zPid.process(targetZDescend - self.heigh)
+self.setVelocity(0, 0, zVel, 0)
+print "Heigh:", self.heigh</code></state><state initial="false" id="16"><posx>350</posx><posy>190</posy><name>Land</name><idSubautomataSon>0</idSubautomataSon><code>self.setVelocity(0,0,0,0)
+if not self.hasLanded:
+	self.ExtraPrx.land()
+	self.hasLanded =True</code></state><transition id="24"><posx>232</posx><posy>220</posy><origin>15</origin><destiny>16</destiny><transcode></transcode><name>transition</name><trans type="condition">abs(targetZDescend - self.heigh) &lt; self.minAltit</trans></transition><iteration_time>100</iteration_time><variables>targetZDescend = 0.5</variables><functions></functions></SubAutomata><libraries><lib>numpy</lib><lib>cv2</lib><lib>jderobot</lib></libraries><config><iceinterface><nameinterface>Extra</nameinterface><nameproxy></nameproxy><ip>localhost</ip><port>9701</port><interface>ArDroneExtra</interface></iceinterface><iceinterface><nameinterface>CMDVel</nameinterface><nameproxy></nameproxy><ip>localhost</ip><port>9850</port><interface>CMDVel</interface></iceinterface><iceinterface><nameinterface>Pose3D</nameinterface><nameproxy></nameproxy><ip>localhost</ip><port>9000</port><interface>Pose3D</interface></iceinterface><iceinterface><nameinterface>Camera</nameinterface><nameproxy></nameproxy><ip>localhost</ip><port>9994</port><interface>Camera</interface></iceinterface></config></VisualHFSM>

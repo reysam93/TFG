@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualHFSM><SubAutomata id="1" idFather="0"><state initial="true" id="1"><posx>117</posx><posy>139</posy><name>TakeOff</name><idSubautomataSon>0</idSubautomataSon><code>if self.hIters == 0:
+	self.ExtraPrx.takeoff()
+	print "taking off"
+else:
+	#self.setVelocity(0,0,0.5,0)
+	self.setVelocity(0,0,1,0)
+
+self.hIters += 1
+print "ITERS: ", self.hIters</code></state><state initial="false" id="2"><posx>303</posx><posy>150</posy><name>FollowGreenLookBlue</name><idSubautomataSon>3</idSubautomataSon><code>inImg = self.getImage()
+softenedImg = cv2.bilateralFilter(inImg, 9, 75, 75)
+self.greenConts, hierarchy = self.getContours(softenedImg, minGValues, maxGValues)
+self.blueConts,  hierarchy = self.getContours(softenedImg, minBValues, maxBValues) 
+
+				</code></state><state initial="false" id="5"><posx>421</posx><posy>244</posy><name>FollowBlueLookGreen</name><idSubautomataSon>4</idSubautomataSon><code>inImg = self.getImage()
+softenedImg = cv2.bilateralFilter(inImg, 9, 75, 75)
+self.blueConts,  hierarchy = self.getContours(softenedImg, minBValues, maxBValues) 
+
+if refracIters &gt;= refracTime:
+	self.greenConts, hierarchy = self.getContours(softenedImg, minGValues, maxGValues)
+	print "inside refrac time"
+else:
+	print "refrac Iters:", refracIters
+
+refracIters += 1</code></state><state initial="false" id="6"><posx>325</posx><posy>312</posy><name>FollowGreenLookRed</name><idSubautomataSon>5</idSubautomataSon><code>inImg = self.getImage()
+softenedImg = cv2.bilateralFilter(inImg, 9, 75, 75)
+self.greenConts, hierarchy = self.getContours(softenedImg, minGValues, maxGValues)
+self.redConts,  hierarchy = self.getContours(softenedImg, minRValues, maxRValues)
+print "RED:", self.redConts</code></state><state initial="false" id="7"><posx>142</posx><posy>326</posy><name>FollowRed</name><idSubautomataSon>6</idSubautomataSon><code>inImg = self.getImage()
+softenedImg = cv2.bilateralFilter(inImg, 9, 75, 75)
+self.redConts, hierarchy = self.getContours(softenedImg, minRValues, maxRValues)</code></state><transition id="4"><posx>421</posx><posy>157</posy><origin>2</origin><destiny>5</destiny><transcode>print "Reseting Green Conts"
+self.greenConts = []</transcode><name>transition</name><trans type="condition">self.blueConts</trans></transition><transition id="5"><posx>436</posx><posy>325</posy><origin>5</origin><destiny>6</destiny><transcode>self.blueConts = []
+refracIters = 0</transcode><name>transition</name><trans type="condition">self.greenConts</trans></transition><transition id="6"><posx>232</posx><posy>331</posy><origin>6</origin><destiny>7</destiny><transcode>self.greenConts = []</transcode><name>transition</name><trans type="condition">self.redConts</trans></transition><transition id="15"><posx>194</posx><posy>174</posy><origin>1</origin><destiny>2</destiny><transcode>self.setVelocity(0,0,0,0)</transcode><name>transition</name><trans type="condition">self.hIters &gt;= maxHIters</trans></transition><iteration_time>100</iteration_time><variables>#ControlValues
+minError = 10
+self.targetX = None
+self.targetY = None
+self.hIters = 0
+#maxHIters = 35	#For gazebo
+maxHIters = 20	#For real
+refracIters = 0
+refracTime = 35
+
+#Contours
+self.greenConts = []
+self.blueConts = []
+self.redConts = []
+
+#Filter values for simulator. Order: [H, S, V] 
+minGValues = numpy.array([30,  129, 33])
+maxGValues = numpy.array([70, 255 , 190])
+minBValues = numpy.array([0, 140, 37])
+maxBValues = numpy.array([16, 255, 200])
+minRValues = numpy.array([100, 209, 82])
+maxRValues =  numpy.array([153, 255, 200])
+
+#Filter values for real. Order: [H, S, V] 
+#minGValues = numpy.array([31,0,120])
+#maxGValues = numpy.array([70, 46 , 255])
+#minBValues = numpy.array([9,126,175])
+#maxBValues = numpy.array([58,209,255])
+#minRValues = numpy.array([93,195,154])
+#maxRValues =  numpy.array([155,255,255])
+
+#PID control
+self.xPID = self.PID(minError, 0.01, 0.01, 0.02, 5, -5)
+self.yPID = self.PID(minError, 0.01, 0.01, 0.02, 5, -5)
+
+</variables><functions>def getImage(self):
+	img = self.CameraPrx.getImageData("RGB8")
+	height = img.description.height
+	width=img.description.width
+	
+	if self.targetX == None and self.targetY == None:
+		self.targetX = width/2
+		self.targetY = height/2
+		print "targetX:", self.targetX, "targetY:,", self.targetY
+
+	imgPixels = numpy.zeros((height, width, 3), numpy.uint8)
+	imgPixels = numpy.frombuffer(img.pixelData, dtype=numpy.uint8)
+	imgPixels.shape = height, width, 3
+	return imgPixels
+
+
+def getContours(self, img, minValues, maxValues):
+	hsvImg = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+	thresholdImg = cv2.inRange(hsvImg, minValues, maxValues)
+	contours, hierarchy = cv2.findContours(thresholdImg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+	return contours, hierarchy	
+
+
+def getVelocities(self, contours):
+	contour = max(contours, key=cv2.contourArea)
+	(x, y), radius = cv2.minEnclosingCircle(contour)
+	xError = self.targetX - x
+	yError = self.targetY - y
+
+	xVel = self.xPID.process(xError)
+	yVel = self.yPID.process(yError)
+	return xVel, yVel
+
+
+def setVelocity(self, vx, vy, vz, yaw):
+	cmd = jderobot.CMDVelData()
+	cmd.linearX = vy
+	cmd.linearY = vx
+	cmd.linearZ = vz
+	cmd.angularZ = yaw
+	cmd.angularX = cmd.angularY = 1.0
+	self.CMDVelPrx.setCMDVelData(cmd)
+
+
+class PID:
+		def __init__(self, Epsilon=.01, Kp=1, Ki=1, Kd=1, Imax=300, Imin=-300):
+			self.Ep = Epsilon
+			self.Kp = Kp
+			self.Ki = Ki
+			self.Kd = Kd
+	
+			self.Imax = Imax
+			self.Imin = Imin
+			self.lastError = 0
+			self.cumulativeError = 0
+	
+		def updateCumulativeError(self, error):
+			self.cumulativeError += error
+			if self.cumulativeError &gt; self.Imax:
+				self.cumulativeError = self.Imax
+			elif self.cumulativeError &lt; self.Imin:
+				self.cumulativeError = self.Imin
+	
+		def process(self, error, derivative=None, integral=None):
+			if -self.Ep &lt; error &lt; self.Ep:
+				return 0
+	
+			P = self.Kp * error
+			self.updateCumulativeError(error)
+			if integral != None:
+				I = self.Ki * integral
+			else:
+				I = self.Ki * self.cumulativeError
+
+			if derivative != None:
+				D = self.Kd * derivative
+			else:
+				D = self.Kd * (error - self.lastError)
+			self.lastError = error
+			speed = P + I + D
+
+			#if speed &gt; 0.4:
+			#	speed = 0.4
+			#if speed &lt; -0.4:
+			#	speed = -0.4
+
+			return speed
+
+</functions></SubAutomata><SubAutomata id="3" idFather="1"><state initial="true" id="3"><posx>67</posx><posy>147</posy><name>WaitGreen</name><idSubautomataSon>0</idSubautomataSon><code>self.setVelocity(0, 0, 0, 0)
+</code></state><state initial="false" id="4"><posx>269</posx><posy>152</posy><name>FollowGreen</name><idSubautomataSon>0</idSubautomataSon><code>xVel, yVel = self.getVelocities(self.greenConts)
+self.setVelocity(xVel, yVel, 0, 0)
+</code></state><transition id="2"><posx>173</posx><posy>40</posy><origin>3</origin><destiny>4</destiny><transcode>print "Green Finded"</transcode><name>transition</name><trans type="condition">self.greenConts</trans></transition><transition id="3"><posx>170</posx><posy>221</posy><origin>4</origin><destiny>3</destiny><transcode>print "Green Lost"
+self.setVelocity(0, 0, 0, 0)</transcode><name>transition</name><trans type="condition">not self.greenConts</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><SubAutomata id="4" idFather="1"><state initial="true" id="8"><posx>111</posx><posy>129</posy><name>WaitBlue</name><idSubautomataSon>0</idSubautomataSon><code>self.setVelocity(0, 0, 0, 0)
+</code></state><state initial="false" id="9"><posx>296</posx><posy>141</posy><name>FollowBlue</name><idSubautomataSon>0</idSubautomataSon><code>xVel, yVel = self.getVelocities(self.blueConts)
+self.setVelocity(xVel, yVel, 0, 0)
+</code></state><transition id="7"><posx>200</posx><posy>60</posy><origin>8</origin><destiny>9</destiny><transcode>print "Blue Finded"</transcode><name>transition</name><trans type="condition">self.blueConts</trans></transition><transition id="8"><posx>191</posx><posy>198</posy><origin>9</origin><destiny>8</destiny><transcode>print "Blue Lost"
+self.setVelocity(0, 0, 0, 0)</transcode><name>transition</name><trans type="condition">not self.blueConts</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><SubAutomata id="5" idFather="1"><state initial="true" id="10"><posx>79</posx><posy>120</posy><name>WaitGreen2</name><idSubautomataSon>0</idSubautomataSon><code>self.setVelocity(0, 0, 0, 0)
+</code></state><state initial="false" id="11"><posx>336</posx><posy>152</posy><name>FollowGreen2</name><idSubautomataSon>0</idSubautomataSon><code>xVel, yVel = self.getVelocities(self.greenConts)
+self.setVelocity(xVel, yVel, 0, 0)
+</code></state><transition id="9"><posx>196</posx><posy>220</posy><origin>11</origin><destiny>10</destiny><transcode>print "Green2 Lost"
+self.setVelocity(0, 0, 0, 0)</transcode><name>transition</name><trans type="condition">not self.greenConts</trans></transition><transition id="10"><posx>217</posx><posy>56</posy><origin>10</origin><destiny>11</destiny><transcode>print "Green2 finded"</transcode><name>transition</name><trans type="condition">self.greenConts</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><SubAutomata id="6" idFather="1"><state initial="true" id="12"><posx>104</posx><posy>151</posy><name>WaitRed</name><idSubautomataSon>0</idSubautomataSon><code>self.setVelocity(0, 0, 0, 0)
+</code></state><state initial="false" id="13"><posx>341</posx><posy>163</posy><name>FollowingRed</name><idSubautomataSon>0</idSubautomataSon><code>xVel, yVel = self.getVelocities(self.redConts)
+self.setVelocity(xVel, yVel, 0, 0)
+</code></state><transition id="11"><posx>221</posx><posy>56</posy><origin>12</origin><destiny>13</destiny><transcode>print "Red FInded"</transcode><name>transition</name><trans type="condition">self.redConts</trans></transition><transition id="12"><posx>225</posx><posy>219</posy><origin>13</origin><destiny>12</destiny><transcode>print "Red Lost"
+self.setVelocity(0, 0, 0, 0)</transcode><name>transition</name><trans type="condition">not self.redConts</trans></transition><iteration_time>100</iteration_time><variables></variables><functions></functions></SubAutomata><libraries><lib>numpy</lib><lib>jderobot</lib><lib>cv2</lib></libraries><config><iceinterface><nameinterface>Extra</nameinterface><nameproxy></nameproxy><ip>localhost</ip><port>9000</port><interface>ArDroneExtra</interface></iceinterface><iceinterface><nameinterface>CMDVel</nameinterface><nameproxy></nameproxy><ip>localhost</ip><port>9000</port><interface>CMDVel</interface></iceinterface><iceinterface><nameinterface>Camera</nameinterface><nameproxy></nameproxy><ip>localhost</ip><port>9000</port><interface>Camera</interface></iceinterface><iceinterface><nameinterface>Pose3D</nameinterface><nameproxy>Pose3D</nameproxy><ip>localhost</ip><port>9000</port><interface>Pose3D</interface></iceinterface></config></VisualHFSM>

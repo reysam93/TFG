@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualHFSM><SubAutomata id="1" idFather="0"><state initial="true" id="1"><posx>60</posx><posy>124</posy><name>GoFront</name><idSubautomataSon>0</idSubautomataSon><code>Motorsprx-&gt;setV(100.0);
+Motorsprx-&gt;setW(0.0);
+
+encoders = Encodersprx-&gt;getEncodersData();
+thetapos = encoders-&gt;robottheta;</code></state><state initial="false" id="2"><posx>387</posx><posy>123</posy><name>GoBack</name><idSubautomataSon>0</idSubautomataSon><code>Motorsprx-&gt;setV(-100.0);
+Motorsprx-&gt;setW(0.0);
+
+encoders = Encodersprx-&gt;getEncodersData();
+thetapos = encoders-&gt;robottheta;</code></state><state initial="false" id="3"><posx>415</posx><posy>398</posy><name>Turn</name><idSubautomataSon>0</idSubautomataSon><code>Motorsprx-&gt;setV(0.0);
+Motorsprx-&gt;setW(-3.0);
+
+encoders = Encodersprx-&gt;getEncodersData();
+if (encoders-&gt;robottheta &gt; thetapos + 1)
+	angle = thetapos - encoders-&gt;robottheta + 360;
+else
+	angle = thetapos - encoders-&gt;robottheta;
+
+std::cout &lt;&lt; "angle: " &lt;&lt; angle &lt;&lt; std::endl;</code></state><state initial="false" id="4"><posx>89</posx><posy>389</posy><name>Wait</name><idSubautomataSon>0</idSubautomataSon><code>Motorsprx-&gt;setV(0.0);
+Motorsprx-&gt;setW(0.0);
+
+encoders = Encodersprx-&gt;getEncodersData();
+thetapos = encoders-&gt;robottheta;</code></state><transition id="1"><posx>224</posx><posy>123</posy><origin>1</origin><destiny>2</destiny><transcode></transcode><name>transition</name><trans type="time">2000</trans></transition><transition id="2"><posx>555</posx><posy>356</posy><origin>2</origin><destiny>3</destiny><transcode></transcode><name>transition</name><trans type="time">2000</trans></transition><transition id="3"><posx>252</posx><posy>393</posy><origin>3</origin><destiny>4</destiny><transcode></transcode><name>transition</name><trans type="condition">angle &gt; 45</trans></transition><transition id="4"><posx>133</posx><posy>248</posy><origin>4</origin><destiny>1</destiny><transcode></transcode><name>transition</name><trans type="time">1000</trans></transition><iteration_time>100</iteration_time><variables>jderobot::EncodersDataPtr encoders = Encodersprx-&gt;getEncodersData();
+float thetapos = 0;
+float angle = 0;</variables><functions></functions></SubAutomata><libraries><lib>iostream</lib></libraries><config><iceinterface><nameinterface>Encoders</nameinterface><ip>localhost</ip><port>9997</port><interface>Encoders</interface></iceinterface><iceinterface><nameinterface>Motors</nameinterface><ip>localhost</ip><port>9999</port><interface>Motors</interface></iceinterface></config></VisualHFSM>

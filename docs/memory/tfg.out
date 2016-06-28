@@ -1,0 +1,31 @@
+\BOOKMARK [0][-]{chapter.1}{Introducci\363n}{}% 1
+\BOOKMARK [1][-]{section.1.1}{Rob\363tica}{chapter.1}% 2
+\BOOKMARK [1][-]{section.1.2}{Programaci\363n en robots}{chapter.1}% 3
+\BOOKMARK [2][-]{subsection.1.2.1}{Plataformas}{section.1.2}% 4
+\BOOKMARK [2][-]{subsection.1.2.2}{Lenguajes Visuales}{section.1.2}% 5
+\BOOKMARK [2][-]{subsection.1.2.3}{Aut\363matas}{section.1.2}% 6
+\BOOKMARK [1][-]{section.1.3}{VisualHFSM}{chapter.1}% 7
+\BOOKMARK [0][-]{chapter.2}{Objetivos}{}% 8
+\BOOKMARK [1][-]{section.2.1}{Descripci\363n del problema}{chapter.2}% 9
+\BOOKMARK [1][-]{section.2.2}{Requisitos}{chapter.2}% 10
+\BOOKMARK [1][-]{section.2.3}{Metodolog\355a y plan de trabajo}{chapter.2}% 11
+\BOOKMARK [0][-]{chapter.3}{Infraestructura}{}% 12
+\BOOKMARK [1][-]{section.3.1}{JdeRobot}{chapter.3}% 13
+\BOOKMARK [1][-]{section.3.2}{Gazebo}{chapter.3}% 14
+\BOOKMARK [1][-]{section.3.3}{ICE}{chapter.3}% 15
+\BOOKMARK [1][-]{section.3.4}{GTK+}{chapter.3}% 16
+\BOOKMARK [1][-]{section.3.5}{PyQt4}{chapter.3}% 17
+\BOOKMARK [0][-]{chapter.4}{VisualHFSM 5.0}{}% 18
+\BOOKMARK [1][-]{section.4.1}{Mejoras en el editor gr\341fico y de usabilidad}{chapter.4}% 19
+\BOOKMARK [1][-]{section.4.2}{GUI en ejecuci\363n para C++}{chapter.4}% 20
+\BOOKMARK [1][-]{section.4.3}{Generaci\363n de c\363digo en Python}{chapter.4}% 21
+\BOOKMARK [1][-]{section.4.4}{GUI en ejecuci\363n para Python}{chapter.4}% 22
+\BOOKMARK [1][-]{section.4.5}{Difusi\363n}{chapter.4}% 23
+\BOOKMARK [0][-]{chapter.5}{Resultados Experimentales}{}% 24
+\BOOKMARK [1][-]{section.5.1}{Cuadrado con un Pioneer}{chapter.5}% 25
+\BOOKMARK [1][-]{section.5.2}{Choca-Gira}{chapter.5}% 26
+\BOOKMARK [1][-]{section.5.3}{Monitorizar un \341rea con un drone}{chapter.5}% 27
+\BOOKMARK [1][-]{section.5.4}{Aplicaci\363n Sigue Colores con un drone}{chapter.5}% 28
+\BOOKMARK [0][-]{chapter.6}{Conclusiones}{}% 29
+\BOOKMARK [1][-]{section.6.1}{Conclusiones}{chapter.6}% 30
+\BOOKMARK [1][-]{section.6.2}{Trabajos futuros}{chapter.6}% 31
