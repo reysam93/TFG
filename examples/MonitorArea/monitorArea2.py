@@ -492,25 +492,25 @@ class Automata():
 
 				# Evaluation if
 				if(self.sub5 == "ToFirstPos"):
-					if(self.droneInPosition(firstPos)):
+					if(self.droneInPosition(firstPos, 3)):
 						self.sub5 = "ToSecondPos"
 						if self.displayGui:
 							self.automataGui.notifySetNodeAsActive('ToSecondPos')
 
 				elif(self.sub5 == "ToSecondPos"):
-					if(self.droneInPosition(secondPos)):
+					if(self.droneInPosition(secondPos, 3)):
 						self.sub5 = "ToThirdPos"
 						if self.displayGui:
 							self.automataGui.notifySetNodeAsActive('ToThirdPos')
 
 				elif(self.sub5 == "ToThirdPos"):
-					if(self.droneInPosition(thirdPos)):
+					if(self.droneInPosition(thirdPos, 3)):
 						self.sub5 = "Return"
 						if self.displayGui:
 							self.automataGui.notifySetNodeAsActive('Return')
 
 				elif(self.sub5 == "Return"):
-					if(self.droneInPosition(self.initPos)):
+					if(self.droneInPosition(self.initPos, 3)):
 						self.sub5 = "ToFirstPos"
 						self.monitorComplet = True
 						if self.displayGui:
