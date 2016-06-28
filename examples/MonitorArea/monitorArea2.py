@@ -124,10 +124,10 @@ class Automata():
 				D = self.Kd * (error - self.lastError)
 			self.lastError = error
 			speed = P + I + D
-			if speed > 5:
-				speed = 5
-			elif speed < -5:
-				speed = -5
+			if speed > 3:
+				speed = 3
+			elif speed < -3:
+				speed = -3
 			return speed
 	
 	def startThreads(self):
