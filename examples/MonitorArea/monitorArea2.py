@@ -85,17 +85,17 @@ class Automata():
 	
 	#The factor indicate the margin of the error multipliyin the error for this factor
 	def droneInPosition(self, pos, factor=1 ):
-		print "MIN DIST:", self.minDist*factor
-		if (abs(pos[0] - self.xPos) < self.minDist*factor):
+		print "MIN DIST Victims:", self.minDistVictims*factor
+		if (abs(pos[0] - self.xPos) < self.minDistVictims*factor):
 			print "X TRUE"
 		else:
 			print "X FALSE", pos[0] - self.xPos
 		
-		if (pos[1] - self.yPos) < self.minDist*factor):
+		if (pos[1] - self.yPos) < self.minDistVictims*factor):
 			print "Y TRUE"
 		else:
 			print "Y FALSE", pos[1] - self.yPos
-		return (abs(pos[0] - self.xPos) < self.minDist*factor) and (abs(pos[1] - self.yPos) < self.minDist*factor)
+		return (abs(pos[0] - self.xPos) < self.minDistVictims*factor) and (abs(pos[1] - self.yPos) < self.minDistVictims*factor)
 	
 	class PID:
 		def __init__(self, Epsilon=.01, Kp=1, Ki=1, Kd=1, Imax=300, Imin=-300):
@@ -484,11 +484,11 @@ class Automata():
 		secondPos = (5, -30)
 		thirdPos = (-10, -20)
 		
-		self.minDist = 0.02
+		self.minDistVictims = 0.02
 		
 		#Control PID
-		xDistPid = self.PID(self.minDist, 0.9, 0.001, 0.001, 5, -5)
-		yDistPid = self.PID(self.minDist, 0.9, 0.001, 0.001, 5, -5)
+		xDistPid = self.PID(self.minDistVictims, 0.9, 0.001, 0.001, 5, -5)
+		yDistPid = self.PID(self.minDistVictims, 0.9, 0.001, 0.001, 5, -5)
 
 		while(self.run5):
 			totala = time.time() * 1000000
