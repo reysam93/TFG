@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.4.13)  27 JUN 2016 19:44
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.4.13)  30 JUN 2016 01:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -792,18 +792,19 @@ File: template/logo-urjc.jpg Graphic file (type jpg)
 <use template/logo-urjc.jpg>
 Package pdftex.def Info: template/logo-urjc.jpg used on input line 27.
 (pdftex.def)             Requested size: 139.12904pt x 54.06006pt.
- <template/gsyc2.jpg, id=5, 236.885pt x 124.465pt>
-File: template/gsyc2.jpg Graphic file (type jpg)
 
-<use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 27.
-(pdftex.def)             Requested size: 54.14986pt x 28.45274pt.
-
-<template/peloto.png, id=6, 137.51375pt x 135.50626pt>
+<template/peloto.png, id=5, 107.40125pt x 135.50626pt>
 File: template/peloto.png Graphic file (type png)
 
 <use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 27.
+(pdftex.def)             Requested size: 22.55pt x 28.45274pt.
+
+<template/jderobot.png, id=7, 137.51375pt x 135.50626pt>
+File: template/jderobot.png Graphic file (type png)
+
+<use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 27.
 (pdftex.def)             Requested size: 28.87244pt x 28.45274pt.
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 30.
@@ -840,14 +841,14 @@ Non-PDF special ignored!
 Non-PDF special ignored!
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./template/logo-urjc.jpg> 
-<./template/gsyc2.jpg> <./template/peloto.png (PNG copy)>]
-File: template/gsyc2.jpg Graphic file (type jpg)
- <use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 40.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
+<./template/peloto.png> <./template/jderobot.png (PNG copy)>]
 File: template/peloto.png Graphic file (type png)
  <use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 40.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+ <use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 40.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -886,25 +887,25 @@ Package babel Info: Redefining spanish shorthand "?
  [1
 
 ]
-<imgs/blockly.png, id=25, 580.1675pt x 433.62pt>
+<imgs/blockly.png, id=27, 580.1675pt x 433.62pt>
 File: imgs/blockly.png Graphic file (type png)
  <use imgs/blockly.png>
 Package pdftex.def Info: imgs/blockly.png used on input line 58.
 (pdftex.def)             Requested size: 76.13263pt x 56.9055pt.
 
-<imgs/scratch.jpg, id=26, 794.2172pt x 572.1375pt>
+<imgs/scratch.jpg, id=28, 794.2172pt x 572.1375pt>
 File: imgs/scratch.jpg Graphic file (type jpg)
  <use imgs/scratch.jpg>
 Package pdftex.def Info: imgs/scratch.jpg used on input line 59.
 (pdftex.def)             Requested size: 78.9901pt x 56.9055pt.
 
-<imgs/smach.jpg, id=27, 602.25pt x 425.59pt>
+<imgs/smach.jpg, id=29, 602.25pt x 425.59pt>
 File: imgs/smach.jpg Graphic file (type jpg)
  <use imgs/smach.jpg>
 Package pdftex.def Info: imgs/smach.jpg used on input line 69.
 (pdftex.def)             Requested size: 80.51912pt x 56.9055pt.
 
-<imgs/xaitControl.jpg, id=28, 795.7471pt x 481.8pt>
+<imgs/xaitControl.jpg, id=30, 795.7471pt x 481.8pt>
 File: imgs/xaitControl.jpg Graphic file (type jpg)
  <use imgs/xaitControl.jpg>
 Package pdftex.def Info: imgs/xaitControl.jpg used on input line 71.
@@ -920,14 +921,14 @@ LaTeX Warning: Slide 2 overfull by 7.87593pt on input line 76.
 
 Overfull \vbox (2.21663pt too high) has occurred while \output is active []
 
-File: template/gsyc2.jpg Graphic file (type jpg)
-
-<use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 76.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
 File: template/peloto.png Graphic file (type png)
- <use template/peloto.png>
+
+<use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 76.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+ <use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 76.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -960,27 +961,27 @@ Package babel Info: Redefining spanish shorthand "?
 [2
 
  <./imgs/blockly.png (PNG copy)> <./imgs/scratch.jpg> <./imgs/smach.jpg> <./img
-s/xaitControl.jpg>] <imgs/visualHFSM1.png, id=34, 799.98875pt x 601.24625pt>
+s/xaitControl.jpg>] <imgs/visualHFSM1.png, id=36, 799.98875pt x 601.24625pt>
 File: imgs/visualHFSM1.png Graphic file (type png)
 
 <use imgs/visualHFSM1.png>
 Package pdftex.def Info: imgs/visualHFSM1.png used on input line 87.
 (pdftex.def)             Requested size: 94.63954pt x 71.13188pt.
- <imgs/visualHFSM2.jpg, id=35, 1365.1pt x 770.88pt>
+ <imgs/visualHFSM2.jpg, id=37, 1365.1pt x 770.88pt>
 File: imgs/visualHFSM2.jpg Graphic file (type jpg)
 
 <use imgs/visualHFSM2.jpg>
 Package pdftex.def Info: imgs/visualHFSM2.jpg used on input line 88.
 (pdftex.def)             Requested size: 125.95732pt x 71.13188pt.
 
-<imgs/visualhfsm3.png, id=36, 1371.1225pt x 665.48625pt>
+<imgs/visualhfsm3.png, id=38, 1371.1225pt x 665.48625pt>
 File: imgs/visualhfsm3.png Graphic file (type png)
 
 <use imgs/visualhfsm3.png>
 Package pdftex.def Info: imgs/visualhfsm3.png used on input line 95.
 (pdftex.def)             Requested size: 146.535pt x 71.13188pt.
 
-<imgs/visualHFSM4.png, id=37, 1306.8825pt x 770.88pt>
+<imgs/visualHFSM4.png, id=39, 1306.8825pt x 770.88pt>
 File: imgs/visualHFSM4.png Graphic file (type png)
 
 <use imgs/visualHFSM4.png>
@@ -991,13 +992,13 @@ Overfull \hbox (2.2222pt too wide) in paragraph at lines 84--100
 [][]  [] 
  []
 
-File: template/gsyc2.jpg Graphic file (type jpg)
-<use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 101.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
 File: template/peloto.png Graphic file (type png)
- <use template/peloto.png>
+<use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 101.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+ <use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 101.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -1031,13 +1032,13 @@ Package babel Info: Redefining spanish shorthand "?
 
  <./imgs/visualHFSM1.png> <./imgs/visualHFSM2.jpg> <./imgs/visualhfsm3.png> <./
 imgs/visualHFSM4.png>]
-File: template/gsyc2.jpg Graphic file (type jpg)
- <use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 117.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
 File: template/peloto.png Graphic file (type png)
  <use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 117.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+ <use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 117.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -1069,21 +1070,21 @@ Package babel Info: Redefining spanish shorthand "?
 
 [4
 
-] <imgs/logoJdeRobot.png, id=50, 137.51375pt x 135.50626pt>
+] <imgs/logoJdeRobot.png, id=52, 137.51375pt x 135.50626pt>
 File: imgs/logoJdeRobot.png Graphic file (type png)
 
 <use imgs/logoJdeRobot.png>
 Package pdftex.def Info: imgs/logoJdeRobot.png used on input line 135.
 (pdftex.def)             Requested size: 43.31076pt x 42.67912pt.
 
-<imgs/gazeboWorld.png, id=51, 1371.1225pt x 665.48625pt>
+<imgs/gazeboWorld.png, id=53, 1371.1225pt x 665.48625pt>
 File: imgs/gazeboWorld.png Graphic file (type png)
 
 <use imgs/gazeboWorld.png>
 Package pdftex.def Info: imgs/gazeboWorld.png used on input line 142.
 (pdftex.def)             Requested size: 134.8189pt x 65.44142pt.
 
-<imgs/bucleGTK.png, id=52, 727.71875pt x 354.32375pt>
+<imgs/bucleGTK.png, id=54, 727.71875pt x 354.32375pt>
 File: imgs/bucleGTK.png Graphic file (type png)
  <use imgs/bucleGTK.png>
 Package pdftex.def Info: imgs/bucleGTK.png used on input line 144.
@@ -1093,13 +1094,13 @@ Overfull \hbox (2.2222pt too wide) in paragraph at lines 125--148
 [][] [] 
  []
 
-File: template/gsyc2.jpg Graphic file (type jpg)
-<use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 149.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
 File: template/peloto.png Graphic file (type png)
- <use template/peloto.png>
+<use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 149.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+ <use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 149.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -1132,7 +1133,7 @@ Package babel Info: Redefining spanish shorthand "?
 [5
 
  <./imgs/logoJdeRobot.png (PNG copy)> <./imgs/gazeboWorld.png> <./imgs/bucleGTK
-.png>] <imgs/cajaBlanca.jpg, id=59, 690.32906pt x 246.1697pt>
+.png>] <imgs/cajaBlanca.jpg, id=60, 690.32906pt x 246.1697pt>
 File: imgs/cajaBlanca.jpg Graphic file (type jpg)
 
 <use imgs/cajaBlanca.jpg>
@@ -1145,14 +1146,14 @@ LaTeX Warning: Slide 6 overfull by 18.03973pt on input line 177.
 
 Overfull \vbox (3.69336pt too high) has occurred while \output is active []
 
-File: template/gsyc2.jpg Graphic file (type jpg)
-
-<use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 177.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
 File: template/peloto.png Graphic file (type png)
- <use template/peloto.png>
+
+<use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 177.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+ <use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 177.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -1195,30 +1196,38 @@ Underfull \hbox (badness 2103) in paragraph at lines 188--189
 a
  []
 
-<imgs/editor.png, id=65, 523.9575pt x 425.59pt>
+<imgs/editor.png, id=66, 523.9575pt x 425.59pt>
 File: imgs/editor.png Graphic file (type png)
  <use imgs/editor.png>
 Package pdftex.def Info: imgs/editor.png used on input line 198.
-(pdftex.def)             Requested size: 122.60236pt x 99.58464pt.
+(pdftex.def)             Requested size: 148.87372pt x 120.92421pt.
 
-<imgs/configFiles.png, id=66, 1083.04625pt x 292.09125pt>
+<imgs/configFiles.png, id=67, 1083.04625pt x 292.09125pt>
 File: imgs/configFiles.png Graphic file (type png)
 
 <use imgs/configFiles.png>
 Package pdftex.def Info: imgs/configFiles.png used on input line 199.
 (pdftex.def)             Requested size: 158.23581pt x 42.67912pt.
 
+Overfull \hbox (11.82768pt too wide) in paragraph at lines 198--200
+ [] 
+ []
+
+
 Overfull \hbox (21.18977pt too wide) in paragraph at lines 198--200
  [] 
  []
 
-File: template/gsyc2.jpg Graphic file (type jpg)
-<use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 204.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
+
+LaTeX Warning: Slide 7 overfull by 2.71538pt on input line 204.
+
 File: template/peloto.png Graphic file (type png)
- <use template/peloto.png>
+<use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 204.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+ <use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 204.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -1256,14 +1265,14 @@ LaTeX Font Warning: Font shape `OT1/cmss/m/it' in size <10> not available
 (Font)              Font shape `OT1/cmss/m/sl' tried instead on input line 216.
 
 
-<imgs/newRuntimeGuiCPP.png, id=74, 506.89375pt x 362.35374pt>
+<imgs/newRuntimeGuiCPP.png, id=75, 506.89375pt x 362.35374pt>
 File: imgs/newRuntimeGuiCPP.png Graphic file (type png)
 
 <use imgs/newRuntimeGuiCPP.png>
 Package pdftex.def Info: imgs/newRuntimeGuiCPP.png used on input line 226.
 (pdftex.def)             Requested size: 139.30727pt x 99.58464pt.
 
-<imgs/createAutomata.png, id=75, 508.90125pt x 227.85126pt>
+<imgs/createAutomata.png, id=76, 508.90125pt x 227.85126pt>
 File: imgs/createAutomata.png Graphic file (type png)
 
 <use imgs/createAutomata.png>
@@ -1285,14 +1294,14 @@ LaTeX Warning: Slide 8 overfull by 4.1381pt on input line 231.
 
 Overfull \vbox (2.4415pt too high) has occurred while \output is active []
 
-File: template/gsyc2.jpg Graphic file (type jpg)
-
-<use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 231.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
 File: template/peloto.png Graphic file (type png)
- <use template/peloto.png>
+
+<use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 231.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+ <use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 231.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -1325,7 +1334,7 @@ Package babel Info: Redefining spanish shorthand "?
 [8
 
  <./imgs/newRuntimeGuiCPP.png> <./imgs/createAutomata.png>]
-<imgs/runtime-hierarchy.png, id=83, 231.5925pt x 112.347pt>
+<imgs/runtime-hierarchy.png, id=84, 231.5925pt x 112.347pt>
 File: imgs/runtime-hierarchy.png Graphic file (type png)
 
 <use imgs/runtime-hierarchy.png>
@@ -1338,14 +1347,14 @@ LaTeX Warning: Slide 9 overfull by 16.97733pt on input line 251.
 
 Overfull \vbox (4.35535pt too high) has occurred while \output is active []
 
-File: template/gsyc2.jpg Graphic file (type jpg)
-
-<use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 251.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
 File: template/peloto.png Graphic file (type png)
- <use template/peloto.png>
+
+<use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 251.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+ <use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 251.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -1378,26 +1387,27 @@ Package babel Info: Redefining spanish shorthand "?
 [9
 
  <./imgs/runtime-hierarchy.png>]
-<imgs/templategenerator.png, id=88, 410.53375pt x 513.92pt>
+<imgs/templategenerator.png, id=89, 410.53375pt x 513.92pt>
 File: imgs/templategenerator.png Graphic file (type png)
 
 <use imgs/templategenerator.png>
 Package pdftex.def Info: imgs/templategenerator.png used on input line 261.
 (pdftex.def)             Requested size: 159.10524pt x 199.16928pt.
 
-<imgs/templatecode.png, id=89, 369.38pt x 548.0475pt>
+<imgs/templatecode.png, id=90, 369.38pt x 548.0475pt>
 File: imgs/templatecode.png Graphic file (type png)
 
 <use imgs/templatecode.png>
 Package pdftex.def Info: imgs/templatecode.png used on input line 262.
 (pdftex.def)             Requested size: 134.23921pt x 199.16928pt.
-File: template/gsyc2.jpg Graphic file (type jpg)
- <use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 265.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
 File: template/peloto.png Graphic file (type png)
  <use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 265.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+
+<use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 265.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -1430,14 +1440,14 @@ Package babel Info: Redefining spanish shorthand "?
 [10
 
  <./imgs/templategenerator.png> <./imgs/templatecode.png>]
-File: template/gsyc2.jpg Graphic file (type jpg)
-
-<use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 279.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
 File: template/peloto.png Graphic file (type png)
- <use template/peloto.png>
+
+<use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 279.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+ <use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 279.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -1470,13 +1480,13 @@ Package babel Info: Redefining spanish shorthand "?
 [11
 
 ]
-File: template/gsyc2.jpg Graphic file (type jpg)
- <use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 301.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
 File: template/peloto.png Graphic file (type png)
  <use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 301.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+ <use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 301.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -1508,14 +1518,14 @@ Package babel Info: Redefining spanish shorthand "?
 
 [12
 
-] <imgs/bumpAndGoDiagram.png, id=105, 916.42375pt x 637.38126pt>
+] <imgs/bumpAndGoDiagram.png, id=106, 916.42375pt x 637.38126pt>
 File: imgs/bumpAndGoDiagram.png Graphic file (type png)
 
 <use imgs/bumpAndGoDiagram.png>
 Package pdftex.def Info: imgs/bumpAndGoDiagram.png used on input line 316.
 (pdftex.def)             Requested size: 122.71904pt x 85.35826pt.
 
-<imgs/BAGRotate.png, id=106, 1034.86626pt x 501.875pt>
+<imgs/BAGRotate.png, id=107, 1034.86626pt x 501.875pt>
 File: imgs/BAGRotate.png Graphic file (type png)
 
 <use imgs/BAGRotate.png>
@@ -1526,13 +1536,13 @@ Overfull \hbox (38.95786pt too wide) in paragraph at lines 321--322
 [][] 
  []
 
-File: template/gsyc2.jpg Graphic file (type jpg)
-<use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 326.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
 File: template/peloto.png Graphic file (type png)
- <use template/peloto.png>
+<use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 326.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+ <use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 326.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -1565,14 +1575,14 @@ Package babel Info: Redefining spanish shorthand "?
 [13
 
  <./imgs/bumpAndGoDiagram.png> <./imgs/BAGRotate.png>]
-<imgs/monitorArea.png, id=113, 914.41624pt x 631.35875pt>
+<imgs/monitorArea.png, id=114, 914.41624pt x 631.35875pt>
 File: imgs/monitorArea.png Graphic file (type png)
 
 <use imgs/monitorArea.png>
 Package pdftex.def Info: imgs/monitorArea.png used on input line 343.
 (pdftex.def)             Requested size: 123.62225pt x 85.35826pt.
 
-<imgs/followingRoad.png, id=114, 1028.34187pt x 499.11469pt>
+<imgs/followingRoad.png, id=115, 1028.34187pt x 499.11469pt>
 File: imgs/followingRoad.png Graphic file (type png)
 
 <use imgs/followingRoad.png>
@@ -1583,13 +1593,13 @@ Overfull \hbox (38.82108pt too wide) in paragraph at lines 348--349
 [][] 
  []
 
-File: template/gsyc2.jpg Graphic file (type jpg)
-<use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 353.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
 File: template/peloto.png Graphic file (type png)
- <use template/peloto.png>
+<use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 353.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+ <use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 353.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -1622,14 +1632,14 @@ Package babel Info: Redefining spanish shorthand "?
 [14
 
  <./imgs/monitorArea.png> <./imgs/followingRoad.png>]
-<imgs/colorsDiagram.png, id=121, 915.42pt x 638.385pt>
+<imgs/colorsDiagram.png, id=122, 915.42pt x 638.385pt>
 File: imgs/colorsDiagram.png Graphic file (type png)
 
 <use imgs/colorsDiagram.png>
 Package pdftex.def Info: imgs/colorsDiagram.png used on input line 369.
 (pdftex.def)             Requested size: 122.38907pt x 85.35826pt.
 
-<imgs/followingRed.jpg, id=122, 5331.92pt x 2999.205pt>
+<imgs/followingRed.jpg, id=123, 5331.92pt x 2999.205pt>
 File: imgs/followingRed.jpg Graphic file (type jpg)
 
 <use imgs/followingRed.jpg>
@@ -1640,13 +1650,13 @@ Overfull \hbox (14.68745pt too wide) in paragraph at lines 374--375
 [][] 
  []
 
-File: template/gsyc2.jpg Graphic file (type jpg)
-<use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 379.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
 File: template/peloto.png Graphic file (type png)
- <use template/peloto.png>
+<use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 379.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+ <use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 379.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -1682,13 +1692,13 @@ Package babel Info: Redefining spanish shorthand "?
 
 LaTeX Warning: Slide 16 overfull by 8.29959pt on input line 407.
 
-File: template/gsyc2.jpg Graphic file (type jpg)
-<use template/gsyc2.jpg>
-Package pdftex.def Info: template/gsyc2.jpg used on input line 407.
-(pdftex.def)             Requested size: 37.90598pt x 19.91684pt.
 File: template/peloto.png Graphic file (type png)
- <use template/peloto.png>
+<use template/peloto.png>
 Package pdftex.def Info: template/peloto.png used on input line 407.
+(pdftex.def)             Requested size: 15.785pt x 19.91684pt.
+File: template/jderobot.png Graphic file (type png)
+ <use template/jderobot.png>
+Package pdftex.def Info: template/jderobot.png used on input line 407.
 (pdftex.def)             Requested size: 20.21071pt x 19.91684pt.
 
 Overfull \vbox (0.14795pt too high) has occurred while \output is active []
@@ -1742,8 +1752,8 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
  ) 
 Here is how much of TeX's memory you used:
  11376 strings out of 493304
- 166041 string characters out of 6139871
- 282732 words of memory out of 5000000
+ 166056 string characters out of 6139871
+ 282741 words of memory out of 5000000
  14611 multiletter control sequences out of 15000+600000
  8016 words of font info for 28 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
@@ -1760,9 +1770,9 @@ lic/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
 amsfonts/cm/cmssi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
 nts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
 cmtt10.pfb>
-Output written on presentacion.pdf (17 pages, 4838631 bytes).
+Output written on presentacion.pdf (17 pages, 4843230 bytes).
 PDF statistics:
- 184 PDF objects out of 1000 (max. 8388607)
+ 185 PDF objects out of 1000 (max. 8388607)
  111 compressed objects within 2 object streams
  27 named destinations out of 1000 (max. 500000)
  141 words of extra memory for PDF output out of 10000 (max. 10000000)
