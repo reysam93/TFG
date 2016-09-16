@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualHFSM><SubAutomata id="1" idFather="0"><state initial="true" id="1"><posx>112</posx><posy>126</posy><name>Go</name><idSubautomataSon>0</idSubautomataSon><code>self.MotorsPrx.setV(1)
+laserData = self.LasersPrx.getLaserData()
+
+dist = None
+for i in range(60, 120):
+	dist = laserData.distanceData[i]/1000
+	if dist == None or laserData.distanceData[i]/1000 &lt; dist:
+		dist = laserData.distanceData[i]/1000
+
+print "dist:", dist</code></state><state initial="false" id="2"><posx>372</posx><posy>136</posy><name>GoBack</name><idSubautomataSon>0</idSubautomataSon><code>self.MotorsPrx.setV(-0.1)
+print "back"</code></state><state initial="false" id="3"><posx>238</posx><posy>308</posy><name>Rotate</name><idSubautomataSon>0</idSubautomataSon><code>if destinyAngle == None:
+	turn = random.uniform(-math.pi, math.pi)
+	destinyAngle = (angle + turn) % (math.pi)
+	print "DestinyAngle:", destinyAngle
+
+angle =  self.getRobotTheta()
+error = (destinyAngle - angle)*0.75
+
+if error &gt; 0 and error &lt; 0.1:
+	error = 0.1
+elif error &lt; 0 and error &gt; -0.1:
+	error = -0.1
+
+print "angle:", angle, "destiny:", destinyAngle, "speed:", error
+self.MotorsPrx.setW(error)</code></state><transition id="1"><posx>237</posx><posy>114</posy><origin>1</origin><destiny>2</destiny><transcode>self.MotorsPrx.setV(0)
+print "stopping"</transcode><name>transition</name><trans type="condition">dist != None and dist &lt; minDistance</trans></transition><transition id="2"><posx>305</posx><posy>222</posy><origin>2</origin><destiny>3</destiny><transcode>angle = self.getRobotTheta()
+print "my Angle:", angle
+self.MotorsPrx.setV(0)</transcode><name>transition</name><trans type="time">1500</trans></transition><transition id="3"><posx>140</posx><posy>216</posy><origin>3</origin><destiny>1</destiny><transcode>destinyAngle =None
+self.MotorsPrx.setW(0)</transcode><name>transition</name><trans type="condition">error &lt;= 0.1 and error &gt;= -0.1</trans></transition><iteration_time>100</iteration_time><variables>laserData = self.LasersPrx.getLaserData()
+minDistance = 1.5
+dist = None
+destinyAngle = None
+error = 0
+
+print "numero de lasers (grados):", laserData.numLaser
+
+</variables><functions>def getRobotTheta(self):
+        d = self.EncodersPrx.getPose3DData()
+        theta = math.atan2(2*(d.q0*d.q3 + d.q1*d.q2), 1-2*(d.q2*d.q2 + d.q3*d.q3))
+        return theta</functions></SubAutomata><libraries><lib>random</lib><lib>math</lib></libraries><config><iceinterface><nameinterface>Motors</nameinterface><nameproxy>Motors</nameproxy><ip>0.0.0.0</ip><port>9999</port><interface>Motors</interface></iceinterface><iceinterface><nameinterface>Pose3D</nameinterface><nameproxy>Pose3D</nameproxy><ip>0.0.0.0</ip><port>9997</port><interface>Pose3D</interface></iceinterface><iceinterface><nameinterface>Laser</nameinterface><nameproxy>Laser</nameproxy><ip>0.0.0.0</ip><port>9998</port><interface>Laser</interface></iceinterface></config></VisualHFSM>
